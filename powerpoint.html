@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Presentation1 - PowerPoint</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+:root {
+  --ppt-orange: #D24726;
+  --ppt-orange-dark: #B74123;
+  --ppt-orange-darker: #A13518;
+  --ppt-orange-light: #F7E3DD;
+  --bg-ribbon: #F3F2F1;
+  --bg-tab-hover: #EDEBE9;
+  --bg-tab-active: #E1DFDD;
+  --border: #E1DFDD;
+  --border-dark: #C8C6C4;
+  --text-primary: #323130;
+  --text-secondary: #605E5C;
+  --hover: #F5F5F5;
+  --selected: #FCE3DC;
+  --hover-btn: #F7E3DD;
+  --ease-office: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --transition-fast: 0.1s var(--ease-office);
+  --transition-base: 0.15s var(--ease-office);
+  --transition-slow: 0.25s var(--ease-office);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: #fff;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-touch-callout: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+input { font-family: inherit; }
+
+/* ===== Title Bar ===== */
+.title-bar {
+  height: 32px;
+  background: var(--ppt-orange);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 8px;
+  font-size: 12px;
+}
+
+.qa-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.qa-btn {
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  border-radius: 2px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.qa-btn:hover { background: rgba(255,255,255,0.15); }
+.qa-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
+
+.title-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  pointer-events: auto;
+  min-width: 0;
+}
+.doc-title {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  outline: none;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-family: inherit;
+  min-width: 60px;
+  max-width: 200px;
+  transition: background var(--transition-fast);
+}
+.doc-title:hover { background: rgba(255,255,255,0.12); }
+.doc-title:focus { background: rgba(255,255,255,0.2); }
+.save-status { opacity: 0.85; font-size: 12px; }
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.win-btn {
+  width: 46px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+.win-btn:hover { background: rgba(255,255,255,0.15); }
+.win-btn:active { background: rgba(255,255,255,0.3); }
+.win-btn.close:hover { background: #E81123; }
+
+/* ===== Ribbon Tabs ===== */
+.ribbon-tabs {
+  height: 34px;
+  background: var(--ppt-orange);
+  display: flex;
+  align-items: stretch;
+  padding: 0 8px;
+  position: relative;
+  z-index: 10;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ribbon-tabs::-webkit-scrollbar { display: none; }
+
+.ribbon-tabs .tab {
+  background: transparent;
+  border: none;
+  padding: 0 12px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.92);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ribbon-tabs .tab:hover { background: rgba(255,255,255,0.12); }
+.ribbon-tabs .tab:active { background: rgba(255,255,255,0.2); }
+.ribbon-tabs .tab.active {
+  background: var(--bg-ribbon);
+  color: var(--text-primary);
+  font-weight: 400;
+}
+.ribbon-tabs .file-tab {
+  background: var(--ppt-orange-dark);
+  color: #fff;
+  margin-right: 4px;
+  transition: background var(--transition-fast);
+}
+.ribbon-tabs .file-tab:hover { background: var(--ppt-orange-darker); }
+.ribbon-tabs .file-tab.active { background: var(--bg-ribbon); color: var(--text-primary); }
+
+.tab-spacer { flex: 1; min-width: 8px; }
+
+.tab-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.search-box {
+  background: rgba(255,255,255,0.18);
+  border: none;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 2px;
+  color: #fff;
+  font-size: 12px;
+  width: 220px;
+  transition: background var(--transition-fast);
+}
+.search-box:hover { background: rgba(255,255,255,0.25); }
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 12px;
+  width: 100%;
+  margin-left: 6px;
+}
+.search-box input::placeholder { color: rgba(255,255,255,0.7); }
+
+.user-btn {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-radius: 2px;
+}
+.user-btn:hover { background: rgba(255,255,255,0.15); }
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.user-avatar.guest {
+  background: linear-gradient(135deg, #B0B0B0, #808080);
+}
+
+/* ===== Ribbon Content ===== */
+.ribbon-content {
+  background: var(--bg-ribbon);
+  height: 118px;
+  display: flex;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.ribbon-content::-webkit-scrollbar { height: 4px; }
+.ribbon-content::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+.ribbon-content::-webkit-scrollbar-track { background: transparent; }
+
+.ribbon-pane {
+  display: none;
+  align-items: stretch;
+  width: 100%;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.ribbon-pane.active {
+  display: flex;
+  opacity: 1;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+  border-right: 1px solid var(--border);
+  min-width: 0;
+  flex-shrink: 0;
+}
+.group:last-child { border-right: none; }
+.group-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 4px;
+  gap: 4px;
+}
+.group-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 3px 0 2px;
+}
+
+.big-btn {
+  width: 56px;
+  height: 86px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-radius: 2px;
+  text-align: center;
+  line-height: 1.2;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.big-btn i { font-size: 28px; color: var(--ppt-orange); }
+.big-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.big-btn:active { background: var(--bg-tab-active); transform: scale(0.97); }
+
+.small-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.small-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+  height: 22px;
+  min-width: 60px;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.small-btn i { width: 14px; text-align: center; }
+.small-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-btn:active { background: var(--bg-tab-active); }
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 22px);
+  gap: 1px;
+}
+
+.small-icon {
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-radius: 2px;
+  position: relative;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.small-icon:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-icon:active { transform: scale(0.92); }
+.small-icon.active { background: var(--selected); border-color: var(--ppt-orange); }
+.small-icon.has-color { flex-direction: column; padding: 1px 0 0; gap: 1px; }
+.small-icon.has-color i { font-size: 11px; }
+.color-bar {
+  width: 14px;
+  height: 3px;
+  background: #C00000;
+  border-radius: 1px;
+}
+
+.font-controls, .align-tools, .font-styles, .para-controls {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+.font-controls { gap: 0; }
+.font-select, .size-select {
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  height: 22px;
+  font-size: 12px;
+  padding: 0 4px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: border-color var(--transition-fast);
+}
+.font-select { width: 120px; border-right: none; }
+.size-select { width: 50px; border-right: none; }
+.font-select:hover, .size-select:hover { border-color: var(--ppt-orange); }
+
+.separator {
+  width: 1px;
+  height: 16px;
+  background: var(--border-dark);
+  margin: 0 3px;
+}
+
+.styles-list, .themes-list {
+  display: flex;
+  height: 86px;
+  gap: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.styles-list::-webkit-scrollbar, .themes-list::-webkit-scrollbar { height: 4px; }
+.styles-list::-webkit-scrollbar-thumb, .themes-list::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+
+.theme-item {
+  width: 80px;
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 2px;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+.theme-item:hover { border-color: var(--ppt-orange); transform: translateY(-1px); }
+.theme-item.active { border: 2px solid var(--ppt-orange); padding: 3px; }
+.theme-preview {
+  height: 40px;
+  background: #fff;
+  border: 1px solid #eee;
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2px;
+}
+.theme-preview .tp-title { height: 4px; background: #333; width: 80%; border-radius: 1px; }
+.theme-preview .tp-text { height: 2px; background: #888; width: 100%; }
+.theme-preview .tp-text:nth-child(2) { width: 90%; }
+.theme-name { font-size: 10px; }
+
+/* ===== Workspace ===== */
+.workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #F3F2F1;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 10px;
+  transition: width var(--transition-base), opacity var(--transition-base);
+  -webkit-overflow-scrolling: touch;
+}
+.sidebar::-webkit-scrollbar { width: 8px; }
+.sidebar::-webkit-scrollbar-thumb { background: #C8C6C4; border-radius: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar.hidden {
+  width: 0;
+  opacity: 0;
+  padding: 0;
+  border-right: none;
+  overflow: hidden;
+}
+
+.slide-thumb-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.slide-number {
+  font-size: 11px;
+  color: var(--text-secondary);
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.slide-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #fff;
+  border: 2px solid transparent;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+.slide-thumb:hover { border-color: #999; }
+.slide-thumb.active { border-color: var(--ppt-orange); }
+.slide-thumb-content {
+  width: 960px;
+  height: 540px;
+  transform-origin: top left;
+  pointer-events: none;
+  overflow: hidden;
+}
+.slide-thumb-content > * {
+  pointer-events: none;
+}
+
+/* Editor Area */
+.editor-area {
+  flex: 1;
+  background: #F3F2F1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.editor-canvas-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: auto;
+  position: relative;
+}
+
+.editor-canvas-container {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-canvas {
+  width: 960px;
+  height: 540px;
+  transform-origin: top left;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #fff;
+}
+
+.slide-canvas:focus { outline: none; }
+
+/* Slide elements editable */
+.slide-title {
+  font-size: 36pt;
+  font-weight: bold;
+  color: #333;
+  padding: 60px 80px 20px;
+  outline: none;
+  word-wrap: break-word;
+}
+.slide-content {
+  font-size: 20pt;
+  color: #444;
+  padding: 0 80px;
+  outline: none;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+.slide-content ul { padding-left: 40px; }
+
+/* Notes */
+.notes-pane {
+  height: 120px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: height var(--transition-base);
+}
+.notes-pane.hidden { height: 0; border-top: none; }
+.notes-header {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  background: #FAFAFA;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.notes-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: none;
+  color: var(--text-primary);
+}
+
+/* ===== Status Bar ===== */
+.status-bar {
+  height: 24px;
+  background: var(--ppt-orange);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 0 12px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.status-left, .status-right { display: flex; align-items: center; gap: 4px; height: 100%; }
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  height: 100%;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+}
+.status-item:hover { background: rgba(255,255,255,0.15); }
+.status-item.active { background: rgba(255,255,255,0.25); }
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 0 4px 0 8px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+}
+.zoom-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-size: 11px;
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+.zoom-btn:hover { background: rgba(255,255,255,0.15); }
+.zoom-slider {
+  width: 100px;
+  height: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.zoom-slider::-webkit-slider-runnable-track { height: 3px; background: rgba(255,255,255,0.5); border-radius: 2px; }
+.zoom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 10px; height: 14px; background: #fff; border: 1px solid var(--ppt-orange-dark); border-radius: 1px; margin-top: -5px; cursor: pointer; }
+.zoom-slider::-moz-range-track { height: 3px; background: rgba(255,255,255,0.5); }
+.zoom-slider::-moz-range-thumb { width: 10px; height: 14px; background: #fff; border: 1px solid var(--ppt-orange-dark); border-radius: 1px; }
+.zoom-level { min-width: 40px; text-align: center; font-size: 12px; cursor: pointer; }
+.fit-to-slide-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
+  color: #fff;
+  padding: 0 8px;
+  height: 18px;
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 2px;
+  margin-left: 4px;
+  transition: background var(--transition-fast);
+}
+.fit-to-slide-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ===== Context Menu ===== */
+.context-menu {
+  position: fixed;
+  display: none;
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 4px 0;
+  min-width: 220px;
+  z-index: 1000;
+  font-size: 12px;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.context-menu.active {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+.ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-primary);
+  font-size: 12px;
+  transition: background var(--transition-fast);
+}
+.ctx-item i { width: 14px; text-align: center; color: var(--ppt-orange); }
+.ctx-item:hover { background: var(--selected); }
+.ctx-item:disabled { color: var(--text-secondary); cursor: default; }
+.ctx-item:disabled:hover { background: transparent; }
+.ctx-item .shortcut { margin-left: auto; opacity: 0.6; font-size: 11px; }
+.ctx-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* ===== Backstage ===== */
+.backstage {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 2000;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-slow), visibility var(--transition-slow);
+}
+.backstage.active { opacity: 1; visibility: visible; }
+.backstage-nav {
+  width: 240px;
+  background: var(--ppt-orange-dark);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  transform: translateX(-100%);
+  transition: transform var(--transition-slow);
+}
+.backstage.active .backstage-nav { transform: translateX(0); }
+.back-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  transition: background var(--transition-fast);
+}
+.back-btn:hover { background: rgba(255,255,255,0.12); }
+.back-tab {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  font-family: inherit;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.back-tab:hover { background: rgba(255,255,255,0.12); }
+.back-tab.active { background: rgba(255,255,255,0.18); border-left-color: #fff; }
+.back-spacer { flex: 1; }
+.backstage-content {
+  flex: 1;
+  padding: 24px 32px;
+  overflow: auto;
+  background: #fff;
+}
+.back-pane { display: none; opacity: 0; transform: translateY(8px); transition: opacity var(--transition-base), transform var(--transition-base); }
+.back-pane.active { display: block; opacity: 1; transform: translateY(0); }
+.back-pane h2 { font-size: 24px; font-weight: 300; color: var(--text-primary); margin-bottom: 16px; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; max-width: 900px; }
+.info-card { background: #F8F8F8; border: 1px solid var(--border); padding: 16px; cursor: pointer; transition: all var(--transition-base); }
+.info-card:hover { background: #FBF3F1; border-color: var(--ppt-orange); transform: translateY(-1px); }
+.info-card i { font-size: 32px; color: var(--ppt-orange); margin-bottom: 8px; }
+.info-card h3 { font-size: 14px; margin-bottom: 4px; color: var(--text-primary); }
+.info-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+/* ===== Slideshow Mode ===== */
+.slideshow {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 5000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+  cursor: none;
+}
+.slideshow.active { display: flex; opacity: 1; }
+.slideshow-canvas {
+  width: 960px;
+  height: 540px;
+  transform-origin: center center;
+  background: #fff;
+  position: absolute;
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.slideshow-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.slideshow:hover .slideshow-controls, .slideshow-controls:hover { opacity: 1; }
+.slideshow-btn {
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+.slideshow-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* Animations for Slideshow */
+@keyframes slideFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slidePush {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideWipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes slideSplit {
+  from { clip-path: inset(0 50% 0 50%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.slide-anim-fade { animation: slideFade 0.6s var(--ease-office); }
+.slide-anim-push { animation: slidePush 0.5s var(--ease-office); }
+.slide-anim-wipe { animation: slideWipe 0.6s var(--ease-office); }
+.slide-anim-split { animation: slideSplit 0.6s var(--ease-office); }
+
+/* ===== Color Popup ===== */
+.color-popup {
+  position: fixed;
+  display: none;
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 8px;
+  z-index: 1500;
+  width: 200px;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.color-popup.active { display: block; opacity: 1; transform: scale(1); }
+.color-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-bottom: 8px; }
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  position: relative;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+.color-swatch:hover { transform: scale(1.15); border-color: var(--ppt-orange); z-index: 2; }
+
+/* ===== Tooltip ===== */
+[data-tooltip] { position: relative; }
+[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 2px;
+  white-space: nowrap;
+  z-index: 5000;
+  pointer-events: none;
+  animation: tooltipFade 0.15s var(--ease-office);
+}
+@keyframes tooltipFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(-2px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Mobile menu button */
+.mobile-menu-btn { display: none; background: transparent; border: none; color: #fff; width: 32px; height: 32px; cursor: pointer; font-size: 14px; align-items: center; justify-content: center; transition: background var(--transition-fast); }
+.mobile-menu-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ===================== Mobile Responsive ===================== */
+
+@media (max-width: 1024px) {
+  .search-box { width: 140px; }
+  .group { padding: 0 4px; }
+  .win-btn { width: 38px; }
+  .save-status { display: none; }
+}
+
+@media (max-width: 768px) {
+  html, body { font-size: 12px; }
+  
+  .title-bar { height: 36px; padding: 0 0 0 4px; }
+  .qa-btn { width: 32px; height: 32px; font-size: 14px; }
+  .doc-title { font-size: 13px; max-width: 100px; padding: 4px 8px; }
+  .win-btn { width: 36px; height: 36px; font-size: 13px; }
+  .win-btn[data-cmd="minimize"], .win-btn[data-cmd="maximize"] { display: none; }
+  
+  .ribbon-tabs { height: 36px; padding: 0 4px; }
+  .ribbon-tabs .tab { padding: 0 10px; font-size: 13px; }
+  .search-box { display: none; }
+  .user-btn { width: 28px; height: 28px; }
+  .user-avatar { width: 24px; height: 24px; font-size: 12px; }
+  
+  .ribbon-content { height: 96px; padding: 0 4px; }
+  .group { padding: 0 4px; }
+  .group-label { font-size: 10px; padding: 2px 0 1px; }
+  
+  .big-btn { width: 44px; height: 68px; padding-top: 4px; gap: 3px; font-size: 10px; }
+  .big-btn i { font-size: 22px; }
+  .small-btn { font-size: 11px; height: 20px; min-width: 50px; padding: 1px 4px; }
+  .small-icon { width: 24px; height: 24px; font-size: 13px; }
+  .font-select { width: 90px; font-size: 11px; }
+  .size-select { width: 42px; font-size: 11px; }
+  
+  /* Sidebar adjustments */
+  .sidebar {
+    position: absolute;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 180px;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+  }
+  .sidebar.mobile-visible { transform: translateX(0); }
+  .sidebar.hidden { width: 180px; opacity: 1; padding: 10px; border-right: 1px solid var(--border); }
+  .mobile-menu-btn { display: flex; }
+  
+  .editor-canvas-wrapper { padding: 10px; }
+  .notes-pane { height: 100px; }
+  .slide-title { font-size: 24pt; padding: 30px 40px 15px; }
+  .slide-content { font-size: 14pt; padding: 0 40px; }
+  
+  .status-bar { height: 24px; padding: 0 4px 0 8px; }
+  .status-item { padding: 0 6px; font-size: 11px; }
+  .status-item:nth-child(1), .status-item:nth-child(2) { display: flex; }
+  .status-item:nth-child(3), .status-item:nth-child(4) { display: none; }
+  .zoom-slider { width: 70px; }
+  
+  .context-menu { min-width: 180px; max-width: 240px; }
+  .ctx-item { padding: 8px 14px; font-size: 13px; }
+  .ctx-item .shortcut { display: none; }
+  
+  .backstage-nav { width: 200px; }
+  .backstage-content { padding: 16px; }
+  .back-pane h2 { font-size: 20px; }
+  .info-grid { grid-template-columns: 1fr; gap: 12px; }
+  
+  [data-tooltip]:hover::before { display: none; }
+  
+  .small-icon { width: 26px; height: 26px; }
+}
+
+@media (max-width: 480px) {
+  .doc-title { max-width: 80px; font-size: 12px; }
+  .ribbon-tabs .tab { padding: 0 8px; font-size: 12px; }
+  .big-btn { width: 40px; height: 60px; font-size: 9px; }
+  .big-btn i { font-size: 20px; }
+  .font-select { width: 80px; }
+  .group-label { font-size: 9px; }
+  .zoom-slider { width: 60px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .small-icon:hover, .small-btn:hover, .big-btn:hover, .theme-item:hover, .info-card:hover {
+    background: transparent;
+    border-color: transparent;
+    transform: none;
+  }
+  .small-icon:active, .small-btn:active, .big-btn:active { background: var(--bg-tab-hover); transform: scale(0.95); }
+  [data-tooltip]:hover::before { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ===== Title Bar ===== -->
+<header class="title-bar">
+  <div class="qa-toolbar">
+    <button class="mobile-menu-btn" id="mobileSidebarToggle"><i class="fas fa-bars"></i></button>
+    <button class="qa-btn" data-cmd="save"><i class="fas fa-save"></i></button>
+    <button class="qa-btn" data-cmd="undo"><i class="fas fa-undo"></i></button>
+    <button class="qa-btn" data-cmd="redo"><i class="fas fa-redo"></i></button>
+  </div>
+  <div class="title-center">
+    <input type="text" class="doc-title" value="Presentation1" id="docTitle" spellcheck="false">
+    <span class="save-status" id="saveStatus">- Saved to this PC</span>
+  </div>
+  <div class="window-controls">
+    <button class="win-btn" data-cmd="minimize"><i class="far fa-window-minimize"></i></button>
+    <button class="win-btn" data-cmd="maximize"><i class="far fa-window-restore"></i></button>
+    <button class="win-btn close" data-cmd="close"><i class="fas fa-times"></i></button>
+  </div>
+</header>
+
+<!-- ===== Ribbon Tabs ===== -->
+<nav class="ribbon-tabs">
+  <button class="tab file-tab" data-tab="file">File</button>
+  <button class="tab active" data-tab="home">Home</button>
+  <button class="tab" data-tab="insert">Insert</button>
+  <button class="tab" data-tab="design">Design</button>
+  <button class="tab" data-tab="transitions">Transitions</button>
+  <button class="tab" data-tab="animations">Animations</button>
+  <button class="tab" data-tab="slideshow">Slide Show</button>
+  <button class="tab" data-tab="review">Review</button>
+  <button class="tab" data-tab="view">View</button>
+  <div class="tab-spacer"></div>
+  <div class="tab-right">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search" id="searchInput">
+    </div>
+    <button class="user-btn">
+      <div class="user-avatar guest"><i class="fas fa-user"></i></div>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== Ribbon Content ===== -->
+<div class="ribbon-content">
+
+  <!-- HOME -->
+  <div class="ribbon-pane active" data-pane="home">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn has-dropdown" data-cmd="paste">
+          <i class="fas fa-paste"></i>
+          <span>Paste</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="cut"><i class="fas fa-cut"></i>Cut</button>
+          <button class="small-btn" data-cmd="copy"><i class="fas fa-copy"></i>Copy</button>
+          <button class="small-btn" data-cmd="formatPainter"><i class="fas fa-paint-brush"></i>Format Painter</button>
+        </div>
+      </div>
+      <div class="group-label">Clipboard</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="newSlide"><i class="fas fa-plus-square"></i>New Slide</button>
+          <button class="small-btn has-dropdown" data-cmd="layout"><i class="fas fa-columns"></i>Layout</button>
+        </div>
+      </div>
+      <div class="group-label">Slides</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content" style="flex-direction: column; gap: 2px;">
+        <div class="font-controls">
+          <select class="font-select" id="fontSelect">
+            <option>Calibri</option><option>Arial</option><option>Times New Roman</option>
+            <option>Cambria</option><option>Georgia</option><option>Tahoma</option><option>Verdana</option>
+          </select>
+          <select class="size-select" id="sizeSelect">
+            <option>18</option><option>24</option><option>28</option><option>32</option>
+            <option>40</option><option>48</option><option>54</option><option>60</option><option>72</option>
+          </select>
+          <button class="small-icon" data-cmd="growFont"><i class="fas fa-text-height"></i><sup style="font-size:8px">+</sup></button>
+          <button class="small-icon" data-cmd="shrinkFont"><i class="fas fa-text-height"></i><sub style="font-size:8px">-</sub></button>
+          <button class="small-icon" data-cmd="clearFormat"><i class="fas fa-remove-format"></i></button>
+        </div>
+        <div class="font-styles">
+          <button class="small-icon" data-cmd="bold"><i class="fas fa-bold"></i></button>
+          <button class="small-icon" data-cmd="italic"><i class="fas fa-italic"></i></button>
+          <button class="small-icon" data-cmd="underline"><i class="fas fa-underline"></i></button>
+          <button class="small-icon" data-cmd="strikethrough"><i class="fas fa-strikethrough"></i></button>
+          <span class="separator"></span>
+          <button class="small-icon has-color" data-cmd="textColor">
+            <i class="fas fa-font" style="font-size:11px;"></i>
+            <span class="color-bar" id="textColorBar" style="background:#D24726"></span>
+          </button>
+        </div>
+      </div>
+      <div class="group-label">Font</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content" style="flex-direction: column; gap: 2px;">
+        <div class="align-tools">
+          <button class="small-icon" data-cmd="alignLeft"><i class="fas fa-align-left"></i></button>
+          <button class="small-icon" data-cmd="alignCenter"><i class="fas fa-align-center"></i></button>
+          <button class="small-icon" data-cmd="alignRight"><i class="fas fa-align-right"></i></button>
+          <button class="small-icon" data-cmd="alignJustify"><i class="fas fa-align-justify"></i></button>
+        </div>
+        <div class="para-controls">
+          <button class="small-icon" data-cmd="bullets"><i class="fas fa-list-ul"></i></button>
+          <button class="small-icon" data-cmd="numbering"><i class="fas fa-list-ol"></i></button>
+          <span class="separator"></span>
+          <button class="small-icon" data-cmd="decreaseIndent"><i class="fas fa-outdent"></i></button>
+          <button class="small-icon" data-cmd="increaseIndent"><i class="fas fa-indent"></i></button>
+        </div>
+      </div>
+      <div class="group-label">Paragraph</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="shapes"><i class="fas fa-shapes"></i>Shapes</button>
+          <button class="small-btn has-dropdown" data-cmd="arrange"><i class="fas fa-layer-group"></i>Arrange</button>
+        </div>
+      </div>
+      <div class="group-label">Drawing</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="find"><i class="fas fa-search"></i>Find</button>
+          <button class="small-btn" data-cmd="replace"><i class="fas fa-exchange-alt"></i>Replace</button>
+          <button class="small-btn has-dropdown" data-cmd="select"><i class="fas fa-mouse-pointer"></i>Select</button>
+        </div>
+      </div>
+      <div class="group-label">Editing</div>
+    </div>
+  </div>
+
+  <!-- INSERT -->
+  <div class="ribbon-pane" data-pane="insert">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="newSlide"><i class="fas fa-plus-square"></i>New Slide</button>
+          <button class="small-btn" data-cmd="duplicateSlide"><i class="far fa-clone"></i>Duplicate Slide</button>
+        </div>
+      </div>
+      <div class="group-label">Slides</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="insertTable">
+          <i class="fas fa-table"></i>
+          <span>Table</span>
+        </button>
+      </div>
+      <div class="group-label">Tables</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="insertPicture">
+          <i class="far fa-image"></i>
+          <span>Pictures</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="shapes"><i class="fas fa-shapes"></i>Shapes</button>
+          <button class="small-btn" data-cmd="icons"><i class="far fa-star"></i>Icons</button>
+        </div>
+      </div>
+      <div class="group-label">Images</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="textBox"><i class="fas fa-font"></i>Text Box</button>
+          <button class="small-btn" data-cmd="wordArt"><i class="fas fa-magic"></i>WordArt</button>
+          <button class="small-btn" data-cmd="dateTime"><i class="far fa-clock"></i>Date & Time</button>
+        </div>
+      </div>
+      <div class="group-label">Text</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="equation"><i class="fas fa-square-root-alt"></i>Equation</button>
+          <button class="small-btn" data-cmd="symbol"><i class="fas fa-omega"></i>Symbol</button>
+        </div>
+      </div>
+      <div class="group-label">Symbols</div>
+    </div>
+  </div>
+
+  <!-- DESIGN -->
+  <div class="ribbon-pane" data-pane="design">
+    <div class="group">
+      <div class="group-content">
+        <div class="themes-list" id="themesList">
+          <div class="theme-item active" data-theme="light">
+            <div class="theme-preview" style="background:#fff;">
+              <div class="tp-title" style="background:#333;"></div>
+              <div class="tp-text" style="background:#666;"></div>
+              <div class="tp-text" style="background:#666;"></div>
+            </div>
+            <div class="theme-name">Office</div>
+          </div>
+          <div class="theme-item" data-theme="dark">
+            <div class="theme-preview" style="background:#1F1F1F;">
+              <div class="tp-title" style="background:#FFF;"></div>
+              <div class="tp-text" style="background:#CCC;"></div>
+              <div class="tp-text" style="background:#CCC;"></div>
+            </div>
+            <div class="theme-name">Dark</div>
+          </div>
+          <div class="theme-item" data-theme="blue">
+            <div class="theme-preview" style="background:#DEEAF6;">
+              <div class="tp-title" style="background:#1F4E79;"></div>
+              <div class="tp-text" style="background:#2E74B5;"></div>
+              <div class="tp-text" style="background:#2E74B5;"></div>
+            </div>
+            <div class="theme-name">Blue</div>
+          </div>
+          <div class="theme-item" data-theme="orange">
+            <div class="theme-preview" style="background:#FBE5D6;">
+              <div class="tp-title" style="background:#C55A11;"></div>
+              <div class="tp-text" style="background:#ED7D31;"></div>
+              <div class="tp-text" style="background:#ED7D31;"></div>
+            </div>
+            <div class="theme-name">Orange</div>
+          </div>
+          <div class="theme-item" data-theme="green">
+            <div class="theme-preview" style="background:#E2EFDA;">
+              <div class="tp-title" style="background:#375623;"></div>
+              <div class="tp-text" style="background:#548235;"></div>
+              <div class="tp-text" style="background:#548235;"></div>
+            </div>
+            <div class="theme-name">Green</div>
+          </div>
+          <div class="theme-item" data-theme="purple">
+            <div class="theme-preview" style="background:#E4DFEC;">
+              <div class="tp-title" style="background:#3F3151;"></div>
+              <div class="tp-text" style="background:#5B4E91;"></div>
+              <div class="tp-text" style="background:#5B4E91;"></div>
+            </div>
+            <div class="theme-name">Purple</div>
+          </div>
+        </div>
+      </div>
+      <div class="group-label">Themes</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="variant"><i class="fas fa-fill-drip"></i>Variants</button>
+          <button class="small-btn has-dropdown" data-cmd="slideSize"><i class="fas fa-expand"></i>Slide Size</button>
+        </div>
+      </div>
+      <div class="group-label">Customize</div>
+    </div>
+  </div>
+
+  <!-- TRANSITIONS -->
+  <div class="ribbon-pane" data-pane="transitions">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="previewTransition">
+          <i class="fas fa-play"></i>
+          <span>Preview</span>
+        </button>
+      </div>
+      <div class="group-label">Preview</div>
+    </div>
+    <div class="group" style="flex: 1;">
+      <div class="group-content">
+        <div class="themes-list" id="transitionsList">
+          <div class="theme-item" data-transition="none">
+            <div class="theme-preview" style="align-items:center;justify-content:center;display:flex;">
+              <i class="fas fa-ban" style="color:#888;font-size:16px;"></i>
+            </div>
+            <div class="theme-name">None</div>
+          </div>
+          <div class="theme-item active" data-transition="fade">
+            <div class="theme-preview" style="align-items:center;justify-content:center;display:flex;">
+              <i class="fas fa-circle-half-stroke" style="color:#888;font-size:16px;"></i>
+            </div>
+            <div class="theme-name">Fade</div>
+          </div>
+          <div class="theme-item" data-transition="push">
+            <div class="theme-preview" style="align-items:center;justify-content:center;display:flex;">
+              <i class="fas fa-arrow-right" style="color:#888;font-size:16px;"></i>
+            </div>
+            <div class="theme-name">Push</div>
+          </div>
+          <div class="theme-item" data-transition="wipe">
+            <div class="theme-preview" style="align-items:center;justify-content:center;display:flex;">
+              <i class="fas fa-eraser" style="color:#888;font-size:16px;"></i>
+            </div>
+            <div class="theme-name">Wipe</div>
+          </div>
+          <div class="theme-item" data-transition="split">
+            <div class="theme-preview" style="align-items:center;justify-content:center;display:flex;">
+              <i class="fas fa-grip-lines-vertical" style="color:#888;font-size:16px;"></i>
+            </div>
+            <div class="theme-name">Split</div>
+          </div>
+        </div>
+      </div>
+      <div class="group-label">Transition to This Slide</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="applyToAllTransitions"><i class="fas fa-check-double"></i>Apply To All</button>
+        </div>
+      </div>
+      <div class="group-label">Timing</div>
+    </div>
+  </div>
+
+  <!-- ANIMATIONS -->
+  <div class="ribbon-pane" data-pane="animations">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="previewAnimation">
+          <i class="fas fa-play"></i>
+          <span>Preview</span>
+        </button>
+      </div>
+      <div class="group-label">Preview</div>
+    </div>
+    <div class="group" style="flex: 1;">
+      <div class="group-content">
+        <div class="themes-list">
+          <div class="theme-item"><div class="theme-preview" style="align-items:center;justify-content:center;display:flex;"><i class="fas fa-ban" style="color:#888;font-size:16px;"></i></div><div class="theme-name">None</div></div>
+          <div class="theme-item"><div class="theme-preview" style="align-items:center;justify-content:center;display:flex;"><i class="fas fa-feather" style="color:#888;font-size:16px;"></i></div><div class="theme-name">Fade</div></div>
+          <div class="theme-item"><div class="theme-preview" style="align-items:center;justify-content:center;display:flex;"><i class="fas fa-plane-departure" style="color:#888;font-size:16px;"></i></div><div class="theme-name">Fly In</div></div>
+          <div class="theme-item"><div class="theme-preview" style="align-items:center;justify-content:center;display:flex;"><i class="fas fa-arrow-up" style="color:#888;font-size:16px;"></i></div><div class="theme-name">Float Up</div></div>
+          <div class="theme-item"><div class="theme-preview" style="align-items:center;justify-content:center;display:flex;"><i class="fas fa-expand" style="color:#888;font-size:16px;"></i></div><div class="theme-name">Zoom</div></div>
+        </div>
+      </div>
+      <div class="group-label">Animation</div>
+    </div>
+  </div>
+
+  <!-- SLIDE SHOW -->
+  <div class="ribbon-pane" data-pane="slideshow">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="startSlideshowBegin">
+          <i class="fas fa-play"></i>
+          <span>From Beginning</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="startSlideshowCurrent"><i class="fas fa-step-forward"></i>From Current</button>
+          <button class="small-btn" data-cmd="customSlideshow"><i class="fas fa-sliders-h"></i>Custom Slide Show</button>
+        </div>
+      </div>
+      <div class="group-label">Start Slide Show</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="setUpShow"><i class="fas fa-cog"></i>Set Up Slide Show</button>
+          <button class="small-btn" data-cmd="hideSlide"><i class="fas fa-eye-slash"></i>Hide Slide</button>
+          <button class="small-btn" data-cmd="rehearse"><i class="fas fa-stopwatch"></i>Rehearse Timings</button>
+        </div>
+      </div>
+      <div class="group-label">Set Up</div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div class="ribbon-pane" data-pane="review">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="spellCheck">
+          <i class="fas fa-spell-check"></i>
+          <span>Spelling</span>
+        </button>
+      </div>
+      <div class="group-label">Proofing</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="translate"><i class="fas fa-language"></i>Translate</button>
+          <button class="small-btn" data-cmd="language"><i class="fas fa-globe"></i>Language</button>
+        </div>
+      </div>
+      <div class="group-label">Language</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="newComment">
+          <i class="far fa-comment"></i>
+          <span>New Comment</span>
+        </button>
+      </div>
+      <div class="group-label">Comments</div>
+    </div>
+  </div>
+
+  <!-- VIEW -->
+  <div class="ribbon-pane" data-pane="view">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn active" data-cmd="normalView"><i class="fas fa-edit"></i>Normal</button>
+          <button class="small-btn" data-cmd="slideSorter"><i class="fas fa-th-large"></i>Slide Sorter</button>
+          <button class="small-btn" data-cmd="readingView"><i class="fas fa-book-open"></i>Reading View</button>
+        </div>
+      </div>
+      <div class="group-label">Presentation Views</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="toggleNotes"><i class="far fa-sticky-note"></i>Notes</button>
+          <button class="small-btn" data-cmd="toggleGridlines"><i class="fas fa-th"></i>Gridlines</button>
+        </div>
+      </div>
+      <div class="group-label">Show</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="zoomDialog">
+          <i class="fas fa-search-plus"></i>
+          <span>Zoom</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="fitToWindow"><i class="fas fa-compress"></i>Fit to Window</button>
+        </div>
+      </div>
+      <div class="group-label">Zoom</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Workspace ===== -->
+<main class="workspace">
+  <aside class="sidebar" id="sidebar">
+    <div id="thumbnailList"></div>
+    <button class="small-btn" data-cmd="newSlide" style="width: 100%; justify-content: center; margin-top: 8px; border: 1px dashed var(--border-dark); padding: 8px;">
+      <i class="fas fa-plus"></i> New Slide
+    </button>
+  </aside>
+
+  <section class="editor-area">
+    <div class="editor-canvas-wrapper" id="canvasWrapper">
+      <div class="editor-canvas-container" id="canvasContainer">
+        <div class="slide-canvas" id="slideCanvas" contenteditable="true" spellcheck="false"></div>
+      </div>
+    </div>
+    <div class="notes-pane" id="notesPane">
+      <div class="notes-header">
+        <span>Slide <span id="currentSlideNum">1</span> of <span id="totalSlides">1</span></span>
+        <span>Notes</span>
+      </div>
+      <textarea class="notes-input" id="notesInput" placeholder="Click to add notes..."></textarea>
+    </div>
+  </section>
+</main>
+
+<!-- ===== Status Bar ===== -->
+<footer class="status-bar">
+  <div class="status-left">
+    <span class="status-item" id="slideInfoStatus">Slide 1 of 1</span>
+    <span class="status-item" data-cmd="toggleNotes"><i class="far fa-sticky-note"></i> Notes</span>
+  </div>
+  <div class="status-right">
+    <span class="status-item"><i class="fas fa-check-circle"></i> English (U.S.)</span>
+    <span class="status-item"><i class="fas fa-comment"></i> Comments</span>
+    <span class="zoom-controls">
+      <button class="zoom-btn" data-cmd="zoomOut"><i class="fas fa-search-minus"></i></button>
+      <input type="range" class="zoom-slider" min="30" max="200" value="100" id="zoomSlider">
+      <button class="zoom-btn" data-cmd="zoomIn"><i class="fas fa-search-plus"></i></button>
+      <span class="zoom-level" id="zoomLevel">100%</span>
+      <button class="fit-to-slide-btn" data-cmd="fitToWindow">Fit</button>
+    </span>
+  </div>
+</footer>
+
+<!-- ===== Slideshow Overlay ===== -->
+<div class="slideshow" id="slideshow">
+  <div class="slideshow-canvas" id="slideshowCanvas"></div>
+  <div class="slideshow-controls">
+    <button class="slideshow-btn" data-cmd="slideshowPrev"><i class="fas fa-chevron-left"></i></button>
+    <button class="slideshow-btn" data-cmd="slideshowNext"><i class="fas fa-chevron-right"></i></button>
+    <button class="slideshow-btn" data-cmd="slideshowExit" style="margin-left: 12px;"><i class="fas fa-times"></i></button>
+  </div>
+</div>
+
+<!-- ===== Context Menu ===== -->
+<div class="context-menu" id="contextMenu">
+  <button class="ctx-item" data-cmd="cut"><i class="fas fa-cut"></i>Cut<span class="shortcut">Ctrl+X</span></button>
+  <button class="ctx-item" data-cmd="copy"><i class="fas fa-copy"></i>Copy<span class="shortcut">Ctrl+C</span></button>
+  <button class="ctx-item" data-cmd="paste"><i class="fas fa-paste"></i>Paste<span class="shortcut">Ctrl+V</span></button>
+  <div class="ctx-divider"></div>
+  <button class="ctx-item" data-cmd="newSlide"><i class="fas fa-plus-square"></i>New Slide</button>
+  <button class="ctx-item" data-cmd="duplicateSlide"><i class="far fa-clone"></i>Duplicate Slide</button>
+  <button class="ctx-item" data-cmd="deleteSlide"><i class="far fa-trash-alt"></i>Delete Slide</button>
+  <div class="ctx-divider"></div>
+  <button class="ctx-item" data-cmd="formatPainter"><i class="fas fa-paint-brush"></i>Format Painter</button>
+</div>
+
+<!-- ===== Color Popup ===== -->
+<div class="color-popup" id="colorPopup">
+  <div class="color-grid" id="colorGrid"></div>
+</div>
+
+<!-- ===== Backstage ===== -->
+<div class="backstage" id="backstage">
+  <nav class="backstage-nav">
+    <button class="back-btn" data-cmd="closeBackstage"><i class="fas fa-arrow-left"></i>Back</button>
+    <button class="back-tab active" data-bt="info">Info</button>
+    <button class="back-tab" data-bt="new">New</button>
+    <button class="back-tab" data-bt="open">Open</button>
+    <button class="back-tab" data-bt="save">Save</button>
+    <button class="back-tab" data-bt="saveas">Save As</button>
+    <button class="back-tab" data-bt="print">Print</button>
+    <button class="back-tab" data-bt="share">Share</button>
+    <button class="back-tab" data-bt="export">Export</button>
+    <button class="back-tab" data-bt="close">Close</button>
+    <div class="back-spacer"></div>
+    <button class="back-tab" data-bt="account">Account</button>
+    <button class="back-tab" data-bt="options">Options</button>
+  </nav>
+  <div class="backstage-content">
+    <div class="back-pane active" data-bp="info">
+      <h2>Info</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Protect Presentation</h3>
+          <p>Control what types of changes people can make to this presentation.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-search"></i>
+          <h3>Inspect Presentation</h3>
+          <p>Check the presentation for hidden metadata or personal information.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-history"></i>
+          <h3>Manage Presentation</h3>
+          <p>Recover unsaved versions, save a copy, or view version history.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="new">
+      <h2>New</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="newBlankPres">
+          <i class="far fa-file-powerpoint"></i>
+          <h3>Blank Presentation</h3>
+          <p>Start with a blank presentation.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-presentation"></i>
+          <h3>Sample Templates</h3>
+          <p>Choose from a variety of templates.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-themeisle"></i>
+          <h3>Themes</h3>
+          <p>Start with a themed presentation.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="open">
+      <h2>Open</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-desktop"></i>
+          <h3>This PC</h3>
+          <p>Browse files on your local computer.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-cloud"></i>
+          <h3>Cloud Storage</h3>
+          <p>Open from your cloud account.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="save">
+      <h2>Save</h2>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px;">Pick a location to save your presentation.</p>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="saveLocal">
+          <i class="fas fa-desktop"></i>
+          <h3>This PC</h3>
+          <p>Save to your local computer.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-cloud"></i>
+          <h3>Cloud Storage</h3>
+          <p>Save to your cloud account.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="saveas">
+      <h2>Save As</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="saveAsPptx">
+          <i class="far fa-file-powerpoint"></i>
+          <h3>PowerPoint Presentation (.pptx)</h3>
+          <p>Save as a standard presentation.</p>
+        </div>
+        <div class="info-card" data-cmd="saveAsPdf">
+          <i class="far fa-file-pdf"></i>
+          <h3>PDF Document (.pdf)</h3>
+          <p>Save as a portable document.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="print">
+      <h2>Print</h2>
+      <div style="display:flex;gap:32px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:240px;max-width:400px;">
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Copies: <input type="number" value="1" min="1" style="width:60px;padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;"></label>
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Printer: 
+            <select style="padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;width:200px;">
+              <option>Microsoft Print to PDF</option>
+              <option>HP LaserJet Pro</option>
+            </select>
+          </label>
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Settings: 
+            <select style="padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;width:200px;">
+              <option>Print All Slides</option>
+              <option>Print Selection</option>
+              <option>Print Current Slide</option>
+              <option>Custom Range</option>
+            </select>
+          </label>
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Layout: 
+            <select style="padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;width:200px;">
+              <option>Full Page Slides</option>
+              <option>Handouts (2 per page)</option>
+              <option>Notes Pages</option>
+              <option>Outline</option>
+            </select>
+          </label>
+          <button style="background:var(--ppt-orange);color:#fff;border:none;padding:8px 24px;font-size:13px;cursor:pointer;border-radius:2px;margin-top:12px;" onclick="document.getElementById('backstage').classList.remove('active')">Print</button>
+        </div>
+        <div style="flex:1;display:flex;justify-content:center;align-items:flex-start;min-width:200px;">
+          <div style="width:200px;height:112px;background:#fff;border:1px solid var(--border-dark);box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:10px;font-size:6px;line-height:1.3;color:#333;overflow:hidden;">
+            <strong style="font-size:8px;color:#333;">Welcome to PowerPoint</strong>
+            <p style="margin-top:4px;">This is a fully-featured presentation editor built entirely with HTML, CSS, and JavaScript...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="share">
+      <h2>Share</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-envelope"></i>
+          <h3>Share via Email</h3>
+          <p>Send a copy or link to this presentation.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-link"></i>
+          <h3>Copy Link</h3>
+          <p>Create a shareable link to this presentation.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="export">
+      <h2>Export</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="far fa-file-pdf"></i>
+          <h3>Create PDF/XPS</h3>
+          <p>Export your presentation as a PDF file.</p>
+        </div>
+        <div class="info-card">
+          <i class="fab fa-html5"></i>
+          <h3>Create a Video</h3>
+          <p>Save your presentation as an MP4 video.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="account">
+      <h2>Account</h2>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+        <div class="user-avatar guest" style="width:80px;height:80px;font-size:32px;background:linear-gradient(135deg, #B0B0B0, #808080);"><i class="fas fa-user"></i></div>
+        <div>
+          <h3 style="font-size:18px;">Guest User</h3>
+          <p style="color:var(--text-secondary);">Sign in to access your presentations</p>
+          <button style="margin-top:8px;background:var(--ppt-orange);color:#fff;border:none;padding:6px 16px;font-size:12px;cursor:pointer;border-radius:2px;" onclick="document.getElementById('backstage').classList.remove('active')">Sign In</button>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="options">
+      <h2>PowerPoint Options</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-edit"></i>
+          <h3>General</h3>
+          <p>Basic options for working with PowerPoint.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-check"></i>
+          <h3>Proofing</h3>
+          <p>Options for spelling, grammar, and autocorrect.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-save"></i>
+          <h3>Save</h3>
+          <p>Customize how presentations are saved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== State ===================== */
+let slides = [
+  { 
+    id: 1, 
+    title: 'Welcome to PowerPoint', 
+    content: 'This is a fully-featured presentation editor built with HTML, CSS, and JavaScript.<br><br>Click to add text.',
+    notes: 'These are speaker notes. Use them to remember what to say during your presentation.',
+    theme: 'light',
+    transition: 'fade'
+  },
+  { 
+    id: 2, 
+    title: 'Features Included', 
+    content: '<ul><li>Working Slide Editor & Thumbnails</li><li>Theme Switching</li><li>Transition Effects</li><li>Full Presentation Mode</li></ul>',
+    notes: '',
+    theme: 'light',
+    transition: 'push'
+  }
+];
+let currentSlideIndex = 0;
+let zoom = 100;
+let isSlideshow = false;
+let slideshowIndex = 0;
+
+const slideCanvas = document.getElementById('slideCanvas');
+const canvasContainer = document.getElementById('canvasContainer');
+const canvasWrapper = document.getElementById('canvasWrapper');
+const thumbnailList = document.getElementById('thumbnailList');
+const zoomSlider = document.getElementById('zoomSlider');
+const zoomLevel = document.getElementById('zoomLevel');
+const notesInput = document.getElementById('notesInput');
+const sidebar = document.getElementById('sidebar');
+
+/* ===================== Tab Switching ===================== */
+document.querySelectorAll('.ribbon-tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const tabName = tab.dataset.tab;
+    if (tabName === 'file') {
+      document.getElementById('backstage').classList.add('active');
+      return;
+    }
+    document.querySelectorAll('.ribbon-tabs .tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.ribbon-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.ribbon-pane[data-pane="${tabName}"]`);
+    setTimeout(() => {
+      targetPane.classList.add('active');
+      requestAnimationFrame(() => targetPane.style.opacity = '1');
+    }, 50);
+  });
+});
+
+/* ===================== Command Handling ===================== */
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-cmd]');
+  if (!btn) return;
+  const cmd = btn.dataset.cmd;
+  handleCommand(cmd, btn);
+});
+
+function handleCommand(cmd, btn) {
+  switch(cmd) {
+    case 'bold': exec('bold'); break;
+    case 'italic': exec('italic'); break;
+    case 'underline': exec('underline'); break;
+    case 'strikethrough': exec('strikeThrough'); break;
+    case 'clearFormat': exec('removeFormat'); break;
+    case 'alignLeft': exec('justifyLeft'); break;
+    case 'alignCenter': exec('justifyCenter'); break;
+    case 'alignRight': exec('justifyRight'); break;
+    case 'alignJustify': exec('justifyFull'); break;
+    case 'bullets': exec('insertUnorderedList'); break;
+    case 'numbering': exec('insertOrderedList'); break;
+    case 'increaseIndent': exec('indent'); break;
+    case 'decreaseIndent': exec('outdent'); break;
+    case 'undo': exec('undo'); break;
+    case 'redo': exec('redo'); break;
+    case 'cut': exec('cut'); break;
+    case 'copy': exec('copy'); break;
+    case 'paste': exec('paste'); break;
+    case 'newSlide': addSlide(); break;
+    case 'duplicateSlide': duplicateSlide(); break;
+    case 'deleteSlide': deleteSlide(); break;
+    case 'textColor': openColorPopup(btn); break;
+    case 'toggleNotes': toggleNotes(); break;
+    case 'toggleGridlines': canvasContainer.classList.toggle('gridlines'); break;
+    case 'startSlideshowBegin': startSlideshow(0); break;
+    case 'startSlideshowCurrent': startSlideshow(currentSlideIndex); break;
+    case 'slideshowNext': nextSlideshowSlide(); break;
+    case 'slideshowPrev': prevSlideshowSlide(); break;
+    case 'slideshowExit': exitSlideshow(); break;
+    case 'zoomIn': setZoom(zoom + 10); break;
+    case 'zoomOut': setZoom(zoom - 10); break;
+    case 'fitToWindow': fitToWindow(); break;
+    case 'saveLocal': case 'save': savePresentation(); break;
+    case 'closeBackstage': document.getElementById('backstage').classList.remove('active'); break;
+  }
+}
+
+function exec(cmd, value = null) {
+  slideCanvas.focus();
+  document.execCommand(cmd, false, value);
+  saveCurrentSlideContent();
+}
+
+/* ===================== Font Controls ===================== */
+document.getElementById('fontSelect').addEventListener('change', (e) => exec('fontName', e.target.value));
+document.getElementById('sizeSelect').addEventListener('change', (e) => applyFontSize(parseFloat(e.target.value)));
+
+function applyFontSize(size) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+  const span = document.createElement('span');
+  span.style.fontSize = size + 'pt';
+  try {
+    range.surroundContents(span);
+  } catch (err) {
+    document.execCommand('fontSize', false, '7');
+    document.querySelectorAll('font[size="7"]').forEach(f => {
+      f.style.fontSize = size + 'pt';
+      f.removeAttribute('size');
+    });
+  }
+  saveCurrentSlideContent();
+}
+
+/* ===================== Slide Management ===================== */
+function saveCurrentSlideContent() {
+  if (slides[currentSlideIndex]) {
+    slides[currentSlideIndex].htmlContent = slideCanvas.innerHTML;
+    slides[currentSlideIndex].notes = notesInput.value;
+  }
+}
+
+function loadSlide(index) {
+  if (index < 0 || index >= slides.length) return;
+  saveCurrentSlideContent();
+  currentSlideIndex = index;
+  const slide = slides[index];
+  
+  slideCanvas.innerHTML = slide.htmlContent || `
+    <div class="slide-title" contenteditable="true">${slide.title || 'Click to add title'}</div>
+    <div class="slide-content" contenteditable="true">${slide.content || 'Click to add text'}</div>
+  `;
+  
+  // Apply theme
+  applyThemeToCanvas(slide.theme);
+  
+  // Update notes
+  notesInput.value = slide.notes || '';
+  
+  // Update thumbnails active state
+  document.querySelectorAll('.slide-thumb').forEach((t, i) => {
+    t.classList.toggle('active', i === index);
+  });
+  
+  // Update status
+  document.getElementById('slideInfoStatus').textContent = `Slide ${index + 1} of ${slides.length}`;
+  document.getElementById('currentSlideNum').textContent = index + 1;
+  document.getElementById('totalSlides').textContent = slides.length;
+}
+
+function addSlide() {
+  saveCurrentSlideContent();
+  const newSlide = {
+    id: Date.now(),
+    htmlContent: `
+      <div class="slide-title" contenteditable="true">Click to add title</div>
+      <div class="slide-content" contenteditable="true">Click to add text</div>
+    `,
+    notes: '',
+    theme: slides[currentSlideIndex] ? slides[currentSlideIndex].theme : 'light',
+    transition: 'fade'
+  };
+  slides.splice(currentSlideIndex + 1, 0, newSlide);
+  renderThumbnails();
+  loadSlide(currentSlideIndex + 1);
+}
+
+function duplicateSlide() {
+  saveCurrentSlideContent();
+  const current = slides[currentSlideIndex];
+  const dup = {
+    id: Date.now(),
+    htmlContent: current.htmlContent,
+    notes: current.notes,
+    theme: current.theme,
+    transition: current.transition
+  };
+  slides.splice(currentSlideIndex + 1, 0, dup);
+  renderThumbnails();
+  loadSlide(currentSlideIndex + 1);
+}
+
+function deleteSlide() {
+  if (slides.length <= 1) return;
+  slides.splice(currentSlideIndex, 1);
+  if (currentSlideIndex >= slides.length) currentSlideIndex = slides.length - 1;
+  renderThumbnails();
+  loadSlide(currentSlideIndex);
+}
+
+/* ===================== Thumbnails ===================== */
+function renderThumbnails() {
+  thumbnailList.innerHTML = '';
+  slides.forEach((slide, index) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'slide-thumb-wrapper';
+    
+    const num = document.createElement('div');
+    num.className = 'slide-number';
+    num.textContent = index + 1;
+    
+    const thumb = document.createElement('div');
+    thumb.className = 'slide-thumb' + (index === currentSlideIndex ? ' active' : '');
+    thumb.addEventListener('click', () => loadSlide(index));
+    
+    const content = document.createElement('div');
+    content.className = 'slide-thumb-content';
+    content.innerHTML = slide.htmlContent || `<div class="slide-title">${slide.title || ''}</div><div class="slide-content">${slide.content || ''}</div>`;
+    
+    thumb.appendChild(content);
+    wrapper.appendChild(num);
+    wrapper.appendChild(thumb);
+    thumbnailList.appendChild(wrapper);
+  });
+  
+  // Scale thumbnail content
+  setTimeout(() => {
+    document.querySelectorAll('.slide-thumb').forEach(thumb => {
+      const content = thumb.querySelector('.slide-thumb-content');
+      if (content) {
+        const scale = thumb.clientWidth / 960;
+        content.style.transform = `scale(${scale})`;
+      }
+    });
+  }, 50);
+}
+
+/* ===================== Themes ===================== */
+document.querySelectorAll('.theme-item[data-theme]').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.theme-item[data-theme]').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    const theme = item.dataset.theme;
+    slides[currentSlideIndex].theme = theme;
+    applyThemeToCanvas(theme);
+    renderThumbnails();
+  });
+});
+
+function applyThemeToCanvas(theme) {
+  slideCanvas.classList.remove('theme-light', 'theme-dark', 'theme-blue', 'theme-orange', 'theme-green', 'theme-purple');
+  slideCanvas.classList.add(`theme-${theme}`);
+  
+  const themes = {
+    light: { bg: '#fff', title: '#333', content: '#444' },
+    dark: { bg: '#1F1F1F', title: '#FFF', content: '#DDD' },
+    blue: { bg: '#DEEAF6', title: '#1F4E79', content: '#2E74B5' },
+    orange: { bg: '#FBE5D6', title: '#C55A11', content: '#ED7D31' },
+    green: { bg: '#E2EFDA', title: '#375623', content: '#548235' },
+    purple: { bg: '#E4DFEC', title: '#3F3151', content: '#5B4E91' }
+  };
+  
+  const t = themes[theme] || themes.light;
+  slideCanvas.style.background = t.bg;
+  slideCanvas.querySelectorAll('.slide-title').forEach(el => el.style.color = t.title);
+  slideCanvas.querySelectorAll('.slide-content').forEach(el => el.style.color = t.content);
+}
+
+/* ===================== Transitions ===================== */
+document.querySelectorAll('.theme-item[data-transition]').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.theme-item[data-transition]').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    slides[currentSlideIndex].transition = item.dataset.transition;
+  });
+});
+
+document.querySelector('[data-cmd="applyToAllTransitions"]').addEventListener('click', () => {
+  const activeTransition = document.querySelector('.theme-item[data-transition].active');
+  const transition = activeTransition ? activeTransition.dataset.transition : 'fade';
+  slides.forEach(s => s.transition = transition);
+});
+
+document.querySelector('[data-cmd="previewTransition"]').addEventListener('click', () => {
+  startSlideshow(currentSlideIndex, true);
+});
+
+/* ===================== Color Popup ===================== */
+const colors = [
+  'transparent','#C00000','#FF0000','#FFC000','#FFFF00','#92D050','#00B050','#00B0F0',
+  '#0070C0','#002060','#7030A0','#FFFFFF','#000000','#595959','#A6A6A6','#D9D9D9',
+  '#F2F2F2','#E7E6E6','#806000','#4D2D00','#666600','#BF9000','#808000','#1F3864',
+  '#2E74B5','#9DC3E6','#BDD7EE','#FFE699','#F8CBAD','#C9C9C9','#7F7F7F','#404040'
+];
+
+function buildColorGrid() {
+  const grid = document.getElementById('colorGrid');
+  grid.innerHTML = '';
+  colors.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch';
+    if (c !== 'transparent') sw.style.background = c;
+    else sw.style.background = '#fff';
+    sw.addEventListener('click', () => {
+      exec('foreColor', c);
+      document.getElementById('textColorBar').style.background = c;
+      document.getElementById('colorPopup').classList.remove('active');
+    });
+    grid.appendChild(sw);
+  });
+}
+buildColorGrid();
+
+function openColorPopup(anchor) {
+  const popup = document.getElementById('colorPopup');
+  const rect = anchor.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 2;
+  if (window.innerWidth < 480) left = Math.min(left, window.innerWidth - 200);
+  popup.style.left = Math.max(8, left) + 'px';
+  popup.style.top = top + 'px';
+  popup.classList.add('active');
+}
+
+document.addEventListener('click', (e) => {
+  const popup = document.getElementById('colorPopup');
+  if (!popup.classList.contains('active')) return;
+  if (!e.target.closest('.color-popup') && !e.target.closest('[data-cmd="textColor"]')) {
+    popup.classList.remove('active');
+  }
+});
+
+/* ===================== Zoom & Canvas Scaling ===================== */
+function resizeCanvas() {
+  const wrapperRect = canvasWrapper.getBoundingClientRect();
+  const containerW = wrapperRect.width - 48;
+  const containerH = wrapperRect.height - 48;
+  
+  const scaleW = containerW / 960;
+  const scaleH = containerH / 540;
+  let scale = Math.min(scaleW, scaleH) * (zoom / 100);
+  
+  // On mobile, force fit
+  if (window.innerWidth < 768) {
+    scale = Math.min(containerW / 960, containerH / 540);
+    zoom = scale * 100;
+    zoomSlider.value = zoom;
+    zoomLevel.textContent = Math.round(zoom) + '%';
+  }
+  
+  canvasContainer.style.width = (960 * scale) + 'px';
+  canvasContainer.style.height = (540 * scale) + 'px';
+  slideCanvas.style.transform = `scale(${scale})`;
+}
+
+function setZoom(value) {
+  zoom = Math.max(30, Math.min(200, value));
+  zoomSlider.value = zoom;
+  zoomLevel.textContent = zoom + '%';
+  resizeCanvas();
+}
+
+function fitToWindow() {
+  zoom = 100;
+  setZoom(100);
+}
+
+zoomSlider.addEventListener('input', (e) => setZoom(parseInt(e.target.value)));
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  renderThumbnails();
+});
+
+/* ===================== Notes Pane ===================== */
+function toggleNotes() {
+  const pane = document.getElementById('notesPane');
+  pane.classList.toggle('hidden');
+}
+
+notesInput.addEventListener('input', () => {
+  if (slides[currentSlideIndex]) {
+    slides[currentSlideIndex].notes = notesInput.value;
+  }
+});
+
+/* ===================== Slideshow ===================== */
+function startSlideshow(index, isPreview = false) {
+  saveCurrentSlideContent();
+  slideshowIndex = index;
+  isSlideshow = true;
+  const slideshow = document.getElementById('slideshow');
+  slideshow.classList.add('active');
+  renderSlideshowSlide();
+  document.addEventListener('keydown', slideshowKeyHandler);
+}
+
+function renderSlideshowSlide() {
+  const canvas = document.getElementById('slideshowCanvas');
+  const slide = slides[slideshowIndex];
+  
+  // Apply transition animation
+  canvas.innerHTML = '';
+  const contentClone = document.createElement('div');
+  contentClone.style.width = '100%';
+  contentClone.style.height = '100%';
+  contentClone.style.background = slideCanvas.style.background;
+  contentClone.innerHTML = slide.htmlContent || `<div class="slide-title">${slide.title || ''}</div><div class="slide-content">${slide.content || ''}</div>`;
+  canvas.appendChild(contentClone);
+  
+  // Scale to fit screen
+  const scale = Math.min(window.innerWidth / 960, window.innerHeight / 540);
+  canvas.style.width = (960 * scale) + 'px';
+  canvas.style.height = (540 * scale) + 'px';
+  contentClone.style.transform = `scale(${scale})`;
+  contentClone.style.transformOrigin = 'top left';
+  
+  // Add transition class
+  const transition = slide.transition || 'fade';
+  contentClone.classList.add(`slide-anim-${transition}`);
+}
+
+function nextSlideshowSlide() {
+  if (slideshowIndex < slides.length - 1) {
+    slideshowIndex++;
+    renderSlideshowSlide();
+  } else {
+    exitSlideshow();
+  }
+}
+
+function prevSlideshowSlide() {
+  if (slideshowIndex > 0) {
+    slideshowIndex--;
+    renderSlideshowSlide();
+  }
+}
+
+function exitSlideshow() {
+  isSlideshow = false;
+  document.getElementById('slideshow').classList.remove('active');
+  document.removeEventListener('keydown', slideshowKeyHandler);
+}
+
+function slideshowKeyHandler(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    nextSlideshowSlide();
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    prevSlideshowSlide();
+  } else if (e.key === 'Escape') {
+    exitSlideshow();
+  }
+}
+
+document.getElementById('slideshow').addEventListener('click', (e) => {
+  if (e.target.id === 'slideshow') {
+    nextSlideshowSlide();
+  }
+});
+
+/* ===================== Context Menu ===================== */
+const contextMenu = document.getElementById('contextMenu');
+
+slideCanvas.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  contextMenu.style.left = e.clientX + 'px';
+  contextMenu.style.top = e.clientY + 'px';
+  contextMenu.classList.add('active');
+});
+
+thumbnailList.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  contextMenu.style.left = e.clientX + 'px';
+  contextMenu.style.top = e.clientY + 'px';
+  contextMenu.classList.add('active');
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.context-menu')) contextMenu.classList.remove('active');
+});
+
+/* ===================== Keyboard Shortcuts ===================== */
+document.addEventListener('keydown', (e) => {
+  if (isSlideshow) return; // Slideshow handles its own keys
+  
+  if ((e.ctrlKey || e.metaKey)) {
+    switch(e.key.toLowerCase()) {
+      case 'b': e.preventDefault(); exec('bold'); break;
+      case 'i': e.preventDefault(); exec('italic'); break;
+      case 'u': e.preventDefault(); exec('underline'); break;
+      case 's': e.preventDefault(); savePresentation(); break;
+      case 'z': e.preventDefault(); exec('undo'); break;
+      case 'y': e.preventDefault(); exec('redo'); break;
+      case 'm': e.preventDefault(); addSlide(); break;
+      case 'd': e.preventDefault(); duplicateSlide(); break;
+    }
+  }
+  if (e.key === 'Escape') {
+    contextMenu.classList.remove('active');
+    document.getElementById('colorPopup').classList.remove('active');
+    document.getElementById('backstage').classList.remove('active');
+  }
+});
+
+/* ===================== Save ===================== */
+function savePresentation() {
+  saveCurrentSlideContent();
+  try {
+    localStorage.setItem('pptSlides', JSON.stringify(slides));
+    localStorage.setItem('pptTitle', document.getElementById('docTitle').value);
+    document.getElementById('saveStatus').textContent = ' - Saved to this PC';
+  } catch(e) {}
+}
+
+function loadPresentation() {
+  try {
+    const saved = localStorage.getItem('pptSlides');
+    const title = localStorage.getItem('pptTitle');
+    if (saved) slides = JSON.parse(saved);
+    if (title) document.getElementById('docTitle').value = title;
+  } catch(e) {}
+}
+
+/* ===================== Backstage ===================== */
+document.querySelectorAll('.back-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.back-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.back-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.back-pane[data-bp="${tab.dataset.bt}"]`);
+    setTimeout(() => {
+      targetPane.classList.add('active');
+      requestAnimationFrame(() => targetPane.style.opacity = '1');
+    }, 50);
+  });
+});
+
+document.querySelectorAll('.backstage [data-cmd]').forEach(el => {
+  el.addEventListener('click', (e) => {
+    const cmd = el.dataset.cmd;
+    if (cmd === 'closeBackstage') { document.getElementById('backstage').classList.remove('active'); return; }
+    if (cmd === 'saveLocal') { savePresentation(); document.getElementById('backstage').classList.remove('active'); return; }
+    if (cmd === 'newBlankPres') {
+      slides = [{
+        id: 1,
+        htmlContent: `<div class="slide-title" contenteditable="true">Click to add title</div><div class="slide-content" contenteditable="true">Click to add text</div>`,
+        notes: '',
+        theme: 'light',
+        transition: 'fade'
+      }];
+      currentSlideIndex = 0;
+      renderThumbnails();
+      loadSlide(0);
+      document.getElementById('backstage').classList.remove('active');
+    }
+  });
+});
+
+/* ===================== Mobile Sidebar ===================== */
+document.getElementById('mobileSidebarToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('mobile-visible');
+});
+
+/* ===================== Initialization ===================== */
+loadPresentation();
+renderThumbnails();
+loadSlide(0);
+setTimeout(() => {
+  resizeCanvas();
+  renderThumbnails();
+}, 100);
+
+// Prevent text selection outside canvas when editing
+slideCanvas.addEventListener('input', () => {
+  saveCurrentSlideContent();
+  // Update thumbnail on the fly
+  setTimeout(() => {
+    const thumbContent = thumbnailList.children[currentSlideIndex]?.querySelector('.slide-thumb-content');
+    if (thumbContent) {
+      thumbContent.innerHTML = slideCanvas.innerHTML;
+    }
+  }, 10);
+});
+</script>
+</body>
+</html>
