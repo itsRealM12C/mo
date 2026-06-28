@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Book1 - Excel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+:root {
+  --excel-green: #217346;
+  --excel-green-dark: #1E6B40;
+  --excel-green-darker: #175432;
+  --excel-green-light: #E6F2EB;
+  --bg-ribbon: #F3F2F1;
+  --bg-tab-hover: #EDEBE9;
+  --bg-tab-active: #E1DFDD;
+  --border: #E1DFDD;
+  --border-dark: #C8C6C4;
+  --grid-line: #D4D4D4;
+  --grid-line-dark: #BFBFBF;
+  --text-primary: #323130;
+  --text-secondary: #605E5C;
+  --hover: #F5F5F5;
+  --selected: #CDE4D3;
+  --hover-btn: #E6F2EB;
+  --ease-office: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --transition-fast: 0.1s var(--ease-office);
+  --transition-base: 0.15s var(--ease-office);
+  --transition-slow: 0.25s var(--ease-office);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: #fff;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-touch-callout: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+input { font-family: inherit; }
+
+/* ===== Title Bar ===== */
+.title-bar {
+  height: 32px;
+  background: var(--excel-green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 8px;
+  font-size: 12px;
+}
+
+.qa-toolbar { display: flex; align-items: center; gap: 1px; }
+.qa-btn {
+  width: 26px; height: 26px; background: transparent; border: none; color: #fff;
+  border-radius: 2px; font-size: 12px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background var(--transition-fast);
+}
+.qa-btn:hover { background: rgba(255,255,255,0.15); }
+.qa-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
+
+.title-center {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 4px; pointer-events: auto; min-width: 0;
+}
+.doc-title {
+  background: transparent; border: none; color: #fff; font-size: 12px;
+  text-align: center; outline: none; padding: 3px 8px; border-radius: 2px;
+  font-family: inherit; min-width: 60px; max-width: 200px; transition: background var(--transition-fast);
+}
+.doc-title:hover { background: rgba(255,255,255,0.12); }
+.doc-title:focus { background: rgba(255,255,255,0.2); }
+.save-status { opacity: 0.85; font-size: 12px; }
+
+.window-controls { display: flex; align-items: center; height: 100%; }
+.win-btn {
+  width: 46px; height: 32px; background: transparent; border: none; color: #fff;
+  font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition-fast);
+}
+.win-btn:hover { background: rgba(255,255,255,0.15); }
+.win-btn:active { background: rgba(255,255,255,0.3); }
+.win-btn.close:hover { background: #E81123; }
+
+/* ===== Ribbon Tabs ===== */
+.ribbon-tabs {
+  height: 34px; background: var(--excel-green); display: flex; align-items: stretch;
+  padding: 0 8px; position: relative; z-index: 10; overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.ribbon-tabs::-webkit-scrollbar { display: none; }
+.ribbon-tabs .tab {
+  background: transparent; border: none; padding: 0 12px; font-size: 13px;
+  color: rgba(255,255,255,0.92); position: relative; cursor: pointer;
+  transition: background var(--transition-fast); white-space: nowrap; flex-shrink: 0;
+}
+.ribbon-tabs .tab:hover { background: rgba(255,255,255,0.12); }
+.ribbon-tabs .tab:active { background: rgba(255,255,255,0.2); }
+.ribbon-tabs .tab.active { background: var(--bg-ribbon); color: var(--text-primary); font-weight: 400; }
+.ribbon-tabs .file-tab { background: var(--excel-green-dark); color: #fff; margin-right: 4px; transition: background var(--transition-fast); }
+.ribbon-tabs .file-tab:hover { background: var(--excel-green-darker); }
+.ribbon-tabs .file-tab.active { background: var(--bg-ribbon); color: var(--text-primary); }
+
+.tab-spacer { flex: 1; min-width: 8px; }
+.tab-right { display: flex; align-items: center; gap: 8px; padding: 0 6px; flex-shrink: 0; }
+.search-box {
+  background: rgba(255,255,255,0.18); border: none; height: 24px;
+  display: flex; align-items: center; padding: 0 8px; border-radius: 2px;
+  color: #fff; font-size: 12px; width: 220px; transition: background var(--transition-fast);
+}
+.search-box:hover { background: rgba(255,255,255,0.25); }
+.search-box input { background: transparent; border: none; outline: none; color: #fff; font-size: 12px; width: 100%; margin-left: 6px; }
+.search-box input::placeholder { color: rgba(255,255,255,0.7); }
+
+.user-btn {
+  width: 32px; height: 32px; background: transparent; border: none;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background var(--transition-fast); border-radius: 2px;
+}
+.user-btn:hover { background: rgba(255,255,255,0.15); }
+.user-avatar {
+  width: 28px; height: 28px; color: #FFFFFF; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.user-avatar.guest { background: linear-gradient(135deg, #B0B0B0, #808080); }
+
+/* ===== Ribbon Content ===== */
+.ribbon-content {
+  background: var(--bg-ribbon); height: 118px; display: flex; padding: 0 8px;
+  border-bottom: 1px solid var(--border); overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+}
+.ribbon-content::-webkit-scrollbar { height: 4px; }
+.ribbon-content::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+.ribbon-content::-webkit-scrollbar-track { background: transparent; }
+
+.ribbon-pane { display: none; align-items: stretch; width: 100%; opacity: 0; transition: opacity var(--transition-base); }
+.ribbon-pane.active { display: flex; opacity: 1; }
+
+.group { display: flex; flex-direction: column; padding: 0 8px; border-right: 1px solid var(--border); min-width: 0; flex-shrink: 0; }
+.group:last-child { border-right: none; }
+.group-content { flex: 1; display: flex; align-items: flex-start; padding-top: 4px; gap: 4px; }
+.group-label { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 3px 0 2px; }
+
+.big-btn {
+  width: 56px; height: 86px; background: transparent; border: 1px solid transparent;
+  display: flex; flex-direction: column; align-items: center; padding-top: 6px; gap: 5px;
+  cursor: pointer; font-size: 12px; color: var(--text-primary); border-radius: 2px;
+  text-align: center; line-height: 1.2;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.big-btn i { font-size: 28px; color: var(--excel-green); }
+.big-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.big-btn:active { background: var(--bg-tab-active); transform: scale(0.97); }
+
+.small-btns { display: flex; flex-direction: column; gap: 0; }
+.small-btn {
+  background: transparent; border: 1px solid transparent; padding: 2px 6px; cursor: pointer;
+  font-size: 12px; color: var(--text-primary); border-radius: 2px;
+  display: flex; align-items: center; gap: 6px; text-align: left; height: 22px; min-width: 60px;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.small-btn i { width: 14px; text-align: center; }
+.small-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-btn:active { background: var(--bg-tab-active); }
+
+.small-icon {
+  width: 22px; height: 22px; background: transparent; border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  font-size: 13px; color: var(--text-primary); border-radius: 2px; position: relative;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.small-icon:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-icon:active { transform: scale(0.92); }
+.small-icon.active { background: var(--selected); border-color: var(--excel-green); }
+.small-icon.has-color { flex-direction: column; padding: 1px 0 0; gap: 1px; }
+.small-icon.has-color i { font-size: 11px; }
+.color-bar { width: 14px; height: 3px; background: #C00000; border-radius: 1px; }
+
+.font-controls, .align-tools, .font-styles, .number-controls {
+  display: flex; align-items: center; gap: 1px;
+}
+.font-controls { gap: 0; }
+.font-select, .size-select {
+  background: #fff; border: 1px solid var(--border-dark); height: 22px;
+  font-size: 12px; padding: 0 4px; cursor: pointer; outline: none; font-family: inherit;
+  transition: border-color var(--transition-fast);
+}
+.font-select { width: 120px; border-right: none; }
+.size-select { width: 50px; border-right: none; }
+.font-select:hover, .size-select:hover { border-color: var(--excel-green); }
+
+.separator { width: 1px; height: 16px; background: var(--border-dark); margin: 0 3px; }
+
+/* ===== Formula Bar ===== */
+.formula-bar {
+  height: 24px; display: flex; align-items: center; border-bottom: 1px solid var(--border);
+  background: #fff; padding: 0 4px; gap: 4px; flex-shrink: 0;
+}
+.name-box {
+  width: 120px; height: 20px; border: 1px solid var(--border-dark); display: flex;
+  align-items: center; padding: 0 4px; font-size: 12px; background: #fff; cursor: pointer;
+  border-radius: 2px; transition: border-color var(--transition-fast);
+}
+.name-box:hover { border-color: var(--excel-green); }
+.fx-icon {
+  font-size: 12px; color: var(--text-secondary); padding: 0 4px; font-style: italic;
+}
+.formula-input {
+  flex: 1; height: 20px; border: 1px solid var(--border-dark); padding: 0 4px;
+  font-size: 12px; outline: none; background: #fff; border-radius: 2px;
+  transition: border-color var(--transition-fast);
+}
+.formula-input:focus { border-color: var(--excel-green); }
+
+/* ===== Spreadsheet Grid ===== */
+.workspace {
+  flex: 1; background: #fff; overflow: hidden; position: relative; display: flex; flex-direction: column;
+}
+.grid-scroll-container {
+  flex: 1; overflow: auto; position: relative; -webkit-overflow-scrolling: touch;
+}
+.grid-scroll-container::-webkit-scrollbar { width: 14px; height: 14px; }
+.grid-scroll-container::-webkit-scrollbar-thumb { background: #C8C6C4; border: 3px solid #fff; border-radius: 7px; }
+.grid-scroll-container::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+.grid {
+  display: grid;
+  grid-template-columns: 30px repeat(26, 100px);
+  grid-template-rows: 20px repeat(100, 24px);
+  background: #fff;
+}
+.grid-corner {
+  grid-row: 1; grid-column: 1; background: #F3F2F1; border-right: 1px solid var(--grid-line);
+  border-bottom: 1px solid var(--grid-line); position: sticky; top: 0; left: 0; z-index: 4;
+}
+.col-header {
+  background: #F3F2F1; border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line);
+  display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-primary);
+  position: sticky; top: 0; z-index: 3; cursor: pointer; transition: background var(--transition-fast);
+  font-weight: 500;
+}
+.col-header:hover { background: #E1DFDD; }
+.col-header.active { background: var(--excel-green); color: #fff; }
+
+.row-header {
+  background: #F3F2F1; border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line);
+  display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-primary);
+  position: sticky; left: 0; z-index: 2; cursor: pointer; transition: background var(--transition-fast);
+  font-weight: 500;
+}
+.row-header:hover { background: #E1DFDD; }
+.row-header.active { background: var(--excel-green); color: #fff; }
+
+.cell {
+  border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line);
+  padding: 0 4px; font-size: 12px; display: flex; align-items: center; overflow: hidden;
+  position: relative; cursor: cell; background: #fff; user-select: none;
+  transition: background var(--transition-fast);
+}
+.cell.selected { background: var(--excel-green-light); }
+.cell.in-range { background: rgba(33, 115, 70, 0.1); }
+.cell.range-start { box-shadow: inset 0 0 0 2px var(--excel-green); }
+
+.cell-editor {
+  position: absolute; background: #fff; border: 2px solid var(--excel-green);
+  padding: 0 2px; font-size: 12px; outline: none; z-index: 10; display: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15); align-items: center; overflow: hidden;
+}
+.cell-editor.active { display: flex; }
+
+/* ===== Sheet Tabs ===== */
+.sheet-bar {
+  height: 28px; background: #fff; border-top: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 4px; gap: 2px; flex-shrink: 0;
+}
+.sheet-btn {
+  width: 24px; height: 24px; background: transparent; border: none; cursor: pointer;
+  color: var(--text-secondary); border-radius: 2px; font-size: 11px;
+  transition: background var(--transition-fast);
+}
+.sheet-btn:hover { background: var(--bg-tab-hover); }
+.sheet-tab {
+  height: 24px; padding: 0 12px; background: transparent; border: 1px solid transparent;
+  cursor: pointer; color: var(--text-secondary); border-radius: 2px; font-size: 12px;
+  display: flex; align-items: center; transition: all var(--transition-fast);
+}
+.sheet-tab:hover { background: var(--bg-tab-hover); }
+.sheet-tab.active { background: #fff; border: 1px solid var(--border-dark); border-bottom: 2px solid var(--excel-green); color: var(--excel-green); font-weight: 500; }
+
+.sheet-separator { width: 1px; height: 16px; background: var(--border-dark); margin: 0 4px; }
+
+/* ===== Status Bar ===== */
+.status-bar {
+  height: 24px; background: var(--excel-green); color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4px 0 12px; font-size: 12px; flex-shrink: 0;
+}
+.status-left, .status-right { display: flex; align-items: center; gap: 4px; height: 100%; }
+.status-item {
+  display: flex; align-items: center; gap: 4px; padding: 0 8px; height: 100%;
+  cursor: pointer; font-size: 12px; transition: background var(--transition-fast); white-space: nowrap;
+}
+.status-item:hover { background: rgba(255,255,255,0.15); }
+.status-item strong { font-weight: 600; margin-right: 2px; }
+
+.zoom-controls { display: flex; align-items: center; gap: 4px; height: 100%; padding: 0 4px 0 8px; border-left: 1px solid rgba(255,255,255,0.2); }
+.zoom-btn { background: transparent; border: none; color: #fff; width: 22px; height: 22px; cursor: pointer; font-size: 11px; border-radius: 2px; transition: background var(--transition-fast); }
+.zoom-btn:hover { background: rgba(255,255,255,0.15); }
+.zoom-slider { width: 100px; height: 14px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+.zoom-slider::-webkit-slider-runnable-track { height: 3px; background: rgba(255,255,255,0.5); border-radius: 2px; }
+.zoom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 10px; height: 14px; background: #fff; border: 1px solid var(--excel-green-dark); border-radius: 1px; margin-top: -5px; cursor: pointer; }
+.zoom-slider::-moz-range-track { height: 3px; background: rgba(255,255,255,0.5); }
+.zoom-slider::-moz-range-thumb { width: 10px; height: 14px; background: #fff; border: 1px solid var(--excel-green-dark); border-radius: 1px; }
+.zoom-level { min-width: 40px; text-align: center; font-size: 12px; cursor: pointer; }
+
+/* ===== Context Menu ===== */
+.context-menu {
+  position: fixed; display: none; background: #fff; border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 4px 0; min-width: 220px; z-index: 1000;
+  font-size: 12px; opacity: 0; transform: scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.context-menu.active { display: block; opacity: 1; transform: scale(1); }
+.ctx-item { display: flex; align-items: center; gap: 8px; padding: 5px 12px; width: 100%; background: transparent; border: none; cursor: pointer; text-align: left; color: var(--text-primary); font-size: 12px; transition: background var(--transition-fast); }
+.ctx-item i { width: 14px; text-align: center; color: var(--excel-green); }
+.ctx-item:hover { background: var(--selected); }
+.ctx-item:disabled { color: var(--text-secondary); cursor: default; }
+.ctx-item:disabled:hover { background: transparent; }
+.ctx-item .shortcut { margin-left: auto; opacity: 0.6; font-size: 11px; }
+.ctx-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* ===== Color Popup ===== */
+.color-popup { position: fixed; display: none; background: #fff; border: 1px solid var(--border-dark); box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 8px; z-index: 1500; width: 200px; opacity: 0; transform: scale(0.95); transition: opacity var(--transition-fast), transform var(--transition-fast); }
+.color-popup.active { display: block; opacity: 1; transform: scale(1); }
+.color-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-bottom: 8px; }
+.color-swatch { width: 22px; height: 22px; cursor: pointer; border: 1px solid var(--border); border-radius: 2px; position: relative; transition: transform var(--transition-fast), border-color var(--transition-fast); }
+.color-swatch:hover { transform: scale(1.15); border-color: var(--excel-green); z-index: 2; }
+.color-swatch.transparent { background: #fff; position: relative; }
+.color-swatch.transparent::after { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #C00000; transform: rotate(-45deg); }
+
+/* ===== Backstage ===== */
+.backstage { position: fixed; inset: 0; background: #fff; z-index: 2000; display: flex; opacity: 0; visibility: hidden; transition: opacity var(--transition-slow), visibility var(--transition-slow); }
+.backstage.active { opacity: 1; visibility: visible; }
+.backstage-nav { width: 240px; background: var(--excel-green-dark); color: #fff; display: flex; flex-direction: column; padding: 8px 0; transform: translateX(-100%); transition: transform var(--transition-slow); }
+.backstage.active .backstage-nav { transform: translateX(0); }
+.back-btn { background: transparent; border: none; color: #fff; padding: 10px 24px; text-align: left; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; transition: background var(--transition-fast); }
+.back-btn:hover { background: rgba(255,255,255,0.12); }
+.back-tab { background: transparent; border: none; color: #fff; padding: 10px 24px; text-align: left; font-size: 13px; cursor: pointer; border-left: 3px solid transparent; font-family: inherit; transition: background var(--transition-fast), border-color var(--transition-fast); }
+.back-tab:hover { background: rgba(255,255,255,0.12); }
+.back-tab.active { background: rgba(255,255,255,0.18); border-left-color: #fff; }
+.back-spacer { flex: 1; }
+.backstage-content { flex: 1; padding: 24px 32px; overflow: auto; background: #fff; -webkit-overflow-scrolling: touch; }
+.back-pane { display: none; opacity: 0; transform: translateY(8px); transition: opacity var(--transition-base), transform var(--transition-base); }
+.back-pane.active { display: block; opacity: 1; transform: translateY(0); }
+.back-pane h2 { font-size: 24px; font-weight: 300; color: var(--text-primary); margin-bottom: 16px; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; max-width: 900px; }
+.info-card { background: #F8F8F8; border: 1px solid var(--border); padding: 16px; cursor: pointer; transition: all var(--transition-base); }
+.info-card:hover { background: #EFF6F1; border-color: var(--excel-green); transform: translateY(-1px); }
+.info-card i { font-size: 32px; color: var(--excel-green); margin-bottom: 8px; }
+.info-card h3 { font-size: 14px; margin-bottom: 4px; color: var(--text-primary); }
+.info-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+/* ===== Tooltip ===== */
+[data-tooltip] { position: relative; }
+[data-tooltip]:hover::before {
+  content: attr(data-tooltip); position: absolute; top: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%); background: #000; color: #fff; padding: 3px 8px;
+  font-size: 11px; border-radius: 2px; white-space: nowrap; z-index: 5000;
+  pointer-events: none; animation: tooltipFade 0.15s var(--ease-office);
+}
+@keyframes tooltipFade { from { opacity: 0; transform: translateX(-50%) translateY(-2px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+.mobile-menu-btn { display: none; background: transparent; border: none; color: #fff; width: 32px; height: 32px; cursor: pointer; font-size: 14px; align-items: center; justify-content: center; transition: background var(--transition-fast); }
+.mobile-menu-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ===================== Mobile Responsive ===================== */
+@media (max-width: 1024px) {
+  .search-box { width: 140px; }
+  .group { padding: 0 4px; }
+  .win-btn { width: 38px; }
+  .save-status { display: none; }
+}
+
+@media (max-width: 768px) {
+  html, body { font-size: 12px; }
+  .title-bar { height: 36px; padding: 0 0 0 4px; }
+  .qa-btn { width: 32px; height: 32px; font-size: 14px; }
+  .doc-title { font-size: 13px; max-width: 100px; padding: 4px 8px; }
+  .win-btn { width: 36px; height: 36px; font-size: 13px; }
+  .win-btn[data-cmd="minimize"], .win-btn[data-cmd="maximize"] { display: none; }
+  
+  .ribbon-tabs { height: 36px; padding: 0 4px; }
+  .ribbon-tabs .tab { padding: 0 10px; font-size: 13px; }
+  .search-box { display: none; }
+  .user-btn { width: 28px; height: 28px; }
+  .user-avatar { width: 24px; height: 24px; font-size: 12px; }
+  
+  .ribbon-content { height: 96px; padding: 0 4px; }
+  .group { padding: 0 4px; }
+  .group-label { font-size: 10px; padding: 2px 0 1px; }
+  
+  .big-btn { width: 44px; height: 68px; padding-top: 4px; gap: 3px; font-size: 10px; }
+  .big-btn i { font-size: 22px; }
+  .small-btn { font-size: 11px; height: 20px; min-width: 50px; padding: 1px 4px; }
+  .small-icon { width: 24px; height: 24px; font-size: 13px; }
+  .font-select { width: 90px; font-size: 11px; }
+  .size-select { width: 42px; font-size: 11px; }
+  
+  .formula-bar { height: 28px; padding: 0 2px; gap: 2px; }
+  .name-box { width: 60px; font-size: 11px; }
+  .fx-icon { display: none; }
+  
+  .grid { grid-template-columns: 24px repeat(26, 80px); grid-template-rows: 20px repeat(100, 26px); }
+  .cell { font-size: 11px; }
+  
+  .status-bar { height: 24px; padding: 0 4px 0 8px; }
+  .status-item { padding: 0 6px; font-size: 11px; }
+  .status-item:nth-child(2), .status-item:nth-child(3) { display: none; }
+  .zoom-slider { width: 70px; }
+  
+  .context-menu { min-width: 180px; max-width: 240px; }
+  .ctx-item { padding: 8px 14px; font-size: 13px; }
+  .ctx-item .shortcut { display: none; }
+  
+  .backstage-nav { width: 200px; }
+  .backstage-content { padding: 16px; }
+  .back-pane h2 { font-size: 20px; }
+  .info-grid { grid-template-columns: 1fr; gap: 12px; }
+  
+  [data-tooltip]:hover::before { display: none; }
+  .small-icon { width: 26px; height: 26px; }
+}
+
+@media (max-width: 480px) {
+  .doc-title { max-width: 80px; font-size: 12px; }
+  .ribbon-tabs .tab { padding: 0 8px; font-size: 12px; }
+  .big-btn { width: 40px; height: 60px; font-size: 9px; }
+  .big-btn i { font-size: 20px; }
+  .font-select { width: 80px; }
+  .group-label { font-size: 9px; }
+  .zoom-slider { width: 60px; }
+  .grid { grid-template-columns: 20px repeat(26, 70px); }
+  .sheet-tab { padding: 0 8px; font-size: 11px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .small-icon:hover, .small-btn:hover, .big-btn:hover, .info-card:hover {
+    background: transparent; border-color: transparent; transform: none;
+  }
+  .small-icon:active, .small-btn:active, .big-btn:active { background: var(--bg-tab-hover); transform: scale(0.95); }
+  [data-tooltip]:hover::before { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Title Bar ===== -->
+<header class="title-bar">
+  <div class="qa-toolbar">
+    <button class="qa-btn" data-cmd="save"><i class="fas fa-save"></i></button>
+    <button class="qa-btn" data-cmd="undo"><i class="fas fa-undo"></i></button>
+    <button class="qa-btn" data-cmd="redo"><i class="fas fa-redo"></i></button>
+  </div>
+  <div class="title-center">
+    <input type="text" class="doc-title" value="Book1" id="docTitle" spellcheck="false">
+    <span class="save-status" id="saveStatus">- Saved to this PC</span>
+  </div>
+  <div class="window-controls">
+    <button class="win-btn" data-cmd="minimize"><i class="far fa-window-minimize"></i></button>
+    <button class="win-btn" data-cmd="maximize"><i class="far fa-window-restore"></i></button>
+    <button class="win-btn close" data-cmd="close"><i class="fas fa-times"></i></button>
+  </div>
+</header>
+
+<!-- ===== Ribbon Tabs ===== -->
+<nav class="ribbon-tabs">
+  <button class="tab file-tab" data-tab="file">File</button>
+  <button class="tab active" data-tab="home">Home</button>
+  <button class="tab" data-tab="insert">Insert</button>
+  <button class="tab" data-tab="pageLayout">Page Layout</button>
+  <button class="tab" data-tab="formulas">Formulas</button>
+  <button class="tab" data-tab="data">Data</button>
+  <button class="tab" data-tab="review">Review</button>
+  <button class="tab" data-tab="view">View</button>
+  <button class="tab" data-tab="help">Help</button>
+  <div class="tab-spacer"></div>
+  <div class="tab-right">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search" id="searchInput">
+    </div>
+    <button class="user-btn">
+      <div class="user-avatar guest"><i class="fas fa-user"></i></div>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== Ribbon Content ===== -->
+<div class="ribbon-content">
+
+  <!-- HOME -->
+  <div class="ribbon-pane active" data-pane="home">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn has-dropdown" data-cmd="paste">
+          <i class="fas fa-paste"></i>
+          <span>Paste</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="cut"><i class="fas fa-cut"></i>Cut</button>
+          <button class="small-btn" data-cmd="copy"><i class="fas fa-copy"></i>Copy</button>
+          <button class="small-btn" data-cmd="formatPainter"><i class="fas fa-paint-brush"></i>Format Painter</button>
+        </div>
+      </div>
+      <div class="group-label">Clipboard</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content" style="flex-direction: column; gap: 2px;">
+        <div class="font-controls">
+          <select class="font-select" id="fontSelect">
+            <option>Calibri</option><option>Arial</option><option>Times New Roman</option>
+            <option>Cambria</option><option>Georgia</option><option>Tahoma</option><option>Verdana</option>
+          </select>
+          <select class="size-select" id="sizeSelect">
+            <option>8</option><option>9</option><option>10</option><option>11</option>
+            <option>12</option><option>14</option><option>16</option><option>18</option>
+            <option>20</option><option>24</option><option>28</option><option>36</option><option>48</option>
+          </select>
+          <button class="small-icon" data-cmd="increaseFontSize"><i class="fas fa-text-height"></i><sup style="font-size:8px">+</sup></button>
+          <button class="small-icon" data-cmd="decreaseFontSize"><i class="fas fa-text-height"></i><sub style="font-size:8px">-</sub></button>
+          <button class="small-icon" data-cmd="increaseDecimal"><i class="fas fa-sort-numeric-up"></i></button>
+          <button class="small-icon" data-cmd="decreaseDecimal"><i class="fas fa-sort-numeric-down"></i></button>
+        </div>
+        <div class="font-styles">
+          <button class="small-icon" data-cmd="bold"><i class="fas fa-bold"></i></button>
+          <button class="small-icon" data-cmd="italic"><i class="fas fa-italic"></i></button>
+          <button class="small-icon" data-cmd="underline"><i class="fas fa-underline"></i></button>
+          <span class="separator"></span>
+          <button class="small-icon has-color" data-cmd="fillColor">
+            <i class="fas fa-fill-drip" style="font-size:11px;"></i>
+            <span class="color-bar" id="fillColorBar" style="background:#FFFF00"></span>
+          </button>
+          <button class="small-icon has-color" data-cmd="fontColor">
+            <i class="fas fa-font" style="font-size:11px;"></i>
+            <span class="color-bar" id="fontColorBar" style="background:#C00000"></span>
+          </button>
+          <span class="separator"></span>
+          <button class="small-icon has-dropdown" data-cmd="borders"><i class="fas fa-border-all"></i></button>
+        </div>
+      </div>
+      <div class="group-label">Font</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content" style="flex-direction: column; gap: 2px;">
+        <div class="align-tools">
+          <button class="small-icon" data-cmd="alignTop"><i class="fas fa-align-left" style="transform: rotate(90deg)"></i></button>
+          <button class="small-icon" data-cmd="alignMiddle"><i class="fas fa-grip-lines"></i></button>
+          <button class="small-icon" data-cmd="alignBottom"><i class="fas fa-align-left" style="transform: rotate(-90deg)"></i></button>
+        </div>
+        <div class="align-tools">
+          <button class="small-icon" data-cmd="alignLeft"><i class="fas fa-align-left"></i></button>
+          <button class="small-icon" data-cmd="alignCenter"><i class="fas fa-align-center"></i></button>
+          <button class="small-icon" data-cmd="alignRight"><i class="fas fa-align-right"></i></button>
+          <button class="small-icon" data-cmd="wrapText"><i class="fas fa-text-width"></i></button>
+          <button class="small-icon" data-cmd="mergeCenter"><i class="fas fa-object-group"></i></button>
+        </div>
+      </div>
+      <div class="group-label">Alignment</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="number-controls" style="flex-direction: column; gap: 2px;">
+          <div class="number-controls">
+            <select class="size-select" style="width: 100px; height: 22px;" id="numberFormatSelect">
+              <option value="General">General</option>
+              <option value="Number">Number</option>
+              <option value="Currency">Currency</option>
+              <option value="Accounting">Accounting</option>
+              <option value="Date">Short Date</option>
+              <option value="Percentage">Percentage</option>
+              <option value="Fraction">Fraction</option>
+              <option value="Scientific">Scientific</option>
+              <option value="Text">Text</option>
+            </select>
+          </div>
+          <div class="number-controls">
+            <button class="small-icon" data-cmd="formatDollar"><i class="fas fa-dollar-sign"></i></button>
+            <button class="small-icon" data-cmd="formatPercent"><i class="fas fa-percent"></i></button>
+            <button class="small-icon" data-cmd="formatComma"><i class="fas fa-comma"></i></button>
+            <button class="small-btn" style="height: 22px; padding: 1px 4px; border: 1px solid var(--border-dark);" data-cmd="formatMore">More...</button>
+          </div>
+        </div>
+      </div>
+      <div class="group-label">Number</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="conditionalFormatting"><i class="fas fa-fill-drip"></i>Conditional Formatting</button>
+          <button class="small-btn has-dropdown" data-cmd="formatAsTable"><i class="fas fa-table"></i>Format as Table</button>
+          <button class="small-btn has-dropdown" data-cmd="cellStyles"><i class="fas fa-palette"></i>Cell Styles</button>
+        </div>
+      </div>
+      <div class="group-label">Styles</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="insertCells"><i class="fas fa-plus-square"></i>Insert Cells</button>
+          <button class="small-btn has-dropdown" data-cmd="deleteCells"><i class="fas fa-minus-square"></i>Delete Cells</button>
+          <button class="small-btn has-dropdown" data-cmd="formatCells"><i class="fas fa-ellipsis-h"></i>Format</button>
+        </div>
+      </div>
+      <div class="group-label">Cells</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="autoSum"><i class="fas fa-sum"></i>AutoSum</button>
+          <button class="small-btn has-dropdown" data-cmd="fill"><i class="fas fa-fill"></i>Fill</button>
+          <button class="small-btn has-dropdown" data-cmd="clear"><i class="fas fa-eraser"></i>Clear</button>
+          <button class="small-btn has-dropdown" data-cmd="sort"><i class="fas fa-sort"></i>Sort & Filter</button>
+        </div>
+      </div>
+      <div class="group-label">Editing</div>
+    </div>
+  </div>
+
+  <!-- INSERT -->
+  <div class="ribbon-pane" data-pane="insert">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="insertPivotTable">
+          <i class="fas fa-table"></i>
+          <span>PivotTable</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="recommendedTables"><i class="fas fa-lightbulb"></i>Recommended Tables</button>
+        </div>
+      </div>
+      <div class="group-label">Tables</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="insertPicture">
+          <i class="far fa-image"></i>
+          <span>Pictures</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="insertShapes"><i class="fas fa-shapes"></i>Shapes</button>
+          <button class="small-btn" data-cmd="insertIcons"><i class="far fa-star"></i>Icons</button>
+        </div>
+      </div>
+      <div class="group-label">Illustrations</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="insertChart"><i class="fas fa-chart-bar"></i>Chart</button>
+          <button class="small-btn" data-cmd="insertRecommendedChart"><i class="fas fa-lightbulb"></i>Recommended Charts</button>
+          <button class="small-btn" data-cmd="insertMapChart"><i class="fas fa-map-marked-alt"></i>Map</button>
+        </div>
+      </div>
+      <div class="group-label">Charts</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="insertLink"><i class="fas fa-link"></i>Link</button>
+          <button class="small-btn" data-cmd="insertTextbox"><i class="fas fa-font"></i>Text Box</button>
+          <button class="small-btn" data-cmd="insertEquation"><i class="fas fa-square-root-alt"></i>Equation</button>
+        </div>
+      </div>
+      <div class="group-label">Text</div>
+    </div>
+  </div>
+
+  <!-- PAGE LAYOUT -->
+  <div class="ribbon-pane" data-pane="pageLayout">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="themes"><i class="fas fa-palette"></i>Themes</button>
+          <button class="small-btn" data-cmd="colors"><i class="fas fa-fill-drip"></i>Colors</button>
+          <button class="small-btn" data-cmd="fonts"><i class="fas fa-font"></i>Fonts</button>
+          <button class="small-btn" data-cmd="effects"><i class="fas fa-magic"></i>Effects</button>
+        </div>
+      </div>
+      <div class="group-label">Themes</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="pageSetup"><i class="fas fa-cog"></i>Page Setup</button>
+          <button class="small-btn" data-cmd="scaleToFit"><i class="fas fa-expand"></i>Scale to Fit</button>
+          <button class="small-btn has-dropdown" data-cmd="sheetOptions"><i class="fas fa-th"></i>Sheet Options</button>
+        </div>
+      </div>
+      <div class="group-label">Page Setup</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="printArea"><i class="fas fa-print"></i>Print Area</button>
+          <button class="small-btn" data-cmd="printTitles"><i class="fas fa-heading"></i>Print Titles</button>
+        </div>
+      </div>
+      <div class="group-label">Page Setup</div>
+    </div>
+  </div>
+
+  <!-- FORMULAS -->
+  <div class="ribbon-pane" data-pane="formulas">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="insertFunction">
+          <i class="fas fa-superscript"></i>
+          <span>Insert Function</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="autoSumFormulas"><i class="fas fa-sum"></i>AutoSum</button>
+          <button class="small-btn" data-cmd="logical"><i class="fas fa-project-diagram"></i>Logical</button>
+          <button class="small-btn" data-cmd="textFunc"><i class="fas fa-font"></i>Text</button>
+          <button class="small-btn" data-cmd="dateFunc"><i class="far fa-calendar"></i>Date & Time</button>
+        </div>
+      </div>
+      <div class="group-label">Function Library</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="nameManager"><i class="fas fa-tags"></i>Name Manager</button>
+          <button class="small-btn" data-cmd="defineName"><i class="fas fa-tag"></i>Define Name</button>
+          <button class="small-btn" data-cmd="useInFormula"><i class="fas fa-calculator"></i>Use in Formula</button>
+        </div>
+      </div>
+      <div class="group-label">Defined Names</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="tracePrecedents">
+          <i class="fas fa-arrow-right"></i>
+          <span>Trace Precedents</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="traceDependents"><i class="fas fa-arrow-left"></i>Trace Dependents</button>
+          <button class="small-btn" data-cmd="removeArrows"><i class="fas fa-times"></i>Remove Arrows</button>
+        </div>
+      </div>
+      <div class="group-label">Formula Auditing</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="showFormulas"><i class="fas fa-eye"></i>Show Formulas</button>
+          <button class="small-btn" data-cmd="errorChecking"><i class="fas fa-exclamation-triangle"></i>Error Checking</button>
+        </div>
+      </div>
+      <div class="group-label">Formula Auditing</div>
+    </div>
+  </div>
+
+  <!-- DATA -->
+  <div class="ribbon-pane" data-pane="data">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="fromText">
+          <i class="fas fa-file-import"></i>
+          <span>From Text</span>
+        </button>
+      </div>
+      <div class="group-label">Get & Transform Data</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="sortAZ"><i class="fas fa-sort-alpha-down"></i>Sort A to Z</button>
+          <button class="small-btn has-dropdown" data-cmd="sortZA"><i class="fas fa-sort-alpha-up"></i>Sort Z to A</button>
+          <button class="small-btn" data-cmd="customSort"><i class="fas fa-sort"></i>Custom Sort</button>
+        </div>
+      </div>
+      <div class="group-label">Sort & Filter</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="dataValidation"><i class="fas fa-check-circle"></i>Data Validation</button>
+          <button class="small-btn" data-cmd="consolidate"><i class="fas fa-layer-group"></i>Consolidate</button>
+        </div>
+      </div>
+      <div class="group-label">Data Tools</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="group"><i class="fas fa-object-group"></i>Group</button>
+          <button class="small-btn" data-cmd="ungroup"><i class="fas fa-object-ungroup"></i>Ungroup</button>
+        </div>
+      </div>
+      <div class="group-label">Outline</div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div class="ribbon-pane" data-pane="review">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="spellCheck">
+          <i class="fas fa-spell-check"></i>
+          <span>Spelling</span>
+        </button>
+      </div>
+      <div class="group-label">Proofing</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="thesaurus"><i class="fas fa-book"></i>Thesaurus</button>
+          <button class="small-btn" data-cmd="wordCount"><i class="fas fa-paragraph"></i>Word Count</button>
+        </div>
+      </div>
+      <div class="group-label">Proofing</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="newComment">
+          <i class="far fa-comment"></i>
+          <span>New Comment</span>
+        </button>
+      </div>
+      <div class="group-label">Comments</div>
+    </div>
+  </div>
+
+  <!-- VIEW -->
+  <div class="ribbon-pane" data-pane="view">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="normalView"><i class="fas fa-edit"></i>Normal</button>
+          <button class="small-btn" data-cmd="pageBreakPreview"><i class="fas fa-th-large"></i>Page Break Preview</button>
+          <button class="small-btn" data-cmd="pageLayoutView"><i class="fas fa-paint-brush"></i>Page Layout</button>
+        </div>
+      </div>
+      <div class="group-label">Workbook Views</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="toggleGridlines"><i class="fas fa-th"></i>Gridlines</button>
+          <button class="small-btn" data-cmd="toggleHeadings"><i class="fas fa-heading"></i>Headings</button>
+          <button class="small-btn" data-cmd="freezePanes"><i class="fas fa-thumbtack"></i>Freeze Panes</button>
+        </div>
+      </div>
+      <div class="group-label">Show</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="zoomDialog">
+          <i class="fas fa-search-plus"></i>
+          <span>Zoom</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="100percent"><i class="fas fa-compress"></i>100%</button>
+        </div>
+      </div>
+      <div class="group-label">Zoom</div>
+    </div>
+  </div>
+
+  <!-- HELP -->
+  <div class="ribbon-pane" data-pane="help">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="help">
+          <i class="fas fa-question-circle"></i>
+          <span>Help</span>
+        </button>
+      </div>
+      <div class="group-label">Help</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Formula Bar ===== -->
+<div class="formula-bar">
+  <div class="name-box" id="nameBox">A1</div>
+  <span class="fx-icon">fx</span>
+  <input type="text" class="formula-input" id="formulaInput" placeholder="Enter a formula or text">
+</div>
+
+<!-- ===== Workspace ===== -->
+<main class="workspace">
+  <div class="grid-scroll-container" id="gridScrollContainer">
+    <div class="grid" id="grid"></div>
+    <input type="text" class="cell-editor" id="cellEditor">
+  </div>
+</main>
+
+<!-- ===== Sheet Tabs ===== -->
+<div class="sheet-bar">
+  <button class="sheet-btn" data-cmd="prevSheet"><i class="fas fa-chevron-left"></i></button>
+  <button class="sheet-btn" data-cmd="nextSheet"><i class="fas fa-chevron-right"></i></button>
+  <div class="sheet-separator"></div>
+  <div class="sheet-tab active" data-sheet="1">Sheet1</div>
+  <div class="sheet-tab" data-sheet="2">Sheet2</div>
+  <div class="sheet-tab" data-sheet="3">Sheet3</div>
+  <button class="sheet-btn" data-cmd="newSheet"><i class="fas fa-plus"></i></button>
+</div>
+
+<!-- ===== Status Bar ===== -->
+<footer class="status-bar">
+  <div class="status-left">
+    <span class="status-item" id="cellStatus">Ready</span>
+    <span class="status-item" id="sumStatus"><strong>Sum:</strong> 0</span>
+    <span class="status-item"><strong>Average:</strong> 0</span>
+    <span class="status-item"><strong>Count:</strong> 0</span>
+  </div>
+  <div class="status-right">
+    <span class="zoom-controls">
+      <button class="zoom-btn" data-cmd="zoomOut"><i class="fas fa-search-minus"></i></button>
+      <input type="range" class="zoom-slider" min="50" max="200" value="100" id="zoomSlider">
+      <button class="zoom-btn" data-cmd="zoomIn"><i class="fas fa-search-plus"></i></button>
+      <span class="zoom-level" id="zoomLevel">100%</span>
+    </span>
+  </div>
+</footer>
+
+<!-- ===== Context Menu ===== -->
+<div class="context-menu" id="contextMenu">
+  <button class="ctx-item" data-cmd="cut"><i class="fas fa-cut"></i>Cut<span class="shortcut">Ctrl+X</span></button>
+  <button class="ctx-item" data-cmd="copy"><i class="fas fa-copy"></i>Copy<span class="shortcut">Ctrl+C</span></button>
+  <button class="ctx-item" data-cmd="paste"><i class="fas fa-paste"></i>Paste<span class="shortcut">Ctrl+V</span></button>
+  <button class="ctx-item" data-cmd="pasteSpecial"><i class="fas fa-paste"></i>Paste Special...</button>
+  <div class="ctx-divider"></div>
+  <button class="ctx-item" data-cmd="insertCells"><i class="fas fa-plus-square"></i>Insert...</button>
+  <button class="ctx-item" data-cmd="deleteCells"><i class="fas fa-minus-square"></i>Delete...</button>
+  <button class="ctx-item" data-cmd="clearContents"><i class="fas fa-eraser"></i>Clear Contents</button>
+  <div class="ctx-divider"></div>
+  <button class="ctx-item" data-cmd="formatCellsCtx"><i class="fas fa-ellipsis-h"></i>Format Cells...</button>
+</div>
+
+<!-- ===== Color Popup ===== -->
+<div class="color-popup" id="colorPopup">
+  <div class="color-grid" id="colorGrid"></div>
+</div>
+
+<!-- ===== Backstage ===== -->
+<div class="backstage" id="backstage">
+  <nav class="backstage-nav">
+    <button class="back-btn" data-cmd="closeBackstage"><i class="fas fa-arrow-left"></i>Back</button>
+    <button class="back-tab active" data-bt="info">Info</button>
+    <button class="back-tab" data-bt="new">New</button>
+    <button class="back-tab" data-bt="open">Open</button>
+    <button class="back-tab" data-bt="save">Save</button>
+    <button class="back-tab" data-bt="saveas">Save As</button>
+    <button class="back-tab" data-bt="print">Print</button>
+    <button class="back-tab" data-bt="export">Export</button>
+    <button class="back-tab" data-bt="close">Close</button>
+    <div class="back-spacer"></div>
+    <button class="back-tab" data-bt="account">Account</button>
+    <button class="back-tab" data-bt="options">Options</button>
+  </nav>
+  <div class="backstage-content">
+    <div class="back-pane active" data-bp="info">
+      <h2>Info</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Protect Workbook</h3>
+          <p>Control what types of changes people can make to this workbook.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-search"></i>
+          <h3>Inspect Workbook</h3>
+          <p>Check the workbook for hidden metadata or personal information.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-history"></i>
+          <h3>Manage Workbook</h3>
+          <p>Recover unsaved versions, save a copy, or view version history.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="new">
+      <h2>New</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="far fa-file-excel"></i>
+          <h3>Blank Workbook</h3>
+          <p>Start with a blank workbook.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-lightbulb"></i>
+          <h3>Featured Templates</h3>
+          <p>Choose from a variety of templates.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="open">
+      <h2>Open</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-desktop"></i>
+          <h3>This PC</h3>
+          <p>Browse files on your local computer.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-cloud"></i>
+          <h3>Cloud Storage</h3>
+          <p>Open from your cloud account.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="save">
+      <h2>Save</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="saveLocal">
+          <i class="fas fa-desktop"></i>
+          <h3>This PC</h3>
+          <p>Save to your local computer.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-cloud"></i>
+          <h3>Cloud Storage</h3>
+          <p>Save to your cloud account.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="saveas">
+      <h2>Save As</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="saveAsXlsx">
+          <i class="far fa-file-excel"></i>
+          <h3>Excel Workbook (.xlsx)</h3>
+          <p>Save as a standard workbook.</p>
+        </div>
+        <div class="info-card" data-cmd="saveAsCsv">
+          <i class="far fa-file-code"></i>
+          <h3>CSV (.csv)</h3>
+          <p>Save as comma-separated values.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="print">
+      <h2>Print</h2>
+      <div style="display:flex;gap:32px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:240px;max-width:400px;">
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Copies: <input type="number" value="1" min="1" style="width:60px;padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;"></label>
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Printer: 
+            <select style="padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;width:200px;">
+              <option>Microsoft Print to PDF</option>
+              <option>HP LaserJet Pro</option>
+            </select>
+          </label>
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Settings: 
+            <select style="padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;width:200px;">
+              <option>Print Active Sheets</option>
+              <option>Print Entire Workbook</option>
+              <option>Print Selection</option>
+            </select>
+          </label>
+          <button style="background:var(--excel-green);color:#fff;border:none;padding:8px 24px;font-size:13px;cursor:pointer;border-radius:2px;margin-top:12px;" onclick="document.getElementById('backstage').classList.remove('active')">Print</button>
+        </div>
+        <div style="flex:1;display:flex;justify-content:center;align-items:flex-start;min-width:200px;">
+          <div style="width:200px;height:260px;background:#fff;border:1px solid var(--border-dark);box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:10px;font-size:6px;line-height:1.3;color:#333;overflow:hidden;">
+            <strong style="font-size:8px;color:#333;">Book1</strong>
+            <p style="margin-top:4px;">A B C D E F G</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="export">
+      <h2>Export</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="far fa-file-pdf"></i>
+          <h3>Create PDF/XPS</h3>
+          <p>Export your workbook as a PDF file.</p>
+        </div>
+        <div class="info-card">
+          <i class="far fa-file-code"></i>
+          <h3>Change File Type</h3>
+          <p>Save as CSV, TXT, or other formats.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="account">
+      <h2>Account</h2>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+        <div class="user-avatar guest" style="width:80px;height:80px;font-size:32px;background:linear-gradient(135deg, #B0B0B0, #808080);"><i class="fas fa-user"></i></div>
+        <div>
+          <h3 style="font-size:18px;">Guest User</h3>
+          <p style="color:var(--text-secondary);">Sign in to access your workbooks</p>
+          <button style="margin-top:8px;background:var(--excel-green);color:#fff;border:none;padding:6px 16px;font-size:12px;cursor:pointer;border-radius:2px;" onclick="document.getElementById('backstage').classList.remove('active')">Sign In</button>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="options">
+      <h2>Excel Options</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-edit"></i>
+          <h3>General</h3>
+          <p>Basic options for working with Excel.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-check"></i>
+          <h3>Formulas</h3>
+          <p>Change options related to formula calculation, performance, and error handling.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-save"></i>
+          <h3>Save</h3>
+          <p>Customize how workbooks are saved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== State ===================== */
+const ROWS = 100;
+const COLS = 26;
+let cellsData = {}; // { "A1": { value: "=SUM(A2:A3)", display: "5", style: { bold: true, color: "#FF0000", bg: "#FFFF00", align: "left", format: "Number" } } }
+let activeCell = "A1";
+let selectionStart = "A1";
+let selectionEnd = "A1";
+let isEditing = false;
+let isSelectingRange = false;
+let currentColorTarget = null;
+let zoom = 100;
+
+const grid = document.getElementById('grid');
+const cellEditor = document.getElementById('cellEditor');
+const formulaInput = document.getElementById('formulaInput');
+const nameBox = document.getElementById('nameBox');
+const gridScrollContainer = document.getElementById('gridScrollContainer');
+const zoomSlider = document.getElementById('zoomSlider');
+const zoomLevel = document.getElementById('zoomLevel');
+
+/* ===================== Grid Init ===================== */
+function initGrid() {
+  grid.innerHTML = '';
+  // Corner
+  const corner = document.createElement('div');
+  corner.className = 'grid-corner';
+  grid.appendChild(corner);
+
+  // Column Headers
+  for (let c = 0; c < COLS; c++) {
+    const colDiv = document.createElement('div');
+    colDiv.className = 'col-header';
+    colDiv.textContent = getColName(c);
+    colDiv.dataset.col = c;
+    grid.appendChild(colDiv);
+  }
+
+  // Rows
+  for (let r = 0; r < ROWS; r++) {
+    // Row Header
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'row-header';
+    rowDiv.textContent = r + 1;
+    rowDiv.dataset.row = r;
+    grid.appendChild(rowDiv);
+
+    // Cells
+    for (let c = 0; c < COLS; c++) {
+      const cellDiv = document.createElement('div');
+      cellDiv.className = 'cell';
+      const id = getCellId(r, c);
+      cellDiv.dataset.id = id;
+      cellDiv.dataset.row = r;
+      cellDiv.dataset.col = c;
+      grid.appendChild(cellDiv);
+    }
+  }
+}
+
+function getColName(c) {
+  return String.fromCharCode(65 + c);
+}
+
+function getCellId(r, c) {
+  return getColName(c) + (r + 1);
+}
+
+function parseCellId(id) {
+  const match = id.match(/([A-Z]+)(\d+)/);
+  if (!match) return null;
+  const colStr = match[1];
+  let c = 0;
+  for (let i = 0; i < colStr.length; i++) {
+    c = c * 26 + (colStr.charCodeAt(i) - 64);
+  }
+  return { r: parseInt(match[2]) - 1, c: c - 1 };
+}
+
+/* ===================== Rendering ===================== */
+function renderGrid() {
+  // Clear all cells first
+  document.querySelectorAll('.cell').forEach(el => {
+    const id = el.dataset.id;
+    el.textContent = '';
+    el.className = 'cell';
+    el.style.cssText = '';
+  });
+
+  // Render data
+  for (const id in cellsData) {
+    const data = cellsData[id];
+    const el = document.querySelector(`.cell[data-id="${id}"]`);
+    if (!el) continue;
+    
+    el.textContent = data.display;
+    
+    // Apply styles
+    if (data.style) {
+      if (data.style.bold) el.style.fontWeight = 'bold';
+      if (data.style.italic) el.style.fontStyle = 'italic';
+      if (data.style.underline) el.style.textDecoration = 'underline';
+      if (data.style.color) el.style.color = data.style.color;
+      if (data.style.bg) el.style.backgroundColor = data.style.bg;
+      if (data.style.align) el.style.justifyContent = data.style.align;
+      if (data.style.format === 'Number') {
+        el.style.textAlign = 'right';
+      }
+    }
+  }
+
+  updateSelectionVisuals();
+  updateFormulaBar();
+  updateStatusbarStats();
+}
+
+/* ===================== Formula Evaluation ===================== */
+function evaluateFormulas() {
+  // Simple recursive evaluation with basic dependency resolution
+  const visited = {};
+  const evaluating = {};
+
+  function getVal(id) {
+    if (!cellsData[id]) return 0;
+    const cell = cellsData[id];
+    if (cell.value && cell.value.startsWith('=')) {
+      return evaluateCell(id);
+    }
+    const num = parseFloat(cell.value);
+    return isNaN(num) ? 0 : num;
+  }
+
+  function evaluateCell(id) {
+    if (visited[id]) return cellsData[id].display;
+    if (evaluating[id]) return "#CIRC!"; // Circular reference
+
+    evaluating[id] = true;
+    const cell = cellsData[id];
+    if (!cell || !cell.value || !cell.value.startsWith('=')) {
+      visited[id] = true;
+      return cell ? cell.display : "";
+    }
+
+    let formula = cell.value.substring(1).toUpperCase();
+    
+    // Replace ranges SUM(A1:B2)
+    formula = formula.replace(/SUM\(([^)]+)\)/g, (match, range) => {
+      const [start, end] = range.split(':');
+      return sumRange(start, end);
+    });
+    formula = formula.replace(/AVERAGE\(([^)]+)\)/g, (match, range) => {
+      const [start, end] = range.split(':');
+      return avgRange(start, end);
+    });
+    formula = formula.replace(/MIN\(([^)]+)\)/g, (match, range) => {
+      const [start, end] = range.split(':');
+      return minRange(start, end);
+    });
+    formula = formula.replace(/MAX\(([^)]+)\)/g, (match, range) => {
+      const [start, end] = range.split(':');
+      return maxRange(start, end);
+    });
+
+    // Replace cell references A1, B2
+    formula = formula.replace(/([A-Z]+[0-9]+)/g, (match) => {
+      if (cellsData[match] && cellsData[match].value && cellsData[match].value.startsWith('=')) {
+         return evaluateCell(match);
+      }
+      if (cellsData[match] && cellsData[match].value) {
+        const num = parseFloat(cellsData[match].value);
+        return isNaN(num) ? 0 : num;
+      }
+      return 0;
+    });
+
+    let result;
+    try {
+      // Sanitize before eval
+      if (!/^[0-9+\-*/().\s]+$/.test(formula)) {
+        result = "#ERROR!";
+      } else {
+        result = Function('"use strict";return (' + formula + ')')();
+      }
+    } catch (e) {
+      result = "#ERROR!";
+    }
+
+    visited[id] = true;
+    delete evaluating[id];
+    
+    if (typeof result === 'number') {
+      cell.display = Math.round(result * 100) / 100;
+    } else {
+      cell.display = result;
+    }
+    return cell.display;
+  }
+
+  for (const id in cellsData) {
+    if (cellsData[id].value && cellsData[id].value.startsWith('=')) {
+      evaluateCell(id);
+    }
+  }
+}
+
+function sumRange(start, end) {
+  const s = parseCellId(start);
+  const e = parseCellId(end);
+  let sum = 0;
+  for (let r = s.r; r <= e.r; r++) {
+    for (let c = s.c; c <= e.c; c++) {
+      const id = getCellId(r, c);
+      if (cellsData[id] && cellsData[id].value) {
+        const num = parseFloat(cellsData[id].value);
+        if (!isNaN(num)) sum += num;
+      }
+    }
+  }
+  return sum;
+}
+
+function avgRange(start, end) {
+  const s = parseCellId(start);
+  const e = parseCellId(end);
+  let sum = 0;
+  let count = 0;
+  for (let r = s.r; r <= e.r; r++) {
+    for (let c = s.c; c <= e.c; c++) {
+      const id = getCellId(r, c);
+      if (cellsData[id] && cellsData[id].value) {
+        const num = parseFloat(cellsData[id].value);
+        if (!isNaN(num)) { sum += num; count++; }
+      }
+    }
+  }
+  return count > 0 ? sum / count : 0;
+}
+
+function minRange(start, end) {
+  const s = parseCellId(start);
+  const e = parseCellId(end);
+  let min = Infinity;
+  for (let r = s.r; r <= e.r; r++) {
+    for (let c = s.c; c <= e.c; c++) {
+      const id = getCellId(r, c);
+      if (cellsData[id] && cellsData[id].value) {
+        const num = parseFloat(cellsData[id].value);
+        if (!isNaN(num)) min = Math.min(min, num);
+      }
+    }
+  }
+  return min === Infinity ? 0 : min;
+}
+
+function maxRange(start, end) {
+  const s = parseCellId(start);
+  const e = parseCellId(end);
+  let max = -Infinity;
+  for (let r = s.r; r <= e.r; r++) {
+    for (let c = s.c; c <= e.c; c++) {
+      const id = getCellId(r, c);
+      if (cellsData[id] && cellsData[id].value) {
+        const num = parseFloat(cellsData[id].value);
+        if (!isNaN(num)) max = Math.max(max, num);
+      }
+    }
+  }
+  return max === -Infinity ? 0 : max;
+}
+
+/* ===================== Selection ===================== */
+function updateSelectionVisuals() {
+  document.querySelectorAll('.cell').forEach(el => {
+    el.classList.remove('selected', 'in-range', 'range-start');
+  });
+  document.querySelectorAll('.row-header, .col-header').forEach(el => el.classList.remove('active'));
+
+  const s = parseCellId(selectionStart);
+  const e = parseCellId(selectionEnd);
+  
+  const r1 = Math.min(s.r, e.r);
+  const r2 = Math.max(s.r, e.r);
+  const c1 = Math.min(s.c, e.c);
+  const c2 = Math.max(s.c, e.c);
+
+  for (let r = r1; r <= r2; r++) {
+    for (let c = c1; c <= c2; c++) {
+      const el = document.querySelector(`.cell[data-id="${getCellId(r, c)}"]`);
+      if (el) {
+        if (r === s.r && c === s.c) {
+          el.classList.add('selected', 'range-start');
+        } else {
+          el.classList.add('in-range');
+        }
+      }
+    }
+  }
+
+  // Highlight headers
+  for (let r = r1; r <= r2; r++) {
+    document.querySelector(`.row-header[data-row="${r}"]`)?.classList.add('active');
+  }
+  for (let c = c1; c <= c2; c++) {
+    document.querySelector(`.col-header[data-col="${c}"]`)?.classList.add('active');
+  }
+}
+
+function updateFormulaBar() {
+  const cell = cellsData[selectionStart];
+  formulaInput.value = cell ? cell.value : "";
+  nameBox.textContent = selectionStart;
+}
+
+/* ===================== Editing ===================== */
+function startEditing(initialValue = null) {
+  if (isEditing) return;
+  isEditing = true;
+  const el = document.querySelector(`.cell[data-id="${selectionStart}"]`);
+  if (!el) return;
+
+  const rect = el.getBoundingClientRect();
+  const containerRect = gridScrollContainer.getBoundingClientRect();
+  
+  cellEditor.style.left = (el.offsetLeft) + 'px';
+  cellEditor.style.top = (el.offsetTop) + 'px';
+  cellEditor.style.width = el.offsetWidth + 'px';
+  cellEditor.style.height = el.offsetHeight + 'px';
+  cellEditor.classList.add('active');
+  
+  const cell = cellsData[selectionStart];
+  cellEditor.value = initialValue !== null ? initialValue : (cell ? cell.value : "");
+  cellEditor.focus();
+  if (initialValue !== null) cellEditor.setSelectionRange(cellEditor.value.length, cellEditor.value.length);
+
+  formulaInput.value = cellEditor.value;
+}
+
+function commitEdit() {
+  if (!isEditing) return;
+  isEditing = false;
+  cellEditor.classList.remove('active');
+  
+  if (!cellsData[selectionStart]) cellsData[selectionStart] = { value: "", display: "" };
+  cellsData[selectionStart].value = cellEditor.value;
+  
+  if (!cellEditor.value.startsWith('=')) {
+    cellsData[selectionStart].display = cellEditor.value;
+  }
+  
+  evaluateFormulas();
+  renderGrid();
+  saveWorkbook();
+}
+
+/* ===================== Event Listeners ===================== */
+grid.addEventListener('mousedown', (e) => {
+  const cellEl = e.target.closest('.cell');
+  if (!cellEl) return;
+
+  if (isEditing) commitEdit();
+
+  const id = cellEl.dataset.id;
+  
+  if (e.shiftKey) {
+    selectionEnd = id;
+  } else {
+    selectionStart = id;
+    selectionEnd = id;
+  }
+  
+  updateSelectionVisuals();
+  updateFormulaBar();
+  updateStatusbarStats();
+});
+
+grid.addEventListener('dblclick', (e) => {
+  const cellEl = e.target.closest('.cell');
+  if (cellEl) startEditing();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (isEditing) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      commitEdit();
+      moveSelection(1, 0); // Move down
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      commitEdit();
+      moveSelection(0, 1); // Move right
+    } else if (e.key === 'Escape') {
+      isEditing = false;
+      cellEditor.classList.remove('active');
+      updateFormulaBar();
+    } else if (e.key === 'ArrowLeft' && cellEditor.selectionStart === 0) {
+      // allow arrow nav in editor
+    } else {
+      // sync formula bar
+      setTimeout(() => formulaInput.value = cellEditor.value, 0);
+    }
+    return;
+  }
+
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+  const s = parseCellId(selectionStart);
+  
+  switch (e.key) {
+    case 'ArrowUp': e.preventDefault(); moveSelection(-1, 0); break;
+    case 'ArrowDown': e.preventDefault(); moveSelection(1, 0); break;
+    case 'ArrowLeft': e.preventDefault(); moveSelection(0, -1); break;
+    case 'ArrowRight': e.preventDefault(); moveSelection(0, 1); break;
+    case 'Enter': e.preventDefault(); moveSelection(1, 0); break;
+    case 'Tab': e.preventDefault(); moveSelection(0, e.shiftKey ? -1 : 1); break;
+    case 'Delete': case 'Backspace':
+      delete cellsData[selectionStart];
+      evaluateFormulas();
+      renderGrid();
+      saveWorkbook();
+      break;
+    case 'F2':
+      e.preventDefault();
+      startEditing();
+      break;
+    case 'Escape':
+      break;
+    default:
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+        startEditing(e.key);
+      }
+  }
+});
+
+function moveSelection(dr, dc) {
+  const s = parseCellId(selectionStart);
+  let nr = s.r + dr;
+  let nc = s.c + dc;
+  if (nr < 0) nr = 0;
+  if (nc < 0) nc = 0;
+  if (nr >= ROWS) nr = ROWS - 1;
+  if (nc >= COLS) nc = COLS - 1;
+  
+  selectionStart = getCellId(nr, nc);
+  selectionEnd = selectionStart;
+  updateSelectionVisuals();
+  updateFormulaBar();
+  
+  // Scroll into view
+  const el = document.querySelector(`.cell[data-id="${selectionStart}"]`);
+  if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
+cellEditor.addEventListener('input', () => {
+  formulaInput.value = cellEditor.value;
+});
+
+formulaInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (isEditing) commitEdit();
+    else {
+      cellsData[selectionStart] = cellsData[selectionStart] || { value: "", display: "" };
+      cellsData[selectionStart].value = formulaInput.value;
+      evaluateFormulas();
+      renderGrid();
+      saveWorkbook();
+    }
+  }
+});
+
+formulaInput.addEventListener('focus', () => {
+  if (!isEditing) {
+    formulaInput.value = cellsData[selectionStart]?.value || "";
+  }
+});
+
+/* ===================== Formatting ===================== */
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-cmd]');
+  if (!btn) return;
+  const cmd = btn.dataset.cmd;
+  
+  // Handle ribbon commands
+  switch (cmd) {
+    case 'bold': applyStyle('bold', true); break;
+    case 'italic': applyStyle('italic', true); break;
+    case 'underline': applyStyle('underline', true); break;
+    case 'alignLeft': applyStyle('align', 'left'); break;
+    case 'alignCenter': applyStyle('align', 'center'); break;
+    case 'alignRight': applyStyle('align', 'right'); break;
+    case 'fontColor': openColorPopup('font', btn); break;
+    case 'fillColor': openColorPopup('fill', btn); break;
+    case 'formatDollar': applyNumberFormat('Currency'); break;
+    case 'formatPercent': applyNumberFormat('Percentage'); break;
+    case 'formatComma': applyNumberFormat('Number'); break;
+    case 'autoSum': insertAutoSum(); break;
+    case 'saveLocal': case 'save': saveWorkbook(); document.getElementById('backstage').classList.remove('active'); break;
+    case 'closeBackstage': document.getElementById('backstage').classList.remove('active'); break;
+    case 'undo': document.execCommand('undo'); break;
+    case 'redo': document.execCommand('redo'); break;
+  }
+});
+
+function applyStyle(prop, val) {
+  const s = parseCellId(selectionStart);
+  const e = parseCellId(selectionEnd);
+  const r1 = Math.min(s.r, e.r), r2 = Math.max(s.r, e.r);
+  const c1 = Math.min(s.c, e.c), c2 = Math.max(s.c, e.c);
+
+  for (let r = r1; r <= r2; r++) {
+    for (let c = c1; c <= c2; c++) {
+      const id = getCellId(r, c);
+      if (!cellsData[id]) cellsData[id] = { value: "", display: "" };
+      if (!cellsData[id].style) cellsData[id].style = {};
+      if (prop === 'bold' || prop === 'italic' || prop === 'underline') {
+        cellsData[id].style[prop] = !cellsData[id].style[prop];
+      } else {
+        cellsData[id].style[prop] = val;
+      }
+    }
+  }
+  renderGrid();
+  saveWorkbook();
+}
+
+function applyNumberFormat(format) {
+  applyStyle('format', format);
+}
+
+function insertAutoSum() {
+  const s = parseCellId(selectionStart);
+  // Find range above
+  let endR = s.r - 1;
+  let startR = endR;
+  while (startR > 0 && cellsData[getCellId(startR, s.c)] && cellsData[getCellId(startR, s.c)].value) {
+    startR--;
+  }
+  startR++;
+  
+  if (startR <= endR) {
+    const formula = `=SUM(${getCellId(startR, s.c)}:${getCellId(endR, s.c)})`;
+    cellsData[selectionStart] = cellsData[selectionStart] || { value: "", display: "" };
+    cellsData[selectionStart].value = formula;
+    evaluateFormulas();
+    renderGrid();
+    saveWorkbook();
+  }
+}
+
+/* ===================== Color Popup ===================== */
+const colors = [
+  'transparent','#C00000','#FF0000','#FFC000','#FFFF00','#92D050','#00B050','#00B0F0',
+  '#0070C0','#002060','#7030A0','#FFFFFF','#000000','#595959','#A6A6A6','#D9D9D9',
+  '#F2F2F2','#E7E6E6','#806000','#4D2D00','#666600','#BF9000','#808000','#1F3864',
+  '#2E74B5','#9DC3E6','#BDD7EE','#FFE699','#F8CBAD','#C9C9C9','#7F7F7F','#404040'
+];
+
+function buildColorGrid() {
+  const grid = document.getElementById('colorGrid');
+  grid.innerHTML = '';
+  colors.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (c === 'transparent' ? ' transparent' : '');
+    if (c !== 'transparent') sw.style.background = c;
+    sw.addEventListener('click', () => {
+      if (currentColorTarget === 'font') {
+        applyStyle('color', c);
+        document.getElementById('fontColorBar').style.background = c;
+      } else {
+        applyStyle('bg', c);
+        document.getElementById('fillColorBar').style.background = c;
+      }
+      document.getElementById('colorPopup').classList.remove('active');
+    });
+    grid.appendChild(sw);
+  });
+}
+buildColorGrid();
+
+function openColorPopup(type, anchor) {
+  currentColorTarget = type;
+  const popup = document.getElementById('colorPopup');
+  const rect = anchor.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 2;
+  if (window.innerWidth < 480) left = Math.min(left, window.innerWidth - 200);
+  popup.style.left = Math.max(8, left) + 'px';
+  popup.style.top = top + 'px';
+  popup.classList.add('active');
+}
+
+document.addEventListener('click', (e) => {
+  const popup = document.getElementById('colorPopup');
+  if (!popup.classList.contains('active')) return;
+  if (!e.target.closest('.color-popup') && !e.target.closest('[data-cmd="fontColor"]') && !e.target.closest('[data-cmd="fillColor"]')) {
+    popup.classList.remove('active');
+  }
+});
+
+/* ===================== Status Bar Stats ===================== */
+function updateStatusbarStats() {
+  const s = parseCellId(selectionStart);
+  const e = parseCellId(selectionEnd);
+  const r1 = Math.min(s.r, e.r), r2 = Math.max(s.r, e.r);
+  const c1 = Math.min(s.c, e.c), c2 = Math.max(s.c, e.c);
+
+  let sum = 0;
+  let count = 0;
+  let numericCount = 0;
+
+  for (let r = r1; r <= r2; r++) {
+    for (let c = c1; c <= c2; c++) {
+      const id = getCellId(r, c);
+      if (cellsData[id] && cellsData[id].value !== "") {
+        count++;
+        const num = parseFloat(cellsData[id].value);
+        if (!isNaN(num)) {
+          sum += num;
+          numericCount++;
+        }
+      }
+    }
+  }
+
+  const avg = numericCount > 0 ? (sum / numericCount) : 0;
+  
+  document.getElementById('sumStatus').innerHTML = `<strong>Sum:</strong> ${Math.round(sum * 100) / 100}`;
+  document.querySelector('.status-item:nth-child(3)').innerHTML = `<strong>Average:</strong> ${Math.round(avg * 100) / 100}`;
+  document.querySelector('.status-item:nth-child(4)').innerHTML = `<strong>Count:</strong> ${count}`;
+}
+
+/* ===================== Context Menu ===================== */
+const contextMenu = document.getElementById('contextMenu');
+grid.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  const cellEl = e.target.closest('.cell');
+  if (cellEl) {
+    selectionStart = cellEl.dataset.id;
+    selectionEnd = selectionStart;
+    updateSelectionVisuals();
+  }
+  contextMenu.style.left = e.clientX + 'px';
+  contextMenu.style.top = e.clientY + 'px';
+  contextMenu.classList.add('active');
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.context-menu')) contextMenu.classList.remove('active');
+});
+
+/* ===================== Zoom ===================== */
+function setZoom(value) {
+  zoom = Math.max(50, Math.min(200, value));
+  zoomSlider.value = zoom;
+  zoomLevel.textContent = zoom + '%';
+  // Apply scale to grid
+  grid.style.transform = `scale(${zoom / 100})`;
+  grid.style.transformOrigin = 'top left';
+}
+zoomSlider.addEventListener('input', (e) => setZoom(parseInt(e.target.value)));
+
+/* ===================== Backstage ===================== */
+document.querySelectorAll('.ribbon-tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const tabName = tab.dataset.tab;
+    if (tabName === 'file') {
+      document.getElementById('backstage').classList.add('active');
+      return;
+    }
+    document.querySelectorAll('.ribbon-tabs .tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.ribbon-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.ribbon-pane[data-pane="${tabName}"]`);
+    setTimeout(() => {
+      targetPane.classList.add('active');
+      requestAnimationFrame(() => targetPane.style.opacity = '1');
+    }, 50);
+  });
+});
+
+document.querySelectorAll('.back-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.back-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.back-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.back-pane[data-bp="${tab.dataset.bt}"]`);
+    setTimeout(() => {
+      targetPane.classList.add('active');
+      requestAnimationFrame(() => targetPane.style.opacity = '1');
+    }, 50);
+  });
+});
+
+/* ===================== Save / Load ===================== */
+function saveWorkbook() {
+  try {
+    localStorage.setItem('excelData', JSON.stringify(cellsData));
+    localStorage.setItem('excelTitle', document.getElementById('docTitle').value);
+    document.getElementById('saveStatus').textContent = ' - Saved to this PC';
+  } catch(e) {}
+}
+
+function loadWorkbook() {
+  try {
+    const saved = localStorage.getItem('excelData');
+    const title = localStorage.getItem('excelTitle');
+    if (saved) cellsData = JSON.parse(saved);
+    if (title) document.getElementById('docTitle').value = title;
+  } catch(e) {}
+}
+
+/* ===================== Init ===================== */
+initGrid();
+
+// Add some sample data if empty
+if (Object.keys(cellsData).length === 0) {
+  cellsData["A1"] = { value: "Item", display: "Item", style: { bold: true } };
+  cellsData["B1"] = { value: "Qty", display: "Qty", style: { bold: true } };
+  cellsData["C1"] = { value: "Price", display: "Price", style: { bold: true } };
+  cellsData["D1"] = { value: "Total", display: "Total", style: { bold: true } };
+  
+  cellsData["A2"] = { value: "Apples", display: "Apples" };
+  cellsData["B2"] = { value: "10", display: "10" };
+  cellsData["C2"] = { value: "0.50", display: "0.50", style: { format: "Currency" } };
+  cellsData["D2"] = { value: "=B2*C2", display: "" };
+  
+  cellsData["A3"] = { value: "Oranges", display: "Oranges" };
+  cellsData["B3"] = { value: "15", display: "15" };
+  cellsData["C3"] = { value: "0.75", display: "0.75", style: { format: "Currency" } };
+  cellsData["D3"] = { value: "=B3*C3", display: "" };
+  
+  cellsData["A4"] = { value: "Bananas", display: "Bananas" };
+  cellsData["B4"] = { value: "20", display: "20" };
+  cellsData["C4"] = { value: "0.30", display: "0.30", style: { format: "Currency" } };
+  cellsData["D4"] = { value: "=B4*C4", display: "" };
+  
+  cellsData["A5"] = { value: "Total", display: "Total", style: { bold: true } };
+  cellsData["D5"] = { value: "=SUM(D2:D4)", display: "", style: { bold: true } };
+}
+
+loadWorkbook();
+evaluateFormulas();
+renderGrid();
+</script>
+</body>
+</html>
