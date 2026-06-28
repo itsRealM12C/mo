@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Inbox - Outlook</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+:root {
+  --outlook-blue: #0F6CBD;
+  --outlook-blue-dark: #0A4E84;
+  --outlook-blue-darker: #083D68;
+  --outlook-blue-light: #EAF4FB;
+  --bg-ribbon: #F3F2F1;
+  --bg-tab-hover: #EDEBE9;
+  --bg-tab-active: #E1DFDD;
+  --border: #E1DFDD;
+  --border-dark: #C8C6C4;
+  --text-primary: #323130;
+  --text-secondary: #605E5C;
+  --hover: #F5F5F5;
+  --selected: #EAF4FB;
+  --hover-btn: #F0F6FB;
+  --ease-office: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --transition-fast: 0.1s var(--ease-office);
+  --transition-base: 0.15s var(--ease-office);
+  --transition-slow: 0.25s var(--ease-office);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: #fff;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-touch-callout: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+input, textarea { font-family: inherit; }
+
+/* ===== Title Bar ===== */
+.title-bar {
+  height: 32px;
+  background: var(--outlook-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 8px;
+  font-size: 12px;
+  z-index: 20;
+}
+
+.qa-toolbar { display: flex; align-items: center; gap: 1px; }
+.qa-btn {
+  width: 26px; height: 26px; background: transparent; border: none; color: #fff;
+  border-radius: 2px; font-size: 12px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background var(--transition-fast);
+}
+.qa-btn:hover { background: rgba(255,255,255,0.15); }
+.qa-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
+
+.title-center {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 4px; pointer-events: auto; min-width: 0;
+}
+.doc-title {
+  background: transparent; border: none; color: #fff; font-size: 12px;
+  text-align: center; outline: none; padding: 3px 8px; border-radius: 2px;
+  font-family: inherit; min-width: 60px; max-width: 200px; transition: background var(--transition-fast);
+}
+.doc-title:hover { background: rgba(255,255,255,0.12); }
+.doc-title:focus { background: rgba(255,255,255,0.2); }
+.save-status { opacity: 0.85; font-size: 12px; }
+
+.window-controls { display: flex; align-items: center; height: 100%; }
+.win-btn {
+  width: 46px; height: 32px; background: transparent; border: none; color: #fff;
+  font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition-fast);
+}
+.win-btn:hover { background: rgba(255,255,255,0.15); }
+.win-btn:active { background: rgba(255,255,255,0.3); }
+.win-btn.close:hover { background: #E81123; }
+
+/* ===== Ribbon Tabs ===== */
+.ribbon-tabs {
+  height: 34px; background: var(--outlook-blue); display: flex; align-items: stretch;
+  padding: 0 8px; position: relative; z-index: 15; overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.ribbon-tabs::-webkit-scrollbar { display: none; }
+.ribbon-tabs .tab {
+  background: transparent; border: none; padding: 0 12px; font-size: 13px;
+  color: rgba(255,255,255,0.92); position: relative; cursor: pointer;
+  transition: background var(--transition-fast); white-space: nowrap; flex-shrink: 0;
+}
+.ribbon-tabs .tab:hover { background: rgba(255,255,255,0.12); }
+.ribbon-tabs .tab:active { background: rgba(255,255,255,0.2); }
+.ribbon-tabs .tab.active { background: var(--bg-ribbon); color: var(--text-primary); font-weight: 400; }
+.ribbon-tabs .file-tab { background: var(--outlook-blue-dark); color: #fff; margin-right: 4px; transition: background var(--transition-fast); }
+.ribbon-tabs .file-tab:hover { background: var(--outlook-blue-darker); }
+.ribbon-tabs .file-tab.active { background: var(--bg-ribbon); color: var(--text-primary); }
+
+.tab-spacer { flex: 1; min-width: 8px; }
+.tab-right { display: flex; align-items: center; gap: 8px; padding: 0 6px; flex-shrink: 0; }
+.search-box {
+  background: rgba(255,255,255,0.18); border: none; height: 24px;
+  display: flex; align-items: center; padding: 0 8px; border-radius: 2px;
+  color: #fff; font-size: 12px; width: 220px; transition: background var(--transition-fast);
+}
+.search-box:hover { background: rgba(255,255,255,0.25); }
+.search-box input { background: transparent; border: none; outline: none; color: #fff; font-size: 12px; width: 100%; margin-left: 6px; }
+.search-box input::placeholder { color: rgba(255,255,255,0.7); }
+
+.user-btn {
+  width: 32px; height: 32px; background: transparent; border: none;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background var(--transition-fast); border-radius: 2px;
+}
+.user-btn:hover { background: rgba(255,255,255,0.15); }
+.user-avatar {
+  width: 28px; height: 28px; color: #FFFFFF; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.user-avatar.guest { background: linear-gradient(135deg, #B0B0B0, #808080); }
+
+/* ===== Ribbon Content ===== */
+.ribbon-content {
+  background: var(--bg-ribbon); height: 96px; display: flex; padding: 0 8px;
+  border-bottom: 1px solid var(--border); overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+  position: relative; z-index: 10;
+}
+.ribbon-content::-webkit-scrollbar { height: 4px; }
+.ribbon-content::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+.ribbon-content::-webkit-scrollbar-track { background: transparent; }
+
+.ribbon-pane { display: none; align-items: stretch; width: 100%; opacity: 0; transition: opacity var(--transition-base); }
+.ribbon-pane.active { display: flex; opacity: 1; }
+
+.group { display: flex; flex-direction: column; padding: 0 8px; border-right: 1px solid var(--border); min-width: 0; flex-shrink: 0; }
+.group:last-child { border-right: none; }
+.group-content { flex: 1; display: flex; align-items: flex-start; padding-top: 4px; gap: 4px; }
+.group-label { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 3px 0 2px; }
+
+.big-btn {
+  width: 56px; height: 68px; background: transparent; border: 1px solid transparent;
+  display: flex; flex-direction: column; align-items: center; padding-top: 6px; gap: 5px;
+  cursor: pointer; font-size: 12px; color: var(--text-primary); border-radius: 2px;
+  text-align: center; line-height: 1.2;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.big-btn i { font-size: 28px; color: var(--outlook-blue); }
+.big-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.big-btn:active { background: var(--bg-tab-active); transform: scale(0.97); }
+
+.small-btns { display: flex; flex-direction: column; gap: 0; }
+.small-btn {
+  background: transparent; border: 1px solid transparent; padding: 2px 6px; cursor: pointer;
+  font-size: 12px; color: var(--text-primary); border-radius: 2px;
+  display: flex; align-items: center; gap: 6px; text-align: left; height: 22px; min-width: 60px;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.small-btn i { width: 14px; text-align: center; }
+.small-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-btn:active { background: var(--bg-tab-active); }
+
+.small-icon {
+  width: 22px; height: 22px; background: transparent; border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  font-size: 13px; color: var(--text-primary); border-radius: 2px; position: relative;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.small-icon:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-icon:active { transform: scale(0.92); }
+.small-icon.active { background: var(--selected); border-color: var(--outlook-blue); }
+
+.separator { width: 1px; height: 16px; background: var(--border-dark); margin: 0 3px; }
+
+/* ===== Main Layout ===== */
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 48px 220px 360px 1fr;
+  overflow: hidden;
+  position: relative;
+}
+
+/* App Bar (Far Left) */
+.app-bar {
+  background: #F3F2F1;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  gap: 4px;
+}
+.app-btn {
+  width: 40px; height: 40px; margin: 0 4px;
+  background: transparent; border: 1px solid transparent;
+  border-radius: 2px; color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+.app-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.app-btn.active { color: var(--outlook-blue); }
+.app-btn.active::before {
+  content: ""; position: absolute; left: -4px; top: 8px; bottom: 8px; width: 3px;
+  background: var(--outlook-blue); border-radius: 2px;
+}
+
+/* Folder List */
+.folder-list {
+  background: #FAFAFA;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.folder-header {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.folder-header i { cursor: pointer; color: var(--text-secondary); transition: transform var(--transition-fast); }
+.folder-header i:hover { transform: rotate(180deg); }
+.folders {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.folders::-webkit-scrollbar { width: 6px; }
+.folders::-webkit-scrollbar-thumb { background: #C8C6C4; border-radius: 3px; }
+.folder-item {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.folder-item:hover { background: var(--hover); }
+.folder-item.active { background: var(--outlook-blue-light); font-weight: 500; color: var(--outlook-blue-dark); }
+.folder-item i { width: 16px; text-align: center; color: var(--text-secondary); }
+.folder-item.active i { color: var(--outlook-blue); }
+.folder-count { margin-left: auto; background: #E1DFDD; padding: 1px 6px; border-radius: 10px; font-size: 11px; }
+.folder-item.active .folder-count { background: var(--outlook-blue); color: #fff; }
+
+/* Message List */
+.message-list {
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  z-index: 5;
+}
+.list-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.list-title { font-size: 16px; font-weight: 600; }
+.list-search {
+  background: #F3F2F1;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color var(--transition-fast);
+}
+.list-search:focus-within { border-color: var(--outlook-blue); background: #fff; }
+.list-search input { background: transparent; border: none; outline: none; flex: 1; font-size: 13px; }
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.messages::-webkit-scrollbar { width: 8px; }
+.messages::-webkit-scrollbar-thumb { background: #C8C6C4; border-radius: 4px; }
+
+.msg-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: background var(--transition-fast);
+  display: flex;
+  gap: 12px;
+}
+.msg-item:hover { background: var(--hover); }
+.msg-item.active { background: var(--outlook-blue-light); }
+.msg-item.unread { font-weight: 600; }
+.msg-item.unread::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--outlook-blue);
+}
+
+.msg-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; font-weight: 500;
+  flex-shrink: 0;
+}
+.msg-content { flex: 1; min-width: 0; }
+.msg-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.msg-sender { font-size: 13px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg-time { font-size: 12px; color: var(--text-secondary); flex-shrink: 0; }
+.msg-subject { font-size: 13px; color: var(--text-primary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg-preview { font-size: 12px; color: var(--text-secondary); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 400; }
+.msg-icons { display: flex; gap: 8px; margin-top: 4px; color: var(--outlook-blue); font-size: 11px; }
+
+/* Reading Pane */
+.reading-pane {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1;
+}
+.reading-toolbar {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.toolbar-btn {
+  background: transparent; border: 1px solid transparent; padding: 6px 12px;
+  border-radius: 2px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  color: var(--text-primary); transition: all var(--transition-fast);
+}
+.toolbar-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.toolbar-btn:active { background: var(--bg-tab-active); }
+.toolbar-btn i { color: var(--outlook-blue); }
+.toolbar-sep { width: 1px; height: 24px; background: var(--border-dark); margin: 0 4px; }
+
+.reading-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+  -webkit-overflow-scrolling: touch;
+}
+.reading-scroll::-webkit-scrollbar { width: 8px; }
+.reading-scroll::-webkit-scrollbar-thumb { background: #C8C6C4; border-radius: 4px; }
+
+.email-subject { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
+.email-meta { display: flex; gap: 16px; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.email-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 500; }
+.email-info { flex: 1; }
+.email-from { font-size: 13px; font-weight: 500; }
+.email-to { font-size: 12px; color: var(--text-secondary); }
+.email-time { font-size: 12px; color: var(--text-secondary); }
+
+.email-body { font-size: 14px; line-height: 1.6; color: #323130; user-select: text; }
+.email-body p { margin-bottom: 12px; }
+
+/* Compose Modal */
+.compose-modal {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  width: 600px;
+  height: 500px;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  border: 1px solid var(--border-dark);
+  border-radius: 4px 4px 0 0;
+  transform: translateY(100%);
+  transition: transform var(--transition-slow);
+}
+.compose-modal.active { display: flex; transform: translateY(0); }
+.compose-header { background: var(--outlook-blue); color: #fff; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.compose-close { background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px; padding: 4px; }
+.compose-fields { padding: 8px 16px; border-bottom: 1px solid var(--border); }
+.compose-field { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+.compose-field label { font-size: 12px; color: var(--text-secondary); width: 40px; }
+.compose-field input { flex: 1; border: none; outline: none; font-size: 13px; padding: 4px 0; background: transparent; }
+.compose-body { flex: 1; padding: 16px; overflow-y: auto; outline: none; font-size: 13px; line-height: 1.5; }
+.compose-toolbar { padding: 8px 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.compose-send { background: var(--outlook-blue); color: #fff; border: none; padding: 8px 24px; border-radius: 2px; font-size: 13px; cursor: pointer; transition: background var(--transition-fast); }
+.compose-send:hover { background: var(--outlook-blue-dark); }
+
+/* ===== Context Menu ===== */
+.context-menu {
+  position: fixed; display: none; background: #fff; border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 4px 0; min-width: 220px; z-index: 1000;
+  font-size: 12px; opacity: 0; transform: scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.context-menu.active { display: block; opacity: 1; transform: scale(1); }
+.ctx-item { display: flex; align-items: center; gap: 8px; padding: 5px 12px; width: 100%; background: transparent; border: none; cursor: pointer; text-align: left; color: var(--text-primary); font-size: 12px; transition: background var(--transition-fast); }
+.ctx-item i { width: 14px; text-align: center; color: var(--outlook-blue); }
+.ctx-item:hover { background: var(--selected); }
+
+/* ===== Backstage ===== */
+.backstage { position: fixed; inset: 0; background: #fff; z-index: 2000; display: flex; opacity: 0; visibility: hidden; transition: opacity var(--transition-slow), visibility var(--transition-slow); }
+.backstage.active { opacity: 1; visibility: visible; }
+.backstage-nav { width: 240px; background: var(--outlook-blue-dark); color: #fff; display: flex; flex-direction: column; padding: 8px 0; transform: translateX(-100%); transition: transform var(--transition-slow); }
+.backstage.active .backstage-nav { transform: translateX(0); }
+.back-btn { background: transparent; border: none; color: #fff; padding: 10px 24px; text-align: left; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; transition: background var(--transition-fast); }
+.back-btn:hover { background: rgba(255,255,255,0.12); }
+.back-tab { background: transparent; border: none; color: #fff; padding: 10px 24px; text-align: left; font-size: 13px; cursor: pointer; border-left: 3px solid transparent; font-family: inherit; transition: background var(--transition-fast), border-color var(--transition-fast); }
+.back-tab:hover { background: rgba(255,255,255,0.12); }
+.back-tab.active { background: rgba(255,255,255,0.18); border-left-color: #fff; }
+.back-spacer { flex: 1; }
+.backstage-content { flex: 1; padding: 24px 32px; overflow: auto; background: #fff; }
+.back-pane { display: none; opacity: 0; transform: translateY(8px); transition: opacity var(--transition-base), transform var(--transition-base); }
+.back-pane.active { display: block; opacity: 1; transform: translateY(0); }
+.back-pane h2 { font-size: 24px; font-weight: 300; color: var(--text-primary); margin-bottom: 16px; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; max-width: 900px; }
+.info-card { background: #F8F8F8; border: 1px solid var(--border); padding: 16px; cursor: pointer; transition: all var(--transition-base); }
+.info-card:hover { background: #EFF6FB; border-color: var(--outlook-blue); transform: translateY(-1px); }
+.info-card i { font-size: 32px; color: var(--outlook-blue); margin-bottom: 8px; }
+.info-card h3 { font-size: 14px; margin-bottom: 4px; color: var(--text-primary); }
+.info-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+/* ===== Tooltip ===== */
+[data-tooltip] { position: relative; }
+[data-tooltip]:hover::before {
+  content: attr(data-tooltip); position: absolute; top: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%); background: #000; color: #fff; padding: 3px 8px;
+  font-size: 11px; border-radius: 2px; white-space: nowrap; z-index: 5000;
+  pointer-events: none; animation: tooltipFade 0.15s var(--ease-office);
+}
+@keyframes tooltipFade { from { opacity: 0; transform: translateX(-50%) translateY(-2px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+.mobile-back-btn { display: none; }
+
+/* ===================== Mobile Responsive ===================== */
+@media (max-width: 1024px) {
+  .workspace { grid-template-columns: 48px 200px 320px 1fr; }
+  .search-box { width: 140px; }
+  .group { padding: 0 4px; }
+  .win-btn { width: 38px; }
+  .save-status { display: none; }
+}
+
+@media (max-width: 768px) {
+  html, body { font-size: 12px; }
+  .title-bar { height: 36px; padding: 0 0 0 4px; }
+  .qa-btn { width: 32px; height: 32px; font-size: 14px; }
+  .doc-title { font-size: 13px; max-width: 100px; padding: 4px 8px; }
+  .win-btn { width: 36px; height: 36px; font-size: 13px; }
+  .win-btn[data-cmd="minimize"], .win-btn[data-cmd="maximize"] { display: none; }
+  
+  .ribbon-tabs { height: 36px; padding: 0 4px; }
+  .ribbon-tabs .tab { padding: 0 10px; font-size: 13px; }
+  .search-box { display: none; }
+  .user-btn { width: 28px; height: 28px; }
+  .user-avatar { width: 24px; height: 24px; font-size: 12px; }
+  
+  .ribbon-content { height: 80px; padding: 0 4px; }
+  .group { padding: 0 4px; }
+  .group-label { font-size: 10px; padding: 2px 0 1px; }
+  .big-btn { width: 44px; height: 54px; padding-top: 4px; gap: 3px; font-size: 10px; }
+  .big-btn i { font-size: 22px; }
+  .small-btn { font-size: 11px; height: 20px; min-width: 50px; padding: 1px 4px; }
+  
+  /* Mobile Workspace Layout */
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+  .app-bar, .folder-list { display: none; }
+  .message-list {
+    border-right: none;
+    grid-column: 1;
+    transition: transform var(--transition-base);
+  }
+  .reading-pane {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10;
+    transform: translateX(100%);
+    transition: transform var(--transition-base);
+  }
+  .workspace.mobile-view-read .message-list { transform: translateX(-100%); }
+  .workspace.mobile-view-read .reading-pane { transform: translateX(0); }
+  
+  .mobile-back-btn {
+    display: flex;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: 6px 12px;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  
+  .reading-scroll { padding: 16px; }
+  .email-subject { font-size: 18px; }
+  
+  .compose-modal {
+    left: 0; right: 0; bottom: 0; top: 0;
+    width: 100%; height: 100%;
+    border-radius: 0;
+  }
+  
+  .context-menu { min-width: 180px; max-width: 240px; }
+  .ctx-item { padding: 8px 14px; font-size: 13px; }
+  
+  .backstage-nav { width: 200px; }
+  .backstage-content { padding: 16px; }
+  .back-pane h2 { font-size: 20px; }
+  .info-grid { grid-template-columns: 1fr; gap: 12px; }
+  
+  [data-tooltip]:hover::before { display: none; }
+  .small-icon { width: 26px; height: 26px; }
+}
+
+@media (max-width: 480px) {
+  .doc-title { max-width: 80px; font-size: 12px; }
+  .ribbon-tabs .tab { padding: 0 8px; font-size: 12px; }
+  .big-btn { width: 40px; height: 48px; font-size: 9px; }
+  .big-btn i { font-size: 20px; }
+  .group-label { font-size: 9px; }
+  .msg-item { padding: 10px 12px; gap: 8px; }
+  .msg-avatar { width: 28px; height: 28px; font-size: 12px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .small-icon:hover, .small-btn:hover, .big-btn:hover, .info-card:hover, .folder-item:hover, .msg-item:hover {
+    background: transparent; border-color: transparent; transform: none;
+  }
+  .small-icon:active, .small-btn:active, .big-btn:active { background: var(--bg-tab-hover); transform: scale(0.95); }
+  .msg-item:active { background: var(--hover); }
+  [data-tooltip]:hover::before { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Title Bar ===== -->
+<header class="title-bar">
+  <div class="qa-toolbar">
+    <button class="qa-btn" data-cmd="save"><i class="fas fa-save"></i></button>
+    <button class="qa-btn" data-cmd="undo"><i class="fas fa-undo"></i></button>
+    <button class="qa-btn" data-cmd="redo"><i class="fas fa-redo"></i></button>
+  </div>
+  <div class="title-center">
+    <input type="text" class="doc-title" value="Inbox - Guest User" id="docTitle" spellcheck="false">
+    <span class="save-status" id="saveStatus">- Outlook</span>
+  </div>
+  <div class="window-controls">
+    <button class="win-btn" data-cmd="minimize"><i class="far fa-window-minimize"></i></button>
+    <button class="win-btn" data-cmd="maximize"><i class="far fa-window-restore"></i></button>
+    <button class="win-btn close" data-cmd="close"><i class="fas fa-times"></i></button>
+  </div>
+</header>
+
+<!-- ===== Ribbon Tabs ===== -->
+<nav class="ribbon-tabs">
+  <button class="tab file-tab" data-tab="file">File</button>
+  <button class="tab active" data-tab="home">Home</button>
+  <button class="tab" data-tab="view">View</button>
+  <button class="tab" data-tab="help">Help</button>
+  <div class="tab-spacer"></div>
+  <div class="tab-right">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search Mail" id="searchInput">
+    </div>
+    <button class="user-btn">
+      <div class="user-avatar guest"><i class="fas fa-user"></i></div>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== Ribbon Content ===== -->
+<div class="ribbon-content">
+  <!-- HOME -->
+  <div class="ribbon-pane active" data-pane="home">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="newEmail">
+          <i class="fas fa-envelope-open-text"></i>
+          <span>New Email</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="reply"><i class="fas fa-reply"></i>Reply</button>
+          <button class="small-btn" data-cmd="replyAll"><i class="fas fa-reply-all"></i>Reply All</button>
+          <button class="small-btn" data-cmd="forward"><i class="fas fa-share"></i>Forward</button>
+        </div>
+      </div>
+      <div class="group-label">Respond</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="archive"><i class="fas fa-box"></i>Archive</button>
+          <button class="small-btn" data-cmd="delete"><i class="far fa-trash-alt"></i>Delete</button>
+          <button class="small-btn" data-cmd="junk"><i class="fas fa-ban"></i>Junk</button>
+        </div>
+      </div>
+      <div class="group-label">Delete</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="flag"><i class="far fa-flag"></i>Flag</button>
+          <button class="small-btn" data-cmd="markRead"><i class="far fa-envelope-open"></i>Mark Read</button>
+          <button class="small-btn" data-cmd="pin"><i class="fas fa-thumbtack"></i>Pin</button>
+        </div>
+      </div>
+      <div class="group-label">Tags</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="moveTo"><i class="far fa-folder"></i>Move to</button>
+          <button class="small-btn" data-cmd="copyTo"><i class="far fa-copy"></i>Copy to</button>
+        </div>
+      </div>
+      <div class="group-label">Move</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="filter"><i class="fas fa-filter"></i>Filter</button>
+          <button class="small-btn" data-cmd="sort"><i class="fas fa-sort"></i>Sort</button>
+        </div>
+      </div>
+      <div class="group-label">Find</div>
+    </div>
+  </div>
+
+  <!-- VIEW -->
+  <div class="ribbon-pane" data-pane="view">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="compactView"><i class="fas fa-compress"></i>Compact</button>
+          <button class="small-btn" data-cmd="cozyView"><i class="fas fa-expand"></i>Cozy</button>
+        </div>
+      </div>
+      <div class="group-label">Layout</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="readingPaneRight"><i class="fas fa-columns"></i>Right Pane</button>
+          <button class="small-btn" data-cmd="readingPaneBottom"><i class="fas fa-grip-lines"></i>Bottom Pane</button>
+          <button class="small-btn" data-cmd="readingPaneHide"><i class="far fa-eye-slash"></i>Hide Pane</button>
+        </div>
+      </div>
+      <div class="group-label">Reading Pane</div>
+    </div>
+  </div>
+
+  <!-- HELP -->
+  <div class="ribbon-pane" data-pane="help">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="help">
+          <i class="fas fa-question-circle"></i>
+          <span>Help</span>
+        </button>
+      </div>
+      <div class="group-label">Help</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Workspace ===== -->
+<main class="workspace" id="workspace">
+  <!-- App Bar -->
+  <div class="app-bar">
+    <button class="app-btn active" data-cmd="mailView"><i class="far fa-envelope"></i></button>
+    <button class="app-btn" data-cmd="calendarView"><i class="far fa-calendar-alt"></i></button>
+    <button class="app-btn" data-cmd="peopleView"><i class="far fa-address-book"></i></button>
+    <button class="app-btn" data-cmd="tasksView"><i class="far fa-check-square"></i></button>
+  </div>
+
+  <!-- Folder List -->
+  <div class="folder-list">
+    <div class="folder-header">
+      <span>Folders</span>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="folders" id="foldersContainer">
+      <div class="folder-item active" data-folder="inbox">
+        <i class="fas fa-inbox"></i> Inbox <span class="folder-count" id="inboxCount">0</span>
+      </div>
+      <div class="folder-item" data-folder="starred">
+        <i class="fas fa-star"></i> Starred
+      </div>
+      <div class="folder-item" data-folder="sent">
+        <i class="fas fa-paper-plane"></i> Sent Items
+      </div>
+      <div class="folder-item" data-folder="drafts">
+        <i class="fas fa-file-alt"></i> Drafts
+      </div>
+      <div class="folder-item" data-folder="archive">
+        <i class="fas fa-box"></i> Archive
+      </div>
+      <div class="folder-item" data-folder="deleted">
+        <i class="fas fa-trash-alt"></i> Deleted Items
+      </div>
+      <div class="folder-item" data-folder="junk">
+        <i class="fas fa-ban"></i> Junk Email
+      </div>
+    </div>
+  </div>
+
+  <!-- Message List -->
+  <div class="message-list">
+    <div class="list-header">
+      <div class="list-title">Inbox</div>
+      <div class="list-search">
+        <i class="fas fa-search" style="color: #605E5C; font-size: 12px;"></i>
+        <input type="text" placeholder="Search" id="msgSearchInput">
+      </div>
+    </div>
+    <div class="messages" id="messagesContainer">
+      <!-- Messages injected here -->
+    </div>
+  </div>
+
+  <!-- Reading Pane -->
+  <div class="reading-pane" id="readingPane">
+    <div class="reading-toolbar">
+      <button class="mobile-back-btn" id="mobileBackBtn"><i class="fas fa-arrow-left"></i> Back</button>
+      <button class="toolbar-btn" data-cmd="reply"><i class="fas fa-reply"></i> Reply</button>
+      <button class="toolbar-btn" data-cmd="replyAll"><i class="fas fa-reply-all"></i> Reply All</button>
+      <button class="toolbar-btn" data-cmd="forward"><i class="fas fa-share"></i> Forward</button>
+      <div class="toolbar-sep"></div>
+      <button class="toolbar-btn" data-cmd="archive"><i class="fas fa-box"></i> Archive</button>
+      <button class="toolbar-btn" data-cmd="delete"><i class="far fa-trash-alt"></i> Delete</button>
+      <button class="toolbar-btn" data-cmd="flag"><i class="far fa-flag"></i></button>
+    </div>
+    <div class="reading-scroll" id="readingScroll">
+      <!-- Email content injected here -->
+    </div>
+  </div>
+</main>
+
+<!-- ===== Compose Modal ===== -->
+<div class="compose-modal" id="composeModal">
+  <div class="compose-header">
+    <span>New Message</span>
+    <button class="compose-close" id="composeClose"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="compose-fields">
+    <div class="compose-field">
+      <label>To:</label>
+      <input type="text" id="composeTo" placeholder="recipient@example.com">
+    </div>
+    <div class="compose-field">
+      <label>Cc:</label>
+      <input type="text" id="composeCc">
+    </div>
+    <div class="compose-field" style="border-bottom: none;">
+      <label>Subject:</label>
+      <input type="text" id="composeSubject" placeholder="Enter subject">
+    </div>
+  </div>
+  <div class="compose-body" id="composeBody" contenteditable="true">
+    <br><br><br><br>
+    <p style="font-size: 11px; color: #888;">Sent from Outlook</p>
+  </div>
+  <div class="compose-toolbar">
+    <div style="display: flex; gap: 8px;">
+      <button class="toolbar-btn" style="border: 1px solid var(--border-dark);"><i class="fas fa-paperclip"></i></button>
+      <button class="toolbar-btn" style="border: 1px solid var(--border-dark);"><i class="fas fa-image"></i></button>
+      <button class="toolbar-btn" style="border: 1px solid var(--border-dark);"><i class="fas fa-link"></i></button>
+    </div>
+    <button class="compose-send" id="composeSend">Send</button>
+  </div>
+</div>
+
+<!-- ===== Context Menu ===== -->
+<div class="context-menu" id="contextMenu">
+  <button class="ctx-item" data-cmd="reply"><i class="fas fa-reply"></i>Reply</button>
+  <button class="ctx-item" data-cmd="replyAll"><i class="fas fa-reply-all"></i>Reply All</button>
+  <button class="ctx-item" data-cmd="forward"><i class="fas fa-share"></i>Forward</button>
+  <div class="ctx-item" style="height: 1px; background: var(--border); margin: 4px 0;"></div>
+  <button class="ctx-item" data-cmd="archive"><i class="fas fa-box"></i>Archive</button>
+  <button class="ctx-item" data-cmd="delete"><i class="far fa-trash-alt"></i>Delete</button>
+  <button class="ctx-item" data-cmd="markRead"><i class="far fa-envelope-open"></i>Mark as Read</button>
+  <button class="ctx-item" data-cmd="flag"><i class="far fa-flag"></i>Flag</button>
+</div>
+
+<!-- ===== Backstage ===== -->
+<div class="backstage" id="backstage">
+  <nav class="backstage-nav">
+    <button class="back-btn" data-cmd="closeBackstage"><i class="fas fa-arrow-left"></i>Back</button>
+    <button class="back-tab active" data-bt="info">Info</button>
+    <button class="back-tab" data-bt="new">New</button>
+    <button class="back-tab" data-bt="open">Open</button>
+    <button class="back-tab" data-bt="save">Save</button>
+    <button class="back-tab" data-bt="print">Print</button>
+    <button class="back-tab" data-bt="export">Export</button>
+    <button class="back-tab" data-bt="close">Close</button>
+    <div class="back-spacer"></div>
+    <button class="back-tab" data-bt="account">Account</button>
+    <button class="back-tab" data-bt="options">Options</button>
+  </nav>
+  <div class="backstage-content">
+    <div class="back-pane active" data-bp="info">
+      <h2>Info</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Account Information</h3>
+          <p>guest@outlook.com</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-box"></i>
+          <h3>Mailbox Settings</h3>
+          <p>Manage your mailbox size and cleanup.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-rules"></i>
+          <h3>Manage Rules</h3>
+          <p>Create rules to automatically handle messages.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="new">
+      <h2>New</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="newEmail">
+          <i class="far fa-envelope"></i>
+          <h3>New Email</h3>
+          <p>Compose a new message.</p>
+        </div>
+        <div class="info-card">
+          <i class="far fa-calendar-plus"></i>
+          <h3>New Meeting</h3>
+          <p>Schedule a meeting.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="open">
+      <h2>Open</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-folder-open"></i>
+          <h3>Open Outlook Data File</h3>
+          <p>Open a .pst or .ost file.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="save">
+      <h2>Save</h2>
+      <p style="font-size:14px;color:var(--text-secondary);">Emails are automatically saved to Drafts.</p>
+    </div>
+    <div class="back-pane" data-bp="print">
+      <h2>Print</h2>
+      <button style="background:var(--outlook-blue);color:#fff;border:none;padding:8px 24px;font-size:13px;cursor:pointer;border-radius:2px;margin-top:12px;" onclick="document.getElementById('backstage').classList.remove('active')">Print</button>
+    </div>
+    <div class="back-pane" data-bp="export">
+      <h2>Export</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-file-export"></i>
+          <h3>Export to PST</h3>
+          <p>Export your mailbox to a file.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="account">
+      <h2>Account</h2>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+        <div class="user-avatar guest" style="width:80px;height:80px;font-size:32px;background:linear-gradient(135deg, #B0B0B0, #808080);"><i class="fas fa-user"></i></div>
+        <div>
+          <h3 style="font-size:18px;">Guest User</h3>
+          <p style="color:var(--text-secondary);">Sign in to access your emails</p>
+          <button style="margin-top:8px;background:var(--outlook-blue);color:#fff;border:none;padding:6px 16px;font-size:12px;cursor:pointer;border-radius:2px;" onclick="document.getElementById('backstage').classList.remove('active')">Sign In</button>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="options">
+      <h2>Outlook Options</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-cog"></i>
+          <h3>General</h3>
+          <p>Basic options for Outlook.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-envelope"></i>
+          <h3>Mail</h3>
+          <p>Customize how mail is displayed and handled.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== State ===================== */
+let emails = [];
+let selectedEmailId = null;
+let activeFolder = "inbox";
+let searchQuery = "";
+
+/* ===================== Mock Data Generation ===================== */
+const senders = [
+  { name: "GitHub", email: "noreply@github.com", color: "#24292E", initials: "GH" },
+  { name: "Microsoft", email: "noreply@microsoft.com", color: "#0078D4", initials: "MS" },
+  { name: "Sarah Johnson", email: "sarah.j@contoso.com", color: "#5B2C87", initials: "SJ" },
+  { name: "IT Department", email: "it@contoso.com", color: "#C55A11", initials: "IT" },
+  { name: "Amazon", email: "auto-reply@amazon.com", color: "#FF9900", initials: "AZ" },
+  { name: "LinkedIn", email: "messages@linkedin.com", color: "#0A66C2", initials: "LI" },
+  { name: "Netflix", email: "info@netflix.com", color: "#E50914", initials: "NF" },
+  { name: "John Doe", email: "john.doe@example.com", color: "#1F3864", initials: "JD" },
+  { name: "Jane Smith", email: "jane.s@example.com", color: "#2E74B5", initials: "JS" },
+  { name: "Project Team", email: "team@project.com", color: "#375623", initials: "PT" }
+];
+
+const subjects = [
+  "Security alert: New sign-in detected",
+  "Your order has shipped",
+  "Meeting reminder: Project Review tomorrow",
+  "Action required: Update your password",
+  "Weekly Status Report - Week 14",
+  "Re: Proposal for new marketing campaign",
+  "Your subscription is expiring soon",
+  "Welcome to the team!",
+  "System Maintenance Scheduled for Sunday",
+  "Invitation: Quarterly Review Meeting"
+];
+
+const bodies = [
+  "Hi,<br><br>We detected a new sign-in to your account. If this was you, no action is needed. If not, please secure your account immediately.<br><br>Thank you,<br>Security Team",
+  "Hello,<br><br>Your order #12345 has shipped and will arrive on Tuesday. You can track your package using the link below.<br><br>Best regards,<br>Shipping Dept",
+  "Hi Team,<br><br>Just a reminder about our meeting tomorrow at 10 AM in Conference Room B. Please bring your updated reports.<br><br>See you there,<br>Sarah",
+  "Dear User,<br><br>This is a reminder that your password will expire in 3 days. Please update it to avoid losing access to your account.<br><br>IT Support",
+  "Hello,<br><br>Please find attached the weekly status report. Let me know if you have any questions or concerns.<br><br>Regards,<br>John",
+  "Hi,<br><br>The proposal looks great. I think we should move forward with Option A. Let's discuss the timeline in our next meeting.<br><br>Best,<br>Jane",
+  "Dear Customer,<br><br>Your premium subscription is expiring soon. Renew now to continue enjoying uninterrupted service.<br><br>Thank you for your loyalty.",
+  "Welcome to the team! We are thrilled to have you on board. Please review the attached onboarding documents before your first day.<br><br>Cheers,<br>HR",
+  "Please be advised that system maintenance will be performed on Sunday from 2 AM to 4 AM. Services may be temporarily unavailable.<br><br>IT Department",
+  "You are invited to attend the Quarterly Review Meeting. Please RSVP to confirm your attendance.<br><br>Best regards,<br>Management"
+];
+
+function generateMockEmails() {
+  emails = [];
+  const now = new Date();
+  for (let i = 0; i < 15; i++) {
+    const sender = senders[Math.floor(Math.random() * senders.length)];
+    const subject = subjects[Math.floor(Math.random() * subjects.length)];
+    const body = bodies[Math.floor(Math.random() * bodies.length)];
+    const isUnread = Math.random() > 0.4;
+    const isFlagged = Math.random() > 0.8;
+    const timeOffset = Math.floor(Math.random() * 4320); // up to 3 days in minutes
+    const time = new Date(now.getTime() - timeOffset * 60000);
+    
+    emails.push({
+      id: i,
+      senderName: sender.name,
+      senderEmail: sender.email,
+      senderColor: sender.color,
+      senderInitials: sender.initials,
+      subject: subject,
+      body: body,
+      time: time,
+      unread: isUnread,
+      flagged: isFlagged,
+      folder: "inbox"
+    });
+  }
+  // Sort by time descending
+  emails.sort((a, b) => b.time - a.time);
+}
+
+/* ===================== Rendering ===================== */
+function formatTime(date) {
+  const now = new Date();
+  const diff = now - date;
+  const oneDay = 86400000;
+  
+  if (diff < oneDay && now.getDate() === date.getDate()) {
+    return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  } else if (diff < 2 * oneDay) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString([], {month: 'short', day: 'numeric'});
+  }
+}
+
+function renderMessageList() {
+  const container = document.getElementById('messagesContainer');
+  container.innerHTML = '';
+  
+  let filtered = emails.filter(e => e.folder === activeFolder);
+  if (searchQuery) {
+    filtered = filtered.filter(e =>
+      e.senderName.toLowerCase().includes(searchQuery) ||
+      e.subject.toLowerCase().includes(searchQuery) ||
+      e.body.replace(/<[^>]+>/g, '').toLowerCase().includes(searchQuery)
+    );
+  }
+  
+  // Update folder count
+  const inboxUnread = emails.filter(e => e.folder === "inbox" && e.unread).length;
+  document.getElementById('inboxCount').textContent = inboxUnread || '';
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-secondary);">${searchQuery ? 'No results found' : 'No messages'}</div>`;
+    return;
+  }
+
+  filtered.forEach(email => {
+    const item = document.createElement('div');
+    item.className = 'msg-item' + (email.unread ? ' unread' : '') + (email.id === selectedEmailId ? ' active' : '');
+    item.dataset.id = email.id;
+    item.innerHTML = `
+      <div class="msg-avatar" style="background:${email.senderColor};">${email.senderInitials}</div>
+      <div class="msg-content">
+        <div class="msg-row">
+          <div class="msg-sender">${email.senderName}</div>
+          <div class="msg-time">${formatTime(email.time)}</div>
+        </div>
+        <div class="msg-subject">${email.subject}</div>
+        <div class="msg-preview">${email.body.replace(/<[^>]+>/g, '').substring(0, 80)}...</div>
+        ${email.flagged ? '<div class="msg-icons"><i class="fas fa-flag"></i></div>' : ''}
+      </div>
+    `;
+    item.addEventListener('click', () => selectEmail(email.id));
+    container.appendChild(item);
+  });
+}
+
+function selectEmail(id) {
+  selectedEmailId = id;
+  const email = emails.find(e => e.id === id);
+  if (!email) return;
+  
+  // Mark as read
+  email.unread = false;
+  
+  renderMessageList();
+  renderReadingPane(email);
+  
+  // Mobile view switch
+  if (window.innerWidth <= 768) {
+    document.getElementById('workspace').classList.add('mobile-view-read');
+  }
+}
+
+function renderReadingPane(email) {
+  const scroll = document.getElementById('readingScroll');
+  scroll.innerHTML = `
+    <div class="email-subject">${email.subject}</div>
+    <div class="email-meta">
+      <div class="email-avatar" style="background:${email.senderColor};">${email.senderInitials}</div>
+      <div class="email-info">
+        <div class="email-from">${email.senderName} &lt;${email.senderEmail}&gt;</div>
+        <div class="email-to">To: Guest User &lt;guest@outlook.com&gt;</div>
+      </div>
+      <div class="email-time">${email.time.toLocaleString()}</div>
+    </div>
+    <div class="email-body">${email.body}</div>
+  `;
+}
+
+/* ===================== Command Handling ===================== */
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-cmd]');
+  if (!btn) {
+    // Close context menu if clicking outside
+    if (!e.target.closest('.context-menu')) {
+      document.getElementById('contextMenu').classList.remove('active');
+    }
+    return;
+  }
+  
+  const cmd = btn.dataset.cmd;
+  
+  // Close context menu after action
+  document.getElementById('contextMenu').classList.remove('active');
+  
+  switch(cmd) {
+    case 'newEmail': openCompose(); break;
+    case 'reply': case 'replyAll': case 'forward': openCompose(cmd); break;
+    case 'delete': deleteEmail(); break;
+    case 'archive': archiveEmail(); break;
+    case 'flag': toggleFlag(); break;
+    case 'markRead': markRead(); break;
+    case 'closeBackstage': document.getElementById('backstage').classList.remove('active'); break;
+  }
+});
+
+function openCompose(type) {
+  const modal = document.getElementById('composeModal');
+  const composeTo = document.getElementById('composeTo');
+  const composeSubject = document.getElementById('composeSubject');
+  const composeBody = document.getElementById('composeBody');
+  
+  composeTo.value = '';
+  composeSubject.value = '';
+  composeBody.innerHTML = "<br><br><br><br><p style='font-size: 11px; color: #888;'>Sent from Outlook</p>";
+  
+  if (type && selectedEmailId !== null) {
+    const email = emails.find(e => e.id === selectedEmailId);
+    if (email) {
+      if (type === 'reply' || type === 'replyAll') {
+        composeTo.value = email.senderEmail;
+        composeSubject.value = 'RE: ' + email.subject;
+        composeBody.innerHTML = `<br><br><p>-----Original Message-----</p><p>From: ${email.senderName} &lt;${email.senderEmail}&gt;</p><p>Subject: ${email.subject}</p><br>${email.body}` + composeBody.innerHTML;
+      } else if (type === 'forward') {
+        composeSubject.value = 'FW: ' + email.subject;
+        composeBody.innerHTML = `<br><br><p>-----Forwarded Message-----</p><p>From: ${email.senderName} &lt;${email.senderEmail}&gt;</p><p>Subject: ${email.subject}</p><br>${email.body}` + composeBody.innerHTML;
+      }
+    }
+  }
+  modal.classList.add('active');
+}
+
+document.getElementById('composeClose').addEventListener('click', () => {
+  document.getElementById('composeModal').classList.remove('active');
+});
+
+document.getElementById('composeSend').addEventListener('click', () => {
+  const to = document.getElementById('composeTo').value;
+  const subject = document.getElementById('composeSubject').value || '(No Subject)';
+  const body = document.getElementById('composeBody').innerHTML;
+  
+  const newEmail = {
+    id: Date.now(),
+    senderName: "Guest User",
+    senderEmail: "guest@outlook.com",
+    senderColor: "#808080",
+    senderInitials: "GU",
+    subject: subject,
+    body: body,
+    time: new Date(),
+    unread: false,
+    flagged: false,
+    folder: "sent"
+  };
+  emails.unshift(newEmail);
+  document.getElementById('composeModal').classList.remove('active');
+  if (activeFolder === "sent") {
+    renderMessageList();
+  }
+});
+
+function deleteEmail() {
+  if (selectedEmailId === null) return;
+  const email = emails.find(e => e.id === selectedEmailId);
+  if (email) {
+    email.folder = "deleted";
+    selectedEmailId = null;
+    renderMessageList();
+    document.getElementById('readingScroll').innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Select an email to read</div>';
+  }
+}
+
+function archiveEmail() {
+  if (selectedEmailId === null) return;
+  const email = emails.find(e => e.id === selectedEmailId);
+  if (email) {
+    email.folder = "archive";
+    selectedEmailId = null;
+    renderMessageList();
+    document.getElementById('readingScroll').innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Select an email to read</div>';
+  }
+}
+
+function toggleFlag() {
+  if (selectedEmailId === null) return;
+  const email = emails.find(e => e.id === selectedEmailId);
+  if (email) {
+    email.flagged = !email.flagged;
+    renderMessageList();
+  }
+}
+
+function markRead() {
+  if (selectedEmailId === null) return;
+  const email = emails.find(e => e.id === selectedEmailId);
+  if (email) {
+    email.unread = !email.unread;
+    renderMessageList();
+  }
+}
+
+/* ===================== Search ===================== */
+document.getElementById('msgSearchInput').addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase();
+  renderMessageList();
+});
+
+/* ===================== Folders ===================== */
+document.querySelectorAll('.folder-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.folder-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    activeFolder = item.dataset.folder;
+    selectedEmailId = null;
+    searchQuery = ""; // Clear search on folder change
+    document.getElementById('msgSearchInput').value = "";
+    renderMessageList();
+    document.getElementById('readingScroll').innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Select an email to read</div>';
+  });
+});
+
+/* ===================== Mobile Back Button ===================== */
+document.getElementById('mobileBackBtn').addEventListener('click', () => {
+  document.getElementById('workspace').classList.remove('mobile-view-read');
+});
+
+/* ===================== Context Menu (Right Click & Long Press) ===================== */
+const contextMenu = document.getElementById('contextMenu');
+const messagesContainer = document.getElementById('messagesContainer');
+
+function showContextMenu(x, y, id) {
+  if (id !== null) selectEmail(id);
+  // Adjust position to stay on screen
+  const menuWidth = 220;
+  const menuHeight = 240;
+  if (x + menuWidth > window.innerWidth) x = window.innerWidth - menuWidth - 8;
+  if (y + menuHeight > window.innerHeight) y = window.innerHeight - menuHeight - 8;
+  contextMenu.style.left = x + 'px';
+  contextMenu.style.top = y + 'px';
+  contextMenu.classList.add('active');
+}
+
+messagesContainer.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  const item = e.target.closest('.msg-item');
+  if (item) {
+    showContextMenu(e.clientX, e.clientY, parseInt(item.dataset.id));
+  }
+});
+
+// Long press for mobile
+let touchTimer;
+messagesContainer.addEventListener('touchstart', (e) => {
+  const item = e.target.closest('.msg-item');
+  if (!item) return;
+  touchTimer = setTimeout(() => {
+    const touch = e.touches[0];
+    showContextMenu(touch.clientX, touch.clientY, parseInt(item.dataset.id));
+  }, 500);
+});
+messagesContainer.addEventListener('touchend', () => clearTimeout(touchTimer));
+messagesContainer.addEventListener('touchmove', () => clearTimeout(touchTimer));
+
+/* ===================== Ribbon Tabs ===================== */
+document.querySelectorAll('.ribbon-tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const tabName = tab.dataset.tab;
+    if (tabName === 'file') {
+      document.getElementById('backstage').classList.add('active');
+      return;
+    }
+    document.querySelectorAll('.ribbon-tabs .tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.ribbon-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.ribbon-pane[data-pane="${tabName}"]`);
+    targetPane.classList.add('active');
+    void targetPane.offsetWidth; // Force reflow for transition
+    targetPane.style.opacity = '1';
+  });
+});
+
+document.querySelectorAll('.back-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.back-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.back-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.back-pane[data-bp="${tab.dataset.bt}"]`);
+    targetPane.classList.add('active');
+    void targetPane.offsetWidth; // Force reflow
+    targetPane.style.opacity = '1';
+  });
+});
+
+/* ===================== Init ===================== */
+generateMockEmails();
+renderMessageList();
+document.getElementById('readingScroll').innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Select an email to read</div>';
+</script>
+</body>
+</html>
