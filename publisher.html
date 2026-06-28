@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Publication1 - Publisher</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
+:root {
+  --pub-green: #077467; --pub-green-dark: #055A50; --pub-green-light: #E0F0ED;
+  --w10-bg: #F3F3F3; --w10-border: #E1E1E1; --w10-border-dark: #C8C6C4;
+  --text-primary: #201F1E; --text-secondary: #605E5C;
+  --ease-fluent: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --transition-fast: 0.1s var(--ease-fluent); --transition-base: 0.15s var(--ease-fluent);
+}
+html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; font-size: 13px; background: var(--w10-bg); color: var(--text-primary); user-select: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: transparent; color: inherit; }
+input, textarea { font-family: inherit; outline: none; border: none; background: transparent; }
+
+.title-bar { height: 32px; background: #fff; border-bottom: 1px solid var(--w10-border); display: flex; align-items: center; padding: 0 0 0 12px; }
+.title-bar-icon { font-size: 14px; margin-right: 8px; color: var(--pub-green); }
+.title-bar-text { flex: 1; font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+.user-avatar { width: 24px; height: 24px; background: linear-gradient(135deg, #B0B0B0, #808080); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; margin-right: 12px; }
+.win-btn { width: 46px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-primary); transition: background var(--transition-fast); }
+.win-btn:hover { background: #EDEBE9; }
+.win-btn.close:hover { background: #E81123; color: #fff; }
+
+.ribbon-tabs { display: flex; background: #fff; border-bottom: 1px solid var(--w10-border); padding: 0 12px; height: 34px; overflow-x: auto; scrollbar-width: none; }
+.ribbon-tabs::-webkit-scrollbar { display: none; }
+.tab { background: transparent; padding: 0 12px; font-size: 13px; color: var(--text-primary); cursor: pointer; border-bottom: 2px solid transparent; transition: all var(--transition-fast); white-space: nowrap; flex-shrink: 0; height: 34px; display: flex; align-items: center; }
+.tab:hover { background: #F3F2F1; }
+.tab.active { color: var(--pub-green); border-bottom-color: var(--pub-green); font-weight: 600; }
+.tab.file-tab { background: var(--pub-green); color: #fff; border-radius: 2px; margin-right: 8px; padding: 0 16px; height: 26px; align-self: center; }
+.tab.file-tab:hover { background: var(--pub-green-dark); }
+
+.ribbon-content { background: #FAFAFA; border-bottom: 1px solid var(--w10-border); padding: 8px 12px; display: flex; height: 88px; overflow-x: auto; gap: 12px; }
+.group { display: flex; flex-direction: column; border-right: 1px solid var(--w10-border); padding-right: 12px; flex-shrink: 0; }
+.group:last-child { border-right: none; padding-right: 0; }
+.group-content { flex: 1; display: flex; align-items: flex-start; gap: 4px; }
+.group-label { text-align: center; font-size: 11px; color: var(--text-secondary); padding-top: 4px; }
+
+.big-btn { background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 4px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; width: 60px; height: 64px; color: var(--text-primary); transition: all var(--transition-fast); }
+.big-btn i { font-size: 24px; color: var(--pub-green); }
+.big-btn:hover { background: #EDEBE9; border-color: var(--w10-border); }
+
+.publisher-layout { flex: 1; display: flex; overflow: hidden; }
+.publisher-page-pane { width: 180px; background: #F3F2F1; border-right: 1px solid var(--w10-border); padding: 16px 8px; overflow-y: auto; transition: margin-left var(--transition-base); }
+.publisher-page-pane.hidden { margin-left: -180px; }
+.publisher-page-header { font-size: 12px; font-weight: 600; color: var(--text-secondary); padding: 0 8px 12px; text-transform: uppercase; }
+.publisher-page-thumb { width: 100%; aspect-ratio: 8.5/11; background: #fff; margin-bottom: 12px; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer; transition: border-color var(--transition-fast); }
+.publisher-page-thumb.active { border-color: var(--pub-green); }
+
+.publisher-canvas-area { flex: 1; background: #4A4A4A; overflow: auto; display: flex; justify-content: center; align-items: flex-start; padding: 32px; }
+.publisher-page { width: 8.5in; max-width: 816px; height: 11in; max-height: 1056px; background: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.publisher-text-box { position: absolute; border: 1px dashed var(--pub-green); padding: 8px; font-size: 14px; color: #000; outline: none; cursor: move; user-select: text; }
+.publisher-text-box:focus { border: 1px solid var(--pub-green); border-style: solid; box-shadow: 0 0 0 1px var(--pub-green); }
+
+.status-bar { height: 24px; background: var(--pub-green); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; font-size: 11px; flex-shrink: 0; }
+.status-item { padding: 0 8px; display: flex; align-items: center; gap: 8px; height: 100%; cursor: pointer; transition: background var(--transition-fast); }
+.status-item:hover { background: rgba(255,255,255,0.1); }
+
+.mobile-menu-btn { display: none; background: transparent; font-size: 16px; cursor: pointer; padding: 0 12px; color: var(--text-primary); }
+
+@media (max-width: 768px) {
+  .publisher-page-pane { position: absolute; top: 0; left: 0; bottom: 0; z-index: 20; width: 200px; transform: translateX(-100%); transition: transform var(--transition-base); }
+  .publisher-page-pane.hidden { transform: translateX(-100%); margin-left: 0; }
+  .publisher-page-pane.mobile-open { transform: translateX(0); }
+  .publisher-canvas-area { padding: 16px; }
+  .publisher-page { width: 100%; max-width: 100%; height: auto; min-height: 100%; box-shadow: none; }
+  .status-item:not(:first-child) { display: none; }
+  .mobile-menu-btn { display: flex; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<div style="height: 100vh; display: flex; flex-direction: column;">
+  <div class="title-bar">
+    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+    <i class="title-bar-icon fas fa-newspaper"></i>
+    <div class="title-bar-text">Publication1 - Publisher</div>
+    <div class="user-avatar"><i class="fas fa-user"></i></div>
+    <button class="win-btn"><i class="far fa-window-minimize"></i></button>
+    <button class="win-btn"><i class="far fa-window-restore"></i></button>
+    <button class="win-btn close"><i class="fas fa-times"></i></button>
+  </div>
+
+  <nav class="ribbon-tabs">
+    <button class="tab file-tab">File</button>
+    <button class="tab active" data-tab="home">Home</button>
+    <button class="tab" data-tab="insert">Insert</button>
+    <button class="tab" data-tab="design">Page Design</button>
+    <button class="tab" data-tab="mailings">Mailings</button>
+    <button class="tab" data-tab="review">Review</button>
+    <button class="tab" data-tab="view">View</button>
+  </nav>
+
+  <div class="ribbon-content">
+    <div class="ribbon-pane active" data-pane="home">
+      <div class="group">
+        <div class="group-content">
+          <button class="big-btn"><i class="fas fa-vector-square"></i><span>Draw Text Box</span></button>
+          <button class="big-btn"><i class="fas fa-image"></i><span>Pictures</span></button>
+          <button class="big-btn"><i class="fas fa-shapes"></i><span>Shapes</span></button>
+        </div>
+        <div class="group-label">Objects</div>
+      </div>
+      <div class="group">
+        <div class="group-content">
+          <button class="big-btn"><i class="fas fa-fill-drip"></i><span>Background</span></button>
+          <button class="big-btn"><i class="fas fa-palette"></i><span>Color</span></button>
+          <button class="big-btn"><i class="fas fa-font"></i><span>Fonts</span></button>
+        </div>
+        <div class="group-label">Page Design</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="publisher-layout">
+    <aside class="publisher-page-pane" id="pagePane">
+      <div class="publisher-page-header">Page Navigation</div>
+      <div class="publisher-page-thumb active"></div>
+      <div class="publisher-page-thumb"></div>
+    </aside>
+
+    <div class="publisher-canvas-area">
+      <div class="publisher-page" id="page">
+        <div class="publisher-text-box" contenteditable="true" style="top: 100px; left: 100px; width: 400px; font-size: 36pt; font-weight: bold; color: var(--pub-green);">Newsletter Title</div>
+        <div class="publisher-text-box" contenteditable="true" style="top: 250px; left: 100px; width: 300px; font-size: 12pt; line-height: 1.5;">Click here to enter your main story. You can drag this text box around to position it anywhere on the page.</div>
+        <div class="publisher-text-box" contenteditable="true" style="top: 250px; left: 450px; width: 250px; font-size: 12pt; line-height: 1.5;">Secondary story or sidebar content goes here. Publisher allows for free-form layout.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div style="display:flex; align-items:center; height:100%;">
+      <span class="status-item">Page 1 of 2</span>
+    </div>
+    <div style="display:flex; align-items:center; height:100%;">
+      <span class="status-item">100%</span>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.publisher-text-box').forEach(box => {
+  let isDragging = false, startX, startY, initialX, initialY;
+  box.addEventListener('mousedown', (e) => {
+    if (e.target === box) {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      initialX = box.offsetLeft;
+      initialY = box.offsetTop;
+      box.style.cursor = 'grabbing';
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      box.style.left = (initialX + e.clientX - startX) + 'px';
+      box.style.top = (initialY + e.clientY - startY) + 'px';
+    }
+  });
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      box.style.cursor = 'move';
+    }
+  });
+});
+
+document.querySelectorAll('.publisher-page-thumb').forEach(thumb => {
+  thumb.addEventListener('click', () => {
+    document.querySelectorAll('.publisher-page-thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  });
+});
+
+document.getElementById('menuBtn').addEventListener('click', () => {
+  document.getElementById('pagePane').classList.toggle('mobile-open');
+});
+</script>
+</body>
+</html>
