@@ -1,0 +1,3184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Document1 - Word</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+:root {
+  --office-blue: #2B579A;
+  --office-blue-dark: #1F3864;
+  --office-blue-darker: #16365F;
+  --office-blue-light: #CCE0F5;
+  --office-green: #217346;
+  --bg-ribbon: #F3F2F1;
+  --bg-tab-hover: #EDEBE9;
+  --bg-tab-active: #E1DFDD;
+  --border: #E1DFDD;
+  --border-dark: #C8C6C4;
+  --text-primary: #323130;
+  --text-secondary: #605E5C;
+  --hover: #F5F5F5;
+  --selected: #CCE0F5;
+  --hover-btn: #E6F0FA;
+  --ease-office: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --transition-fast: 0.1s var(--ease-office);
+  --transition-base: 0.15s var(--ease-office);
+  --transition-slow: 0.25s var(--ease-office);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: #fff;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-touch-callout: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+input { font-family: inherit; }
+
+/* ===== Title Bar ===== */
+.title-bar {
+  height: 32px;
+  background: var(--office-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 8px;
+  font-size: 12px;
+}
+
+.qa-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.qa-btn {
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  border-radius: 2px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.qa-btn:hover { background: rgba(255,255,255,0.15); }
+.qa-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
+
+.title-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  pointer-events: auto;
+  min-width: 0;
+}
+.doc-title {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  outline: none;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-family: inherit;
+  min-width: 60px;
+  max-width: 200px;
+  transition: background var(--transition-fast);
+}
+.doc-title:hover { background: rgba(255,255,255,0.12); }
+.doc-title:focus { background: rgba(255,255,255,0.2); }
+.save-status { opacity: 0.85; font-size: 12px; }
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.win-btn, .skype-btn {
+  width: 46px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+.win-btn:hover { background: rgba(255,255,255,0.15); }
+.win-btn:active { background: rgba(255,255,255,0.3); }
+.win-btn.close:hover { background: #E81123; }
+.skype-btn { width: 32px; margin-right: 12px; }
+
+/* ===== Ribbon Tabs ===== */
+.ribbon-tabs {
+  height: 34px;
+  background: var(--office-blue);
+  display: flex;
+  align-items: stretch;
+  padding: 0 8px;
+  position: relative;
+  z-index: 10;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ribbon-tabs::-webkit-scrollbar { display: none; }
+
+.ribbon-tabs .tab {
+  background: transparent;
+  border: none;
+  padding: 0 12px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.92);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ribbon-tabs .tab:hover { background: rgba(255,255,255,0.12); }
+.ribbon-tabs .tab:active { background: rgba(255,255,255,0.2); }
+.ribbon-tabs .tab.active {
+  background: var(--bg-ribbon);
+  color: var(--text-primary);
+  font-weight: 400;
+}
+.ribbon-tabs .file-tab {
+  background: var(--office-blue-dark);
+  color: #fff;
+  margin-right: 4px;
+  transition: background var(--transition-fast);
+}
+.ribbon-tabs .file-tab:hover { background: var(--office-blue-darker); }
+.ribbon-tabs .file-tab.active { background: var(--bg-ribbon); color: var(--text-primary); }
+
+.tab-spacer { flex: 1; min-width: 8px; }
+
+.tab-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.search-box {
+  background: rgba(255,255,255,0.18);
+  border: none;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 2px;
+  color: #fff;
+  font-size: 12px;
+  width: 220px;
+  transition: background var(--transition-fast);
+}
+.search-box:hover { background: rgba(255,255,255,0.25); }
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 12px;
+  width: 100%;
+  margin-left: 6px;
+}
+.search-box input::placeholder { color: rgba(255,255,255,0.7); }
+
+/* Guest user avatar */
+.user-btn {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-radius: 2px;
+}
+.user-btn:hover { background: rgba(255,255,255,0.15); }
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  background: #B8B8B8;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.user-avatar.guest {
+  background: #9A9A9A;
+  background: linear-gradient(135deg, #B0B0B0, #808080);
+}
+
+/* ===== Ribbon Content ===== */
+.ribbon-content {
+  background: var(--bg-ribbon);
+  height: 118px;
+  display: flex;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.ribbon-content::-webkit-scrollbar { height: 4px; }
+.ribbon-content::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+.ribbon-content::-webkit-scrollbar-track { background: transparent; }
+
+.ribbon-pane {
+  display: none;
+  align-items: stretch;
+  width: 100%;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.ribbon-pane.active {
+  display: flex;
+  opacity: 1;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+  border-right: 1px solid var(--border);
+  min-width: 0;
+  flex-shrink: 0;
+}
+.group:last-child { border-right: none; }
+.group-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 4px;
+  gap: 4px;
+}
+.group-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 3px 0 2px;
+}
+
+.big-btn {
+  width: 56px;
+  height: 86px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-radius: 2px;
+  text-align: center;
+  line-height: 1.2;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.big-btn i { font-size: 28px; color: var(--office-blue); }
+.big-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.big-btn:active { background: var(--bg-tab-active); transform: scale(0.97); }
+
+.small-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.small-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+  height: 22px;
+  min-width: 60px;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.small-btn i { width: 14px; text-align: center; }
+.small-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-btn:active { background: var(--bg-tab-active); }
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 22px);
+  gap: 1px;
+}
+.icon-grid.two-col { grid-template-columns: repeat(2, 22px); }
+
+.small-icon {
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-radius: 2px;
+  position: relative;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.small-icon:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.small-icon:active { transform: scale(0.92); }
+.small-icon.active { background: var(--selected); border-color: var(--border-dark); }
+.small-icon.has-color { flex-direction: column; padding: 1px 0 0; gap: 1px; }
+.small-icon.has-color i { font-size: 11px; }
+.color-bar {
+  width: 14px;
+  height: 3px;
+  background: #C00000;
+  border-radius: 1px;
+}
+.color-bar.highlight { background: #FFFF00; }
+
+.font-group {
+  flex-direction: column;
+  gap: 2px;
+}
+.font-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.font-select, .size-select {
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  height: 22px;
+  font-size: 12px;
+  padding: 0 4px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: border-color var(--transition-fast);
+}
+.font-select { width: 120px; border-right: none; }
+.size-select { width: 50px; border-right: none; }
+.font-select:hover, .size-select:hover { border-color: var(--office-blue); }
+.font-tools, .font-styles, .para-controls, .para-tools, .align-tools, .indent-tools {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+.font-styles { margin-top: 2px; }
+.para-controls { flex-direction: column; align-items: stretch; gap: 2px; }
+.para-tools { margin-top: 2px; }
+.separator {
+  width: 1px;
+  height: 16px;
+  background: var(--border-dark);
+  margin: 0 3px;
+}
+
+.styles-group { min-width: 200px; }
+.styles-list {
+  display: flex;
+  height: 86px;
+  gap: 1px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.styles-list::-webkit-scrollbar { height: 4px; }
+.styles-list::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+.style-item {
+  width: 64px;
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 6px 4px;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 2px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+}
+.style-item:hover { border-color: var(--office-blue); background: var(--hover-btn); }
+.style-item:active { transform: scale(0.95); }
+.style-item.heading1 { font-size: 14px; font-weight: 700; color: #1F3864; }
+.style-item.heading2 { font-size: 13px; font-weight: 700; color: #2E74B5; }
+.style-item.title { font-size: 14px; font-weight: 600; color: #1F3864; }
+.style-item.subtitle { font-size: 12px; font-style: italic; color: #5B9BD5; }
+.style-item.more { font-size: 11px; color: var(--text-secondary); }
+
+.small-btns-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 4px;
+}
+
+/* ===== Ruler ===== */
+.ruler-bar {
+  height: 20px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: relative;
+  transition: height var(--transition-base), opacity var(--transition-base);
+  overflow: hidden;
+}
+.ruler-bar.hidden {
+  height: 0;
+  opacity: 0;
+  border-bottom: none;
+}
+.ruler {
+  flex: 1;
+  height: 18px;
+  background: #fff;
+  position: relative;
+  border-left: 1px solid var(--border-dark);
+  border-right: 1px solid var(--border-dark);
+  overflow: hidden;
+}
+.ruler-marks {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(to right, var(--text-secondary) 1px, transparent 1px);
+  background-size: 50px 100%;
+  background-position: 0 0;
+  opacity: 0.6;
+}
+.ruler-numbers {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  font-size: 9px;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+.ruler-numbers span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+.ruler-indent-marker {
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--office-blue);
+  cursor: ew-resize;
+}
+
+/* ===== Document Area ===== */
+.document-area {
+  flex: 1;
+  background: #F3F2F1;
+  overflow: auto;
+  padding: 20px 0 40px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+.document-area::-webkit-scrollbar { width: 14px; height: 14px; }
+.document-area::-webkit-scrollbar-thumb { background: #C8C6C4; border: 3px solid #F3F2F1; border-radius: 7px; }
+.document-area::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 40px;
+  transform-origin: top center;
+  transition: transform var(--transition-slow);
+}
+
+.page {
+  width: 8.5in;
+  max-width: 816px;
+  min-height: 11in;
+  background: #fff;
+  padding: 1in 1in 1in 1in;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+  font-family: Calibri, 'Segoe UI', sans-serif;
+  font-size: 11pt;
+  line-height: 1.5;
+  color: #000;
+  outline: none;
+  cursor: text;
+  user-select: text;
+  overflow-wrap: break-word;
+}
+.page h1 { font-size: 24pt; font-weight: bold; color: #1F3864; margin: 8pt 0 4pt; }
+.page h2 { font-size: 18pt; font-weight: bold; color: #2E74B5; margin: 6pt 0 3pt; }
+.page h3 { font-size: 14pt; font-weight: bold; color: #1F4E79; margin: 4pt 0 2pt; }
+.page p { margin: 0 0 8pt; }
+.page ul, .page ol { margin: 0 0 8pt 24pt; }
+.page img { max-width: 100%; height: auto; }
+.page table { border-collapse: collapse; width: 100%; margin: 8pt 0; }
+.page table td, .page table th { border: 1px solid #888; padding: 6px 8px; }
+.page:focus { outline: none; }
+.page ::selection { background: rgba(43,87,154,0.25); }
+
+/* ===== Status Bar ===== */
+.status-bar {
+  height: 22px;
+  background: var(--office-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 0 12px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.status-left, .status-right { display: flex; align-items: center; gap: 4px; height: 100%; }
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  height: 100%;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+}
+.status-item:hover { background: rgba(255,255,255,0.15); }
+.status-sep { opacity: 0.4; padding: 0 4px; }
+.view-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 0 8px;
+  height: 100%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+}
+.view-btn:hover { background: rgba(255,255,255,0.15); }
+.view-btn.active { background: rgba(255,255,255,0.22); }
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 0 4px 0 8px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+}
+.zoom-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-size: 11px;
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+.zoom-btn:hover { background: rgba(255,255,255,0.15); }
+.zoom-btn:active { background: rgba(255,255,255,0.3); }
+.zoom-slider {
+  width: 100px;
+  height: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.zoom-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 2px;
+}
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 14px;
+  background: #fff;
+  border: 1px solid var(--office-blue-dark);
+  border-radius: 1px;
+  margin-top: -5px;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+.zoom-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+.zoom-slider::-moz-range-track { height: 3px; background: rgba(255,255,255,0.5); }
+.zoom-slider::-moz-range-thumb { width: 10px; height: 14px; background: #fff; border: 1px solid var(--office-blue-dark); border-radius: 1px; }
+.zoom-level {
+  min-width: 40px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ===== Context Menu ===== */
+.context-menu {
+  position: fixed;
+  display: none;
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 4px 0;
+  min-width: 220px;
+  z-index: 1000;
+  font-size: 12px;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.context-menu.active {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+.ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-primary);
+  font-size: 12px;
+  transition: background var(--transition-fast);
+}
+.ctx-item i { width: 14px; text-align: center; color: var(--office-blue); }
+.ctx-item:hover { background: var(--selected); }
+.ctx-item:disabled { color: var(--text-secondary); cursor: default; }
+.ctx-item:disabled:hover { background: transparent; }
+.ctx-item .shortcut { margin-left: auto; opacity: 0.6; font-size: 11px; }
+.ctx-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* ===== Find Bar ===== */
+.find-bar {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 8px;
+  display: none;
+  gap: 4px;
+  align-items: center;
+  z-index: 900;
+  border-radius: 2px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+.find-bar.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+.find-bar input {
+  border: 1px solid var(--border-dark);
+  padding: 4px 8px;
+  font-size: 12px;
+  width: 180px;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+.find-bar input:focus { border-color: var(--office-blue); }
+.find-result { font-size: 11px; color: var(--text-secondary); padding: 0 4px; min-width: 50px; }
+.find-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border-radius: 2px;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.find-btn:hover { background: var(--bg-tab-hover); border-color: var(--border-dark); }
+.find-btn:active { background: var(--bg-tab-active); }
+
+mark.find-highlight {
+  background: #FFEB3B;
+  color: inherit;
+}
+mark.find-current {
+  background: #FF9800;
+  color: #fff;
+}
+
+/* ===== Backstage ===== */
+.backstage {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 2000;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-slow), visibility var(--transition-slow);
+}
+.backstage.active {
+  opacity: 1;
+  visibility: visible;
+}
+.backstage-nav {
+  width: 240px;
+  background: var(--office-blue-dark);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  transform: translateX(-100%);
+  transition: transform var(--transition-slow);
+}
+.backstage.active .backstage-nav { transform: translateX(0); }
+.back-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  transition: background var(--transition-fast);
+}
+.back-btn:hover { background: rgba(255,255,255,0.12); }
+.back-btn:active { background: rgba(255,255,255,0.2); }
+.back-tab {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  font-family: inherit;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.back-tab:hover { background: rgba(255,255,255,0.12); }
+.back-tab:active { background: rgba(255,255,255,0.2); }
+.back-tab.active { background: rgba(255,255,255,0.18); border-left-color: #fff; }
+.back-spacer { flex: 1; }
+
+.backstage-content {
+  flex: 1;
+  padding: 24px 32px;
+  overflow: auto;
+  background: #fff;
+  -webkit-overflow-scrolling: touch;
+}
+.back-pane {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+.back-pane.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+.back-pane h2 { font-size: 24px; font-weight: 300; color: var(--text-primary); margin-bottom: 16px; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; max-width: 900px; }
+.info-card {
+  background: #F8F8F8;
+  border: 1px solid var(--border);
+  padding: 16px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+.info-card:hover { background: #EFF6FC; border-color: var(--office-blue); transform: translateY(-1px); }
+.info-card:active { transform: translateY(0); }
+.info-card i { font-size: 32px; color: var(--office-blue); margin-bottom: 8px; }
+.info-card h3 { font-size: 14px; margin-bottom: 4px; color: var(--text-primary); }
+.info-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+.recent-docs { display: flex; flex-direction: column; gap: 4px; max-width: 700px; }
+.recent-doc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+.recent-doc:hover { background: #F3F2F1; }
+.recent-doc:active { background: var(--bg-tab-active); }
+.recent-doc i { font-size: 24px; color: var(--office-blue); }
+.recent-doc-info { flex: 1; min-width: 0; }
+.recent-doc-info strong { font-weight: 500; font-size: 13px; display: block; }
+.recent-doc-info span { font-size: 11px; color: var(--text-secondary); }
+
+.new-template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; max-width: 900px; }
+.template-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+.template-card:hover { border-color: var(--office-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.1); transform: translateY(-1px); }
+.template-card:active { transform: translateY(0); }
+.template-thumb {
+  height: 140px;
+  background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: var(--office-blue);
+}
+.template-card.blank .template-thumb { background: #fff; }
+.template-card.blank .template-thumb::after { content: ""; width: 50%; height: 70%; border: 2px solid var(--text-secondary); }
+.template-name { padding: 8px 12px; font-size: 12px; text-align: center; }
+
+/* ===== Color Popup ===== */
+.color-popup {
+  position: fixed;
+  display: none;
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 8px;
+  z-index: 1500;
+  width: 200px;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.color-popup.active {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  margin-bottom: 8px;
+}
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  position: relative;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+.color-swatch:hover { transform: scale(1.15); border-color: var(--office-blue); z-index: 2; }
+.color-swatch:active { transform: scale(1.05); }
+.color-swatch.transparent {
+  background: #fff;
+  position: relative;
+}
+.color-swatch.transparent::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #C00000;
+  transform: rotate(-45deg);
+}
+.color-popup button.more-colors {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  transition: background var(--transition-fast);
+}
+.color-popup button.more-colors:hover { background: var(--hover); }
+
+/* ===== Insert Table Grid ===== */
+.table-grid-popup {
+  position: fixed;
+  display: none;
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 8px;
+  z-index: 1500;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.table-grid-popup.active {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+.table-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 16px);
+  grid-auto-rows: 16px;
+  gap: 1px;
+}
+.table-cell {
+  background: #fff;
+  border: 1px solid var(--border-dark);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.table-cell.hover { background: var(--selected); border-color: var(--office-blue); }
+.table-size-label {
+  text-align: center;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ===== Toast ===== */
+.toast-container {
+  position: fixed;
+  bottom: 40px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 3000;
+  pointer-events: none;
+}
+.toast {
+  background: var(--office-blue-dark);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 2px;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 320px;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+  pointer-events: auto;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+.toast.hide {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.toast i { color: #5BC0DE; }
+
+/* ===== Mini Toolbar ===== */
+.mini-toolbar {
+  position: fixed;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  padding: 4px;
+  display: none;
+  gap: 1px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  z-index: 800;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.mini-toolbar.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.mini-toolbar .small-icon { width: 26px; height: 26px; font-size: 13px; }
+.mini-toolbar .separator { margin: 0 2px; }
+
+/* ===== Tooltip ===== */
+[data-tooltip] { position: relative; }
+[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 2px;
+  white-space: nowrap;
+  z-index: 5000;
+  pointer-events: none;
+  animation: tooltipFade 0.15s var(--ease-office);
+}
+@keyframes tooltipFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(-2px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Dropdown arrow indicator */
+.has-dropdown::after {
+  content: "";
+  display: inline-block;
+  width: 0; height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 3px solid var(--text-primary);
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* Layout for ribbon groups */
+.ribbon-pane .group.flex-1 { flex: 1; min-width: 0; }
+
+/* Mobile menu button (hidden on desktop) */
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+.mobile-menu-btn:hover { background: rgba(255,255,255,0.15); }
+.mobile-menu-btn:active { background: rgba(255,255,255,0.3); }
+
+/* ===================== Mobile Responsive ===================== */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+  .search-box { width: 140px; }
+  .group { padding: 0 4px; }
+  .skype-btn { display: none; }
+  .win-btn { width: 38px; }
+  .qa-btn { width: 24px; height: 24px; }
+  .doc-title { max-width: 120px; }
+  .save-status { display: none; }
+  .status-item:nth-child(3),
+  .status-item:nth-child(4),
+  .status-item:nth-child(5) { display: none; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  html, body { font-size: 12px; }
+  
+  /* Title bar - compact */
+  .title-bar { height: 36px; padding: 0 0 0 4px; }
+  .qa-btn { width: 32px; height: 32px; font-size: 14px; }
+  .doc-title { font-size: 13px; max-width: 140px; padding: 4px 8px; }
+  .save-status { display: none; }
+  .skype-btn { display: none; }
+  .win-btn { width: 36px; height: 36px; font-size: 13px; }
+  .win-btn[data-cmd="minimize"] { display: none; }
+  .win-btn[data-cmd="maximize"] { display: none; }
+  
+  /* Ribbon tabs - horizontal scroll */
+  .ribbon-tabs {
+    height: 36px;
+    padding: 0 4px;
+  }
+  .ribbon-tabs .tab {
+    padding: 0 10px;
+    font-size: 13px;
+  }
+  .ribbon-tabs .file-tab { margin-right: 2px; }
+  .tab-right { padding: 0 4px; gap: 4px; }
+  .search-box { display: none; }
+  .user-btn { width: 28px; height: 28px; }
+  .user-avatar { width: 24px; height: 24px; font-size: 12px; }
+  
+  /* Ribbon content - shorter on mobile */
+  .ribbon-content {
+    height: 96px;
+    padding: 0 4px;
+  }
+  .group { padding: 0 4px; }
+  .group-label { font-size: 10px; padding: 2px 0 1px; }
+  
+  .big-btn {
+    width: 44px;
+    height: 68px;
+    padding-top: 4px;
+    gap: 3px;
+    font-size: 10px;
+  }
+  .big-btn i { font-size: 22px; }
+  .small-btn { font-size: 11px; height: 20px; min-width: 50px; padding: 1px 4px; }
+  .small-icon { width: 24px; height: 24px; font-size: 13px; }
+  .font-select { width: 90px; font-size: 11px; }
+  .size-select { width: 42px; font-size: 11px; }
+  
+  .styles-group { min-width: 120px; }
+  .styles-list { height: 68px; }
+  .style-item { width: 56px; font-size: 10px; padding: 4px 2px; }
+  
+  /* Ruler - hide on mobile */
+  .ruler-bar { display: none; }
+  
+  /* Document area - smaller padding */
+  .document-area {
+    padding: 8px 0 20px;
+  }
+  .page-wrapper {
+    padding: 0 8px;
+  }
+  .page {
+    width: 100%;
+    max-width: none;
+    min-height: auto;
+    padding: 24px 20px;
+    font-size: 12pt;
+  }
+  
+  /* Status bar - simplified */
+  .status-bar {
+    height: 24px;
+    padding: 0 4px 0 8px;
+  }
+  .status-item { padding: 0 6px; font-size: 11px; }
+  .status-item:nth-child(1) { display: flex; }
+  .status-item:nth-child(2) { display: flex; }
+  .status-item:nth-child(3),
+  .status-item:nth-child(4),
+  .status-item:nth-child(5) { display: none; }
+  .status-sep { display: none; }
+  .view-btn { padding: 0 6px; font-size: 11px; }
+  .view-btn[data-view="read"] { display: none; }
+  .view-btn[data-view="web"] { display: none; }
+  .view-btn[data-view="print"] span { display: none; }
+  .zoom-slider { width: 70px; }
+  .zoom-level { min-width: 32px; font-size: 11px; }
+  
+  /* Context menu - full width on mobile */
+  .context-menu {
+    min-width: 180px;
+    max-width: 240px;
+  }
+  .ctx-item { padding: 8px 14px; font-size: 13px; }
+  .ctx-item .shortcut { display: none; }
+  
+  /* Find bar - positioned for mobile */
+  .find-bar {
+    top: auto;
+    bottom: 60px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+  .find-bar input { width: 100%; flex: 1; }
+  .find-result { min-width: 40px; font-size: 10px; }
+  
+  /* Backstage - full screen on mobile */
+  .backstage-nav {
+    width: 200px;
+  }
+  .backstage-content {
+    padding: 16px;
+  }
+  .back-pane h2 { font-size: 20px; }
+  .info-grid { grid-template-columns: 1fr; gap: 12px; }
+  .new-template-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .recent-docs { max-width: 100%; }
+  
+  /* Color popup - centered on mobile */
+  .color-popup {
+    width: 180px;
+  }
+  .color-grid { grid-template-columns: repeat(8, 1fr); }
+  
+  /* Toast - positioned for mobile */
+  .toast-container {
+    bottom: 60px;
+    right: 8px;
+    left: 8px;
+  }
+  .toast { max-width: 100%; font-size: 11px; padding: 8px 12px; }
+  
+  /* Mini toolbar - smaller on mobile */
+  .mini-toolbar .small-icon { width: 30px; height: 30px; font-size: 14px; }
+  
+  /* Bigger touch targets */
+  .small-icon { width: 26px; height: 26px; }
+  .small-btn { height: 24px; }
+  
+  /* Hide tooltips on touch */
+  [data-tooltip]:hover::before { display: none; }
+}
+
+/* Very small mobile */
+@media (max-width: 480px) {
+  .title-bar { height: 36px; }
+  .qa-btn { width: 30px; height: 30px; }
+  .doc-title { max-width: 100px; font-size: 12px; }
+  .ribbon-tabs .tab { padding: 0 8px; font-size: 12px; }
+  .ribbon-content { height: 88px; }
+  .big-btn { width: 40px; height: 60px; font-size: 9px; }
+  .big-btn i { font-size: 20px; }
+  .small-btn { font-size: 10px; min-width: 44px; }
+  .font-select { width: 80px; }
+  .group-label { font-size: 9px; }
+  .page { padding: 16px 14px; font-size: 11pt; }
+  .status-item { padding: 0 4px; font-size: 10px; }
+  .view-btn[data-view="print"] { padding: 0 8px; }
+  .zoom-slider { width: 60px; }
+  
+  .backstage-nav { width: 160px; }
+  .back-tab { padding: 8px 16px; font-size: 12px; }
+  .back-btn { padding: 8px 16px; font-size: 13px; }
+  .backstage-content { padding: 12px; }
+  .back-pane h2 { font-size: 18px; }
+  .new-template-grid { grid-template-columns: 1fr; }
+}
+
+/* Landscape mobile */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
+  .ribbon-content { height: 80px; }
+  .big-btn { height: 56px; }
+  .big-btn i { font-size: 18px; }
+  .styles-list { height: 56px; }
+  .ruler-bar { display: none; }
+  .document-area { padding: 4px 0 10px; }
+  .page { padding: 16px; min-height: auto; }
+}
+
+/* Touch device adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .small-icon:hover,
+  .small-btn:hover,
+  .big-btn:hover,
+  .style-item:hover,
+  .info-card:hover,
+  .recent-doc:hover,
+  .template-card:hover {
+    background: transparent;
+    border-color: transparent;
+    transform: none;
+  }
+  .small-icon:active,
+  .small-btn:active,
+  .big-btn:active {
+    background: var(--bg-tab-hover);
+    transform: scale(0.95);
+  }
+  [data-tooltip]:hover::before { display: none; }
+}
+
+/* High DPI optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .page {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+  }
+}
+
+/* Print prevention - this is an app, not a printable doc */
+@media print {
+  body { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Title Bar ===== -->
+<header class="title-bar">
+  <div class="qa-toolbar">
+    <button class="qa-btn" data-cmd="save" data-tooltip="Save (Ctrl+S)"><i class="fas fa-save"></i></button>
+    <button class="qa-btn" data-cmd="undo" data-tooltip="Undo (Ctrl+Z)"><i class="fas fa-undo"></i></button>
+    <button class="qa-btn" data-cmd="redo" data-tooltip="Redo (Ctrl+Y)"><i class="fas fa-redo"></i></button>
+  </div>
+  <div class="title-center">
+    <input type="text" class="doc-title" value="Document1" id="docTitle" spellcheck="false">
+    <span class="save-status" id="saveStatus">- Saved to this PC</span>
+  </div>
+  <div class="window-controls">
+    <button class="skype-btn"><i class="fas fa-comment-dots"></i></button>
+    <button class="win-btn" data-cmd="minimize"><i class="far fa-window-minimize"></i></button>
+    <button class="win-btn" data-cmd="maximize"><i class="far fa-window-restore"></i></button>
+    <button class="win-btn close" data-cmd="close"><i class="fas fa-times"></i></button>
+  </div>
+</header>
+
+<!-- ===== Ribbon Tabs ===== -->
+<nav class="ribbon-tabs">
+  <button class="tab file-tab" data-tab="file">File</button>
+  <button class="tab active" data-tab="home">Home</button>
+  <button class="tab" data-tab="insert">Insert</button>
+  <button class="tab" data-tab="layout">Layout</button>
+  <button class="tab" data-tab="references">References</button>
+  <button class="tab" data-tab="review">Review</button>
+  <button class="tab" data-tab="view">View</button>
+  <button class="tab" data-tab="help">Help</button>
+  <div class="tab-spacer"></div>
+  <div class="tab-right">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search" id="searchInput">
+    </div>
+    <button class="user-btn">
+      <div class="user-avatar guest"><i class="fas fa-user"></i></div>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== Ribbon Content ===== -->
+<div class="ribbon-content">
+
+  <!-- HOME -->
+  <div class="ribbon-pane active" data-pane="home">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn has-dropdown" data-cmd="paste">
+          <i class="fas fa-paste"></i>
+          <span>Paste</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="cut"><i class="fas fa-cut"></i>Cut</button>
+          <button class="small-btn" data-cmd="copy"><i class="fas fa-copy"></i>Copy</button>
+          <button class="small-btn" data-cmd="formatPainter"><i class="fas fa-paint-brush"></i>Format Painter</button>
+        </div>
+      </div>
+      <div class="group-label">Clipboard</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content font-group">
+        <div class="font-controls">
+          <select class="font-select" id="fontSelect" data-cmd="fontName">
+            <option>Calibri</option><option>Calibri Light</option><option>Arial</option>
+            <option>Times New Roman</option><option>Cambria</option><option>Courier New</option>
+            <option>Georgia</option><option>Tahoma</option><option>Trebuchet MS</option>
+            <option>Verdana</option><option>Segoe UI</option><option>Comic Sans MS</option>
+            <option>Impact</option>
+          </select>
+          <select class="size-select" id="sizeSelect" data-cmd="fontSize">
+            <option>8</option><option>9</option><option>10</option><option>11</option>
+            <option>12</option><option>14</option><option>16</option><option>18</option>
+            <option>20</option><option>22</option><option>24</option><option>26</option>
+            <option>28</option><option>36</option><option>48</option><option>72</option>
+          </select>
+          <button class="small-icon" data-cmd="growFont" data-tooltip="Grow Font"><i class="fas fa-text-height"></i><sup style="font-size:8px">+</sup></button>
+          <button class="small-icon" data-cmd="shrinkFont" data-tooltip="Shrink Font"><i class="fas fa-text-height"></i><sub style="font-size:8px">-</sub></button>
+          <button class="small-icon" data-cmd="clearFormat" data-tooltip="Clear All Formatting"><i class="fas fa-remove-format"></i></button>
+        </div>
+        <div class="font-styles">
+          <button class="small-icon" data-cmd="bold" data-tooltip="Bold (Ctrl+B)"><i class="fas fa-bold"></i></button>
+          <button class="small-icon" data-cmd="italic" data-tooltip="Italic (Ctrl+I)"><i class="fas fa-italic"></i></button>
+          <button class="small-icon" data-cmd="underline" data-tooltip="Underline (Ctrl+U)"><i class="fas fa-underline"></i></button>
+          <button class="small-icon" data-cmd="strikethrough" data-tooltip="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+          <button class="small-icon" data-cmd="subscript" data-tooltip="Subscript"><i class="fas fa-subscript"></i></button>
+          <button class="small-icon" data-cmd="superscript" data-tooltip="Superscript"><i class="fas fa-superscript"></i></button>
+          <span class="separator"></span>
+          <button class="small-icon has-color" data-cmd="textColor" data-tooltip="Font Color">
+            <i class="fas fa-font" style="font-size:11px;"></i>
+            <span class="color-bar" id="textColorBar" style="background:#C00000"></span>
+          </button>
+          <button class="small-icon has-color" data-cmd="highlight" data-tooltip="Text Highlight Color">
+            <i class="fas fa-highlighter" style="font-size:11px;"></i>
+            <span class="color-bar highlight" id="highlightBar" style="background:#FFFF00"></span>
+          </button>
+        </div>
+      </div>
+      <div class="group-label">Font</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="bullets"><i class="fas fa-list-ul"></i>Bullets</button>
+          <button class="small-btn has-dropdown" data-cmd="numbering"><i class="fas fa-list-ol"></i>Numbering</button>
+          <button class="small-btn has-dropdown" data-cmd="multilevel"><i class="fas fa-indent"></i>Multilevel</button>
+        </div>
+        <div class="align-tools" style="flex-direction:column;gap:1px;">
+          <div class="align-tools">
+            <button class="small-icon" data-cmd="alignLeft" data-tooltip="Align Left"><i class="fas fa-align-left"></i></button>
+            <button class="small-icon" data-cmd="alignCenter" data-tooltip="Center"><i class="fas fa-align-center"></i></button>
+            <button class="small-icon" data-cmd="alignRight" data-tooltip="Align Right"><i class="fas fa-align-right"></i></button>
+            <button class="small-icon" data-cmd="alignJustify" data-tooltip="Justify"><i class="fas fa-align-justify"></i></button>
+            <span class="separator"></span>
+            <button class="small-icon" data-cmd="decreaseIndent" data-tooltip="Decrease Indent"><i class="fas fa-outdent"></i></button>
+            <button class="small-icon" data-cmd="increaseIndent" data-tooltip="Increase Indent"><i class="fas fa-indent"></i></button>
+          </div>
+          <div class="para-tools">
+            <button class="small-btn has-dropdown" data-cmd="lineSpacing" style="min-width:0"><i class="fas fa-arrows-alt-v"></i></button>
+            <button class="small-icon has-color" data-cmd="shading" data-tooltip="Shading">
+              <i class="fas fa-fill-drip" style="font-size:11px;"></i>
+              <span class="color-bar" id="shadingBar" style="background:#FFFFFF;border:1px solid #aaa"></span>
+            </button>
+            <button class="small-icon has-dropdown" data-cmd="borders" data-tooltip="Borders"><i class="fas fa-border-all"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="group-label">Paragraph</div>
+    </div>
+
+    <div class="group styles-group">
+      <div class="group-content">
+        <div class="styles-list">
+          <button class="style-item more" data-cmd="moreStyles"><i class="fas fa-chevron-up"></i></button>
+          <button class="style-item" data-style="p">Normal</button>
+          <button class="style-item" data-style="p" style="font-style:italic">No Spacing</button>
+          <button class="style-item heading1" data-style="h1">Heading 1</button>
+          <button class="style-item heading2" data-style="h2">Heading 2</button>
+          <button class="style-item title" data-style="title">Title</button>
+          <button class="style-item subtitle" data-style="p" style="font-size:13px;font-style:italic;color:#5B9BD5">Subtitle</button>
+          <button class="style-item" data-style="p" style="font-weight:600">Subtle Emph.</button>
+          <button class="style-item" data-style="p" style="font-style:italic">Emphasis</button>
+          <button class="style-item" data-style="p" style="font-weight:bold">Strong</button>
+          <button class="style-item" data-style="blockquote" style="font-style:italic">Quote</button>
+          <button class="style-item" data-style="p" style="color:#C00000;font-weight:600">Intense Quote</button>
+        </div>
+      </div>
+      <div class="group-label">Styles</div>
+    </div>
+
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns-vertical">
+          <button class="small-btn has-dropdown" data-cmd="find"><i class="fas fa-search"></i>Find</button>
+          <button class="small-btn" data-cmd="replace"><i class="fas fa-exchange-alt"></i>Replace</button>
+          <button class="small-btn has-dropdown" data-cmd="select"><i class="fas fa-mouse-pointer"></i>Select</button>
+        </div>
+      </div>
+      <div class="group-label">Editing</div>
+    </div>
+  </div>
+
+  <!-- INSERT -->
+  <div class="ribbon-pane" data-pane="insert">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="coverPage"><i class="far fa-file-alt"></i>Cover Page</button>
+          <button class="small-btn" data-cmd="blankPage"><i class="far fa-file"></i>Blank Page</button>
+          <button class="small-btn" data-cmd="pageBreak"><i class="fas fa-caret-square-right"></i>Page Break</button>
+        </div>
+      </div>
+      <div class="group-label">Pages</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn has-dropdown" data-cmd="insertTable" id="tableBtn">
+          <i class="fas fa-table"></i>
+          <span>Table</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="drawTable"><i class="fas fa-pen"></i>Draw Table</button>
+          <button class="small-btn" data-cmd="convertTextToTable"><i class="fas fa-th"></i>Convert Text</button>
+        </div>
+      </div>
+      <div class="group-label">Tables</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="insertPicture">
+          <i class="far fa-image"></i>
+          <span>Pictures</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="onlinePictures"><i class="fas fa-globe"></i>Online Pictures</button>
+          <button class="small-btn" data-cmd="shapes"><i class="fas fa-shapes"></i>Shapes</button>
+          <button class="small-btn" data-cmd="icons"><i class="far fa-star"></i>Icons</button>
+          <button class="small-btn" data-cmd="smartArt"><i class="fas fa-sitemap"></i>SmartArt</button>
+          <button class="small-btn" data-cmd="chart"><i class="fas fa-chart-bar"></i>Chart</button>
+        </div>
+      </div>
+      <div class="group-label">Illustrations</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="insertLink"><i class="fas fa-link"></i>Link</button>
+          <button class="small-btn" data-cmd="bookmark"><i class="far fa-bookmark"></i>Bookmark</button>
+          <button class="small-btn" data-cmd="crossReference"><i class="fas fa-crosshairs"></i>Cross-reference</button>
+        </div>
+      </div>
+      <div class="group-label">Links</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="insertComment">
+          <i class="far fa-comment"></i>
+          <span>Comment</span>
+        </button>
+      </div>
+      <div class="group-label">Comments</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="textBox"><i class="fas fa-font"></i>Text Box</button>
+          <button class="small-btn" data-cmd="wordArt"><i class="fas fa-magic"></i>WordArt</button>
+          <button class="small-btn" data-cmd="dropCap"><i class="fas fa-text-width"></i>Drop Cap</button>
+          <button class="small-btn" data-cmd="dateTime"><i class="far fa-clock"></i>Date & Time</button>
+        </div>
+      </div>
+      <div class="group-label">Text</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="equation"><i class="fas fa-square-root-alt"></i>Equation</button>
+          <button class="small-btn" data-cmd="symbol"><i class="fas fa-omega"></i>Symbol</button>
+        </div>
+      </div>
+      <div class="group-label">Symbols</div>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="ribbon-pane" data-pane="layout">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="margins"><i class="fas fa-border-all"></i>Margins</button>
+          <button class="small-btn has-dropdown" data-cmd="orientation"><i class="fas fa-sync-alt"></i>Orientation</button>
+          <button class="small-btn has-dropdown" data-cmd="size"><i class="fas fa-expand"></i>Size</button>
+          <button class="small-btn has-dropdown" data-cmd="columns"><i class="fas fa-columns"></i>Columns</button>
+        </div>
+      </div>
+      <div class="group-label">Page Setup</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="breaks">
+          <i class="fas fa-caret-square-right"></i>
+          <span>Breaks</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="lineNumbers"><i class="fas fa-list-ol"></i>Line Numbers</button>
+        </div>
+      </div>
+      <div class="group-label">Page Setup</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="wrapText"><i class="fas fa-wrap"></i>Wrap Text</button>
+          <button class="small-btn has-dropdown" data-cmd="arrange"><i class="fas fa-layer-group"></i>Arrange</button>
+          <button class="small-btn has-dropdown" data-cmd="position"><i class="fas fa-arrows-alt"></i>Position</button>
+          <button class="small-btn" data-cmd="group"><i class="fas fa-object-group"></i>Group</button>
+          <button class="small-btn" data-cmd="rotate"><i class="fas fa-redo"></i>Rotate</button>
+        </div>
+      </div>
+      <div class="group-label">Arrange</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="indentLeft"><i class="fas fa-outdent"></i>Indent Left</button>
+          <button class="small-btn" data-cmd="indentRight"><i class="fas fa-indent"></i>Indent Right</button>
+          <button class="small-btn" data-cmd="spacing"><i class="fas fa-arrows-alt-v"></i>Spacing</button>
+        </div>
+      </div>
+      <div class="group-label">Paragraph</div>
+    </div>
+  </div>
+
+  <!-- REFERENCES -->
+  <div class="ribbon-pane" data-pane="references">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn has-dropdown" data-cmd="tableOfContents">
+          <i class="fas fa-list-ul"></i>
+          <span>Table of Contents</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="addText"><i class="fas fa-plus"></i>Add Text</button>
+          <button class="small-btn" data-cmd="updateTable"><i class="fas fa-sync"></i>Update Table</button>
+        </div>
+      </div>
+      <div class="group-label">Table of Contents</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="insertFootnote"><i class="fas fa-anchor"></i>Insert Footnote</button>
+          <button class="small-btn" data-cmd="insertEndnote"><i class="fas fa-bookmark"></i>Insert Endnote</button>
+          <button class="small-btn has-dropdown" data-cmd="nextFootnote"><i class="fas fa-step-forward"></i>Next Footnote</button>
+        </div>
+      </div>
+      <div class="group-label">Footnotes</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn has-dropdown" data-cmd="insertCitation"><i class="fas fa-quote-right"></i>Insert Citation</button>
+          <button class="small-btn has-dropdown" data-cmd="manageSources"><i class="fas fa-book"></i>Manage Sources</button>
+          <button class="small-btn has-dropdown" data-cmd="bibliography"><i class="fas fa-book-open"></i>Bibliography</button>
+          <button class="small-btn" data-cmd="insertCaption"><i class="fas fa-tag"></i>Insert Caption</button>
+        </div>
+      </div>
+      <div class="group-label">Citations & Bibliography</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="research">
+          <i class="fas fa-search"></i>
+          <span>Research</span>
+        </button>
+      </div>
+      <div class="group-label">Research</div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div class="ribbon-pane" data-pane="review">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="spellCheck">
+          <i class="fas fa-spell-check"></i>
+          <span>Spelling</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="wordCount"><i class="fas fa-paragraph"></i>Word Count</button>
+          <button class="small-btn" data-cmd="thesaurus"><i class="fas fa-book"></i>Thesaurus</button>
+        </div>
+      </div>
+      <div class="group-label">Proofing</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="translate"><i class="fas fa-language"></i>Translate</button>
+          <button class="small-btn" data-cmd="language"><i class="fas fa-globe"></i>Language</button>
+        </div>
+      </div>
+      <div class="group-label">Language</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="newComment">
+          <i class="far fa-comment"></i>
+          <span>New Comment</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="deleteComment"><i class="far fa-trash-alt"></i>Delete</button>
+          <button class="small-btn" data-cmd="previousComment"><i class="fas fa-chevron-up"></i>Previous</button>
+          <button class="small-btn" data-cmd="nextComment"><i class="fas fa-chevron-down"></i>Next</button>
+        </div>
+      </div>
+      <div class="group-label">Comments</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="trackChanges">
+          <i class="fas fa-pen-fancy"></i>
+          <span>Track Changes</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="accept"><i class="fas fa-check"></i>Accept</button>
+          <button class="small-btn" data-cmd="reject"><i class="fas fa-times"></i>Reject</button>
+          <button class="small-btn" data-cmd="previousChange"><i class="fas fa-chevron-up"></i>Previous</button>
+          <button class="small-btn" data-cmd="nextChange"><i class="fas fa-chevron-down"></i>Next</button>
+        </div>
+      </div>
+      <div class="group-label">Tracking</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="restrictEditing">
+          <i class="fas fa-lock"></i>
+          <span>Restrict</span>
+        </button>
+      </div>
+      <div class="group-label">Protect</div>
+    </div>
+  </div>
+
+  <!-- VIEW -->
+  <div class="ribbon-pane" data-pane="view">
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="readMode"><i class="fas fa-book-open"></i>Read Mode</button>
+          <button class="small-btn active" data-cmd="printLayout"><i class="fas fa-paint-brush"></i>Print Layout</button>
+          <button class="small-btn" data-cmd="webLayout"><i class="fas fa-globe"></i>Web Layout</button>
+          <button class="small-btn" data-cmd="draft"><i class="far fa-file-alt"></i>Draft</button>
+        </div>
+      </div>
+      <div class="group-label">Views</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns-vertical">
+          <button class="small-btn" data-cmd="toggleRuler" id="toggleRuler"><i class="fas fa-ruler"></i>Ruler</button>
+          <button class="small-btn" data-cmd="gridlines"><i class="fas fa-th"></i>Gridlines</button>
+          <button class="small-btn" data-cmd="navigationPane"><i class="far fa-compass"></i>Navigation Pane</button>
+        </div>
+      </div>
+      <div class="group-label">Show</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="zoomDialog">
+          <i class="fas fa-search-plus"></i>
+          <span>Zoom</span>
+        </button>
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="onePage"><i class="far fa-file"></i>One Page</button>
+          <button class="small-btn" data-cmd="pageWidth"><i class="fas fa-arrows-alt-h"></i>Page Width</button>
+        </div>
+      </div>
+      <div class="group-label">Zoom</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="macros">
+          <i class="fas fa-code"></i>
+          <span>Macros</span>
+        </button>
+      </div>
+      <div class="group-label">Macros</div>
+    </div>
+  </div>
+
+  <!-- HELP -->
+  <div class="ribbon-pane" data-pane="help">
+    <div class="group">
+      <div class="group-content">
+        <button class="big-btn" data-cmd="help">
+          <i class="fas fa-question-circle"></i>
+          <span>Help</span>
+        </button>
+      </div>
+      <div class="group-label">Help</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="training"><i class="fas fa-graduation-cap"></i>Training</button>
+          <button class="small-btn" data-cmd="showcase"><i class="fas fa-star"></i>Showcase</button>
+          <button class="small-btn" data-cmd="whatsNew"><i class="fas fa-bell"></i>What's New</button>
+        </div>
+      </div>
+      <div class="group-label">Help</div>
+    </div>
+    <div class="group">
+      <div class="group-content">
+        <div class="small-btns">
+          <button class="small-btn" data-cmd="feedback"><i class="far fa-comment-dots"></i>Feedback</button>
+          <button class="small-btn" data-cmd="contactSupport"><i class="fas fa-headset"></i>Contact Support</button>
+        </div>
+      </div>
+      <div class="group-label">Feedback</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Ruler ===== -->
+<div class="ruler-bar" id="rulerBar">
+  <div class="ruler">
+    <div class="ruler-marks"></div>
+    <div class="ruler-numbers" id="rulerNumbers"></div>
+    <div class="ruler-indent-marker" style="left:96px" title="Left Indent"></div>
+    <div class="ruler-indent-marker" style="left:672px" title="Right Indent"></div>
+  </div>
+</div>
+
+<!-- ===== Document Area ===== -->
+<main class="document-area" id="docArea">
+  <div class="page-wrapper" id="pageWrapper">
+    <div class="page" id="page" contenteditable="true" spellcheck="false">
+      <h1>Welcome to Word</h1>
+      <p>This is a fully-featured word processor interface built entirely with HTML, CSS, and JavaScript. It mimics the look and behavior of a desktop office suite, running right in your browser.</p>
+      <h2>Try These Features</h2>
+      <p>You can <strong>bold</strong>, <em>italicize</em>, <u>underline</u>, or <span style="color:#C00000">color</span> any text by selecting it and clicking the buttons in the ribbon above. Try changing the <span style="font-family:Georgia">font</span> or <span style="font-size:18pt">size</span> of this paragraph.</p>
+      <p>The ribbon tabs across the top — Home, Insert, Layout, References, Review, View — all contain functional groups of tools, just like the real application.</p>
+      <h3>Editing Tips</h3>
+      <ul>
+        <li>Right-click anywhere in this document for a context menu</li>
+        <li>Use Ctrl+B, Ctrl+I, Ctrl+U for quick formatting</li>
+        <li>Use Ctrl+Z and Ctrl+Y for undo and redo</li>
+        <li>Press Ctrl+F to open the find bar</li>
+        <li>Use the zoom slider in the bottom-right corner</li>
+        <li>Click the File tab to open the backstage view</li>
+      </ul>
+      <p>Style your text using the Styles gallery in the Home tab. Choose from Title, Headings, Subtitle, Quote, and more. The word count at the bottom of the screen updates live as you type.</p>
+      <blockquote>Word processors are among the most enduring applications in personal computing — their core interaction model has remained remarkably stable for forty years.</blockquote>
+      <p>Start typing anywhere to replace this content, or click File &gt; New to start fresh.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ===== Status Bar ===== -->
+<footer class="status-bar">
+  <div class="status-left">
+    <span class="status-item" id="pageInfo">Page 1 of 1</span>
+    <span class="status-sep">|</span>
+    <span class="status-item" id="wordCountBottom">0 words</span>
+    <span class="status-item"><i class="fas fa-check-circle"></i> Proofing</span>
+    <span class="status-item"><i class="fas fa-language"></i> English</span>
+    <span class="status-item"><i class="fas fa-universal-access"></i> Accessibility</span>
+  </div>
+  <div class="status-right">
+    <button class="view-btn" data-view="read"><i class="fas fa-book-open"></i></button>
+    <button class="view-btn active" data-view="print"><i class="fas fa-paint-brush"></i> <span>Print Layout</span></button>
+    <button class="view-btn" data-view="web"><i class="fas fa-globe"></i></button>
+    <span class="zoom-controls">
+      <button class="zoom-btn" data-cmd="zoomOut"><i class="fas fa-search-minus"></i></button>
+      <input type="range" class="zoom-slider" min="50" max="200" value="100" id="zoomSlider">
+      <button class="zoom-btn" data-cmd="zoomIn"><i class="fas fa-search-plus"></i></button>
+      <span class="zoom-level" id="zoomLevel">100%</span>
+    </span>
+  </div>
+</footer>
+
+<!-- ===== Context Menu ===== -->
+<div class="context-menu" id="contextMenu">
+  <button class="ctx-item" data-cmd="cut"><i class="fas fa-cut"></i>Cut<span class="shortcut">Ctrl+X</span></button>
+  <button class="ctx-item" data-cmd="copy"><i class="fas fa-copy"></i>Copy<span class="shortcut">Ctrl+C</span></button>
+  <button class="ctx-item" data-cmd="paste"><i class="fas fa-paste"></i>Paste<span class="shortcut">Ctrl+V</span></button>
+  <button class="ctx-item" data-cmd="pasteSpecial"><i class="fas fa-paste"></i>Paste Special...</button>
+  <div class="ctx-divider"></div>
+  <button class="ctx-item" data-cmd="font"><i class="fas fa-font"></i>Font...</button>
+  <button class="ctx-item" data-cmd="paragraph"><i class="fas fa-paragraph"></i>Paragraph...</button>
+  <button class="ctx-item" data-cmd="bulletsCtx"><i class="fas fa-list-ul"></i>Bullets</button>
+  <button class="ctx-item" data-cmd="numberingCtx"><i class="fas fa-list-ol"></i>Numbering</button>
+  <div class="ctx-divider"></div>
+  <button class="ctx-item" data-cmd="insertLink"><i class="fas fa-link"></i>Link</button>
+  <button class="ctx-item" data-cmd="insertComment"><i class="far fa-comment"></i>New Comment</button>
+  <div class="ctx-divider"></div>
+  <button class="ctx-item" data-cmd="select"><i class="fas fa-mouse-pointer"></i>Select All<span class="shortcut">Ctrl+A</span></button>
+  <button class="ctx-item" data-cmd="find"><i class="fas fa-search"></i>Find...<span class="shortcut">Ctrl+F</span></button>
+</div>
+
+<!-- ===== Find Bar ===== -->
+<div class="find-bar" id="findBar">
+  <input type="text" placeholder="Find" id="findInput">
+  <span class="find-result" id="findResult">0 of 0</span>
+  <button class="find-btn" data-cmd="findNext" title="Next"><i class="fas fa-chevron-down"></i></button>
+  <button class="find-btn" data-cmd="findPrev" title="Previous"><i class="fas fa-chevron-up"></i></button>
+  <button class="find-btn" data-cmd="closeFind" title="Close"><i class="fas fa-times"></i></button>
+</div>
+
+<!-- ===== Color Popup ===== -->
+<div class="color-popup" id="colorPopup">
+  <div class="color-grid" id="colorGrid"></div>
+  <button class="more-colors">More Colors...</button>
+</div>
+
+<!-- ===== Table Grid Popup ===== -->
+<div class="table-grid-popup" id="tableGridPopup">
+  <div class="table-grid" id="tableGrid"></div>
+  <div class="table-size-label" id="tableSizeLabel">1x1 Table</div>
+</div>
+
+<!-- ===== Mini Toolbar ===== -->
+<div class="mini-toolbar" id="miniToolbar">
+  <button class="small-icon" data-cmd="bold" data-tooltip="Bold"><i class="fas fa-bold"></i></button>
+  <button class="small-icon" data-cmd="italic" data-tooltip="Italic"><i class="fas fa-italic"></i></button>
+  <button class="small-icon" data-cmd="underline" data-tooltip="Underline"><i class="fas fa-underline"></i></button>
+  <span class="separator"></span>
+  <button class="small-icon has-color" data-cmd="textColor" data-tooltip="Font Color">
+    <i class="fas fa-font" style="font-size:11px;"></i>
+    <span class="color-bar" style="background:#C00000"></span>
+  </button>
+  <button class="small-icon has-color" data-cmd="highlight" data-tooltip="Highlight">
+    <i class="fas fa-highlighter" style="font-size:11px;"></i>
+    <span class="color-bar highlight" style="background:#FFFF00"></span>
+  </button>
+  <span class="separator"></span>
+  <button class="small-icon" data-cmd="alignLeft" data-tooltip="Align Left"><i class="fas fa-align-left"></i></button>
+  <button class="small-icon" data-cmd="alignCenter" data-tooltip="Center"><i class="fas fa-align-center"></i></button>
+  <button class="small-icon" data-cmd="alignRight" data-tooltip="Align Right"><i class="fas fa-align-right"></i></button>
+  <span class="separator"></span>
+  <button class="small-icon" data-cmd="bullets" data-tooltip="Bullets"><i class="fas fa-list-ul"></i></button>
+  <button class="small-icon" data-cmd="numbering" data-tooltip="Numbering"><i class="fas fa-list-ol"></i></button>
+</div>
+
+<!-- ===== Backstage ===== -->
+<div class="backstage" id="backstage">
+  <nav class="backstage-nav">
+    <button class="back-btn" data-cmd="closeBackstage"><i class="fas fa-arrow-left"></i>Back</button>
+    <button class="back-tab active" data-bt="info">Info</button>
+    <button class="back-tab" data-bt="new">New</button>
+    <button class="back-tab" data-bt="open">Open</button>
+    <button class="back-tab" data-bt="save">Save</button>
+    <button class="back-tab" data-bt="saveas">Save As</button>
+    <button class="back-tab" data-bt="print">Print</button>
+    <button class="back-tab" data-bt="share">Share</button>
+    <button class="back-tab" data-bt="export">Export</button>
+    <button class="back-tab" data-bt="close">Close</button>
+    <div class="back-spacer"></div>
+    <button class="back-tab" data-bt="account">Account</button>
+    <button class="back-tab" data-bt="feedback">Feedback</button>
+    <button class="back-tab" data-bt="options">Options</button>
+  </nav>
+  <div class="backstage-content" id="backstageContent">
+    <div class="back-pane active" data-bp="info">
+      <h2>Info</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Protect Document</h3>
+          <p>Control what types of changes people can make to this document.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-search"></i>
+          <h3>Check for Issues</h3>
+          <p>Inspect the document for hidden metadata or personal information.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-history"></i>
+          <h3>Manage Document</h3>
+          <p>Recover unsaved versions, save a copy, or view version history.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h3>Browser View</h3>
+          <p>Open this document in your web browser to view it online.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="new">
+      <h2>New</h2>
+      <div class="new-template-grid">
+        <div class="template-card blank" data-cmd="newBlankDoc">
+          <div class="template-thumb"></div>
+          <div class="template-name">Blank document</div>
+        </div>
+        <div class="template-card" data-cmd="newResume">
+          <div class="template-thumb"><i class="far fa-file-alt"></i></div>
+          <div class="template-name">Resume</div>
+        </div>
+        <div class="template-card" data-cmd="newLetter">
+          <div class="template-thumb"><i class="far fa-envelope"></i></div>
+          <div class="template-name">Letter</div>
+        </div>
+        <div class="template-card" data-cmd="newReport">
+          <div class="template-thumb"><i class="fas fa-chart-line"></i></div>
+          <div class="template-name">Report</div>
+        </div>
+        <div class="template-card" data-cmd="newArticle">
+          <div class="template-thumb"><i class="far fa-newspaper"></i></div>
+          <div class="template-name">Article</div>
+        </div>
+        <div class="template-card" data-cmd="newCalendar">
+          <div class="template-thumb"><i class="far fa-calendar-alt"></i></div>
+          <div class="template-name">Calendar</div>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="open">
+      <h2>Open</h2>
+      <div class="recent-docs">
+        <div class="recent-doc" data-cmd="openDoc1">
+          <i class="far fa-file-word"></i>
+          <div class="recent-doc-info">
+            <strong>Document1.docx</strong>
+            <span>Today, 10:42 AM</span>
+          </div>
+        </div>
+        <div class="recent-doc" data-cmd="openDoc2">
+          <i class="far fa-file-word"></i>
+          <div class="recent-doc-info">
+            <strong>Project Proposal.docx</strong>
+            <span>Yesterday, 3:15 PM</span>
+          </div>
+        </div>
+        <div class="recent-doc" data-cmd="openDoc3">
+          <i class="far fa-file-word"></i>
+          <div class="recent-doc-info">
+            <strong>Meeting Notes.docx</strong>
+            <span>Last week</span>
+          </div>
+        </div>
+        <div class="recent-doc" data-cmd="openDoc4">
+          <i class="far fa-file-word"></i>
+          <div class="recent-doc-info">
+            <strong>Budget Report Q3.docx</strong>
+            <span>September 14, 2024</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="save">
+      <h2>Save</h2>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px;">Pick a location to save your document.</p>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="saveLocal">
+          <i class="fas fa-desktop"></i>
+          <h3>This PC</h3>
+          <p>Save to your local computer.</p>
+        </div>
+        <div class="info-card" data-cmd="saveCloud">
+          <i class="fas fa-cloud"></i>
+          <h3>Cloud Storage</h3>
+          <p>Save to your cloud account.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="saveas">
+      <h2>Save As</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="saveAsDocx">
+          <i class="far fa-file-word"></i>
+          <h3>Word Document (.docx)</h3>
+          <p>Save as a standard Word document.</p>
+        </div>
+        <div class="info-card" data-cmd="saveAsPdf">
+          <i class="far fa-file-pdf"></i>
+          <h3>PDF Document (.pdf)</h3>
+          <p>Save as a portable document.</p>
+        </div>
+        <div class="info-card" data-cmd="saveAsOdt">
+          <i class="far fa-file-alt"></i>
+          <h3>OpenDocument (.odt)</h3>
+          <p>Save in OpenDocument format.</p>
+        </div>
+        <div class="info-card" data-cmd="saveAsTxt">
+          <i class="far fa-file-code"></i>
+          <h3>Plain Text (.txt)</h3>
+          <p>Save as plain text without formatting.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="print">
+      <h2>Print</h2>
+      <div style="display:flex;gap:32px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:240px;max-width:400px;">
+          <label style="display:block;margin-bottom:8px;font-size:13px;">Copies: <input type="number" value="1" min="1" style="width:60px;padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;"></label>
+          <label style="display:block;margin-bottom:12px;font-size:13px;">Printer: 
+            <select style="padding:2px 4px;border:1px solid var(--border-dark);font-size:13px;width:200px;">
+              <option>Microsoft Print to PDF</option>
+              <option>HP LaserJet Pro</option>
+              <option>OneNote</option>
+            </select>
+          </label>
+          <button style="background:var(--office-blue);color:#fff;border:none;padding:8px 24px;font-size:13px;cursor:pointer;border-radius:2px;margin-top:12px;" onclick="showToast('Sent to printer (demo)', 'check-circle')">Print</button>
+        </div>
+        <div style="flex:1;display:flex;justify-content:center;align-items:flex-start;min-width:200px;">
+          <div style="width:200px;height:260px;background:#fff;border:1px solid var(--border-dark);box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:20px;font-size:8px;line-height:1.3;color:#333;overflow:hidden;">
+            <strong style="font-size:11px;color:#1F3864;">Welcome to Word</strong>
+            <p style="margin-top:6px;">This is a fully-featured word processor interface built entirely with HTML, CSS, and JavaScript...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="share">
+      <h2>Share</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="shareEmail">
+          <i class="fas fa-envelope"></i>
+          <h3>Share via Email</h3>
+          <p>Send a copy or link to this document.</p>
+        </div>
+        <div class="info-card" data-cmd="shareLink">
+          <i class="fas fa-link"></i>
+          <h3>Copy Link</h3>
+          <p>Create a shareable link to this document.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="export">
+      <h2>Export</h2>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="exportPdf">
+          <i class="far fa-file-pdf"></i>
+          <h3>Create PDF/XPS</h3>
+          <p>Export your document as a PDF file.</p>
+        </div>
+        <div class="info-card" data-cmd="exportHtml">
+          <i class="fab fa-html5"></i>
+          <h3>Web Page</h3>
+          <p>Save as a web page for online publishing.</p>
+        </div>
+        <div class="info-card" data-cmd="exportRtf">
+          <i class="far fa-file-alt"></i>
+          <h3>Rich Text Format</h3>
+          <p>Save as RTF for compatibility with other apps.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="account">
+      <h2>Account</h2>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+        <div class="user-avatar guest" style="width:80px;height:80px;font-size:32px;">
+          <i class="fas fa-user"></i>
+        </div>
+        <div>
+          <h3 style="font-size:18px;">Guest User</h3>
+          <p style="color:var(--text-secondary);">Sign in to access your documents</p>
+          <button style="margin-top:8px;background:var(--office-blue);color:#fff;border:none;padding:6px 16px;font-size:12px;cursor:pointer;border-radius:2px;" onclick="showToast('Sign in is not available in this demo', 'info-circle')">Sign In</button>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="feedback">
+      <h2>Feedback</h2>
+      <p style="color:var(--text-secondary);margin-bottom:16px;">Help us improve. Send us your feedback or report a problem.</p>
+      <div class="info-grid">
+        <div class="info-card" data-cmd="feedbackLike">
+          <i class="far fa-thumbs-up"></i>
+          <h3>I like something</h3>
+          <p>Send us a compliment.</p>
+        </div>
+        <div class="info-card" data-cmd="feedbackDislike">
+          <i class="far fa-thumbs-down"></i>
+          <h3>I don't like something</h3>
+          <p>Send us a suggestion.</p>
+        </div>
+        <div class="info-card" data-cmd="feedbackBug">
+          <i class="fas fa-bug"></i>
+          <h3>Report a problem</h3>
+          <p>Tell us about an issue you're having.</p>
+        </div>
+      </div>
+    </div>
+    <div class="back-pane" data-bp="options">
+      <h2>Word Options</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-edit"></i>
+          <h3>General</h3>
+          <p>Basic options for working with Word.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-check"></i>
+          <h3>Proofing</h3>
+          <p>Options for spelling, grammar, and autocorrect.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-save"></i>
+          <h3>Save</h3>
+          <p>Customize how documents are saved.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-language"></i>
+          <h3>Language</h3>
+          <p>Choose editing and display languages.</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-rocket"></i>
+          <h3>Advanced</h3>
+          <p>Editing, printing, and display options.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Toast Container ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ===================== State ===================== */
+const page = document.getElementById('page');
+const docArea = document.getElementById('docArea');
+const pageWrapper = document.getElementById('pageWrapper');
+const zoomSlider = document.getElementById('zoomSlider');
+const zoomLevel = document.getElementById('zoomLevel');
+let zoom = 100;
+let currentColorTarget = null;
+let formatPainterData = null;
+
+/* ===================== Tab Switching ===================== */
+document.querySelectorAll('.ribbon-tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const tabName = tab.dataset.tab;
+    if (tabName === 'file') {
+      openBackstage();
+      return;
+    }
+    document.querySelectorAll('.ribbon-tabs .tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.ribbon-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.ribbon-pane[data-pane="${tabName}"]`);
+    setTimeout(() => {
+      targetPane.classList.add('active');
+      requestAnimationFrame(() => {
+        targetPane.style.opacity = '1';
+      });
+    }, 50);
+  });
+});
+
+/* ===================== Ruler Numbers ===================== */
+function buildRulerNumbers() {
+  const ruler = document.getElementById('rulerNumbers');
+  ruler.innerHTML = '';
+  for (let i = 1; i <= 12; i++) {
+    const span = document.createElement('span');
+    span.textContent = i;
+    span.style.left = (i * 50) + 'px';
+    ruler.appendChild(span);
+  }
+}
+buildRulerNumbers();
+
+/* ===================== Command Handling ===================== */
+function exec(cmd, value = null) {
+  page.focus();
+  document.execCommand(cmd, false, value);
+  updateFormattingState();
+  updateWordCount();
+}
+
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-cmd]');
+  if (!btn) return;
+  const cmd = btn.dataset.cmd;
+  handleCommand(cmd, btn);
+});
+
+function handleCommand(cmd, btn) {
+  switch(cmd) {
+    case 'bold': exec('bold'); break;
+    case 'italic': exec('italic'); break;
+    case 'underline': exec('underline'); break;
+    case 'strikethrough': exec('strikeThrough'); break;
+    case 'subscript': exec('subscript'); break;
+    case 'superscript': exec('superscript'); break;
+    case 'clearFormat': exec('removeFormat'); break;
+    case 'alignLeft': exec('justifyLeft'); break;
+    case 'alignCenter': exec('justifyCenter'); break;
+    case 'alignRight': exec('justifyRight'); break;
+    case 'alignJustify': exec('justifyFull'); break;
+    case 'bullets': case 'bulletsCtx': exec('insertUnorderedList'); break;
+    case 'numbering': case 'numberingCtx': exec('insertOrderedList'); break;
+    case 'increaseIndent': exec('indent'); break;
+    case 'decreaseIndent': exec('outdent'); break;
+    case 'undo': exec('undo'); break;
+    case 'redo': exec('redo'); break;
+    case 'cut': exec('cut'); break;
+    case 'copy': exec('copy'); break;
+    case 'paste': exec('paste'); break;
+    case 'select': case 'selectAll': exec('selectAll'); break;
+    case 'growFont': changeFontSize(1); break;
+    case 'shrinkFont': changeFontSize(-1); break;
+    case 'textColor': openColorPopup('text', btn); break;
+    case 'highlight': openColorPopup('highlight', btn); break;
+    case 'shading': openColorPopup('shading', btn); break;
+    case 'formatPainter': applyFormatPainter(); break;
+    case 'find': case 'replace': openFindBar(cmd === 'replace'); break;
+    case 'closeFind': closeFindBar(); break;
+    case 'findNext': findInDocument(1); break;
+    case 'findPrev': findInDocument(-1); break;
+    case 'save': saveDocument(); break;
+    case 'zoomIn': setZoom(zoom + 10); break;
+    case 'zoomOut': setZoom(zoom - 10); break;
+    case 'pageBreak': exec('insertHTML', '<div style="page-break-after:always"></div>'); break;
+    case 'blankPage': exec('insertHTML', '<div style="page-break-after:always"></div><p></p>'); break;
+    case 'insertPicture': insertPicture(); break;
+    case 'insertLink': insertLink(); break;
+    case 'insertTable': openTableGrid(btn); break;
+    case 'insertComment': insertComment(); break;
+    case 'newComment': insertComment(); break;
+    case 'wordCount': showWordCountDialog(); break;
+    case 'spellCheck': runSpellCheck(); break;
+    case 'toggleRuler': toggleRuler(btn); break;
+    case 'printLayout': case 'webLayout': case 'readMode': case 'draft': case 'outline':
+      switchView(cmd, btn); break;
+    case 'closeBackstage': closeBackstage(); break;
+    case 'newBlankDoc': newDocument(); break;
+    case 'pageWidth': setZoom(Math.floor(docArea.clientWidth / 8.16 * 100)); break;
+    case 'onePage': setZoom(75); break;
+    default:
+      if (cmd) showToast('Feature: ' + cmd, 'info-circle');
+  }
+}
+
+/* ===================== Font Selection ===================== */
+document.getElementById('fontSelect').addEventListener('change', (e) => {
+  exec('fontName', e.target.value);
+});
+document.getElementById('sizeSelect').addEventListener('change', (e) => {
+  applyFontSize(parseFloat(e.target.value));
+});
+
+function changeFontSize(delta) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  let currentSize = 11;
+  const container = range.commonAncestorContainer;
+  const el = container.nodeType === 3 ? container.parentElement : container;
+  const computed = window.getComputedStyle(el).fontSize;
+  currentSize = parseFloat(computed);
+  applyFontSize(currentSize + delta);
+}
+
+function applyFontSize(size) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+  
+  const span = document.createElement('span');
+  span.style.fontSize = size + 'pt';
+  try {
+    range.surroundContents(span);
+  } catch (e) {
+    document.execCommand('fontSize', false, '7');
+    const fontElements = document.querySelectorAll('font[size="7"]');
+    fontElements.forEach(f => {
+      f.style.fontSize = size + 'pt';
+      f.removeAttribute('size');
+    });
+  }
+  updateWordCount();
+}
+
+/* ===================== Style Application ===================== */
+document.querySelectorAll('.style-item[data-style]').forEach(item => {
+  item.addEventListener('click', () => {
+    const style = item.dataset.style;
+    applyStyle(style);
+  });
+});
+
+function applyStyle(style) {
+  page.focus();
+  if (style === 'h1') document.execCommand('formatBlock', false, 'H1');
+  else if (style === 'h2') document.execCommand('formatBlock', false, 'H2');
+  else if (style === 'title') document.execCommand('formatBlock', false, 'H1');
+  else if (style === 'blockquote') document.execCommand('formatBlock', false, 'BLOCKQUOTE');
+  else document.execCommand('formatBlock', false, 'P');
+  updateWordCount();
+}
+
+/* ===================== Color Popup ===================== */
+const colors = [
+  'transparent','#C00000','#FF0000','#FFC000','#FFFF00','#92D050','#00B050','#00B0F0',
+  '#0070C0','#002060','#7030A0','#FFFFFF','#000000','#595959','#A6A6A6','#D9D9D9',
+  '#F2F2F2','#E7E6E6','#806000','#4D2D00','#666600','#BF9000','#808000','#1F3864',
+  '#2E74B5','#9DC3E6','#BDD7EE','#FFE699','#F8CBAD','#C9C9C9','#7F7F7F','#404040'
+];
+
+function buildColorGrid() {
+  const grid = document.getElementById('colorGrid');
+  grid.innerHTML = '';
+  colors.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (c === 'transparent' ? ' transparent' : '');
+    if (c !== 'transparent') sw.style.background = c;
+    sw.dataset.color = c;
+    sw.addEventListener('click', () => applyColor(c));
+    grid.appendChild(sw);
+  });
+}
+buildColorGrid();
+
+function openColorPopup(type, anchor) {
+  currentColorTarget = type;
+  const popup = document.getElementById('colorPopup');
+  const rect = anchor.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 2;
+  // Adjust for mobile
+  if (window.innerWidth < 480) {
+    left = Math.min(left, window.innerWidth - 200);
+  }
+  popup.style.left = Math.max(8, left) + 'px';
+  popup.style.top = top + 'px';
+  popup.classList.add('active');
+}
+
+function applyColor(color) {
+  page.focus();
+  if (currentColorTarget === 'text') {
+    if (color !== 'transparent') {
+      document.execCommand('foreColor', false, color);
+      document.getElementById('textColorBar').style.background = color;
+    }
+  } else if (currentColorTarget === 'highlight') {
+    if (color === 'transparent') {
+      document.execCommand('hiliteColor', false, 'transparent');
+    } else {
+      document.execCommand('hiliteColor', false, color);
+      document.getElementById('highlightBar').style.background = color;
+    }
+  } else if (currentColorTarget === 'shading') {
+    if (color !== 'transparent') {
+      const sel = window.getSelection();
+      if (sel.rangeCount) {
+        const range = sel.getRangeAt(0);
+        let block = range.commonAncestorContainer;
+        if (block.nodeType === 3) block = block.parentElement;
+        while (block && block !== page && !['P','H1','H2','H3','LI'].includes(block.tagName)) {
+          block = block.parentElement;
+        }
+        if (block) block.style.background = color;
+      }
+    }
+  }
+  document.getElementById('colorPopup').classList.remove('active');
+}
+
+document.addEventListener('click', (e) => {
+  const popup = document.getElementById('colorPopup');
+  if (!popup.classList.contains('active')) return;
+  if (!e.target.closest('.color-popup') && !e.target.closest('[data-cmd="textColor"]') && !e.target.closest('[data-cmd="highlight"]') && !e.target.closest('[data-cmd="shading"]')) {
+    popup.classList.remove('active');
+  }
+});
+
+/* ===================== Table Grid ===================== */
+function buildTableGrid() {
+  const grid = document.getElementById('tableGrid');
+  grid.innerHTML = '';
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 10; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'table-cell';
+      cell.dataset.row = r + 1;
+      cell.dataset.col = c + 1;
+      cell.addEventListener('mouseenter', () => highlightTable(r + 1, c + 1));
+      cell.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        highlightTable(r + 1, c + 1);
+      });
+      cell.addEventListener('click', () => insertTable(r + 1, c + 1));
+      grid.appendChild(cell);
+    }
+  }
+}
+buildTableGrid();
+
+function openTableGrid(anchor) {
+  const popup = document.getElementById('tableGridPopup');
+  const rect = anchor.getBoundingClientRect();
+  let left = rect.left;
+  let top = rect.bottom + 2;
+  if (window.innerWidth < 480) {
+    left = Math.min(left, window.innerWidth - 200);
+  }
+  popup.style.left = Math.max(8, left) + 'px';
+  popup.style.top = top + 'px';
+  popup.classList.add('active');
+}
+
+function highlightTable(rows, cols) {
+  document.querySelectorAll('.table-cell').forEach(c => {
+    if (parseInt(c.dataset.row) <= rows && parseInt(c.dataset.col) <= cols) {
+      c.classList.add('hover');
+    } else {
+      c.classList.remove('hover');
+    }
+  });
+  document.getElementById('tableSizeLabel').textContent = `${rows}x${cols} Table`;
+}
+
+function insertTable(rows, cols) {
+  page.focus();
+  let html = '<table style="border-collapse:collapse;width:100%;"><tbody>';
+  for (let r = 0; r < rows; r++) {
+    html += '<tr>';
+    for (let c = 0; c < cols; c++) {
+      html += '<td style="border:1px solid #888;padding:6px 8px;">&nbsp;</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  document.execCommand('insertHTML', false, html);
+  document.getElementById('tableGridPopup').classList.remove('active');
+  showToast(`Inserted ${rows}×${cols} table`, 'table');
+}
+
+document.addEventListener('click', (e) => {
+  const popup = document.getElementById('tableGridPopup');
+  if (!popup.classList.contains('active')) return;
+  if (!e.target.closest('.table-grid-popup') && !e.target.closest('[data-cmd="insertTable"]')) {
+    popup.classList.remove('active');
+  }
+});
+
+/* ===================== Format Painter ===================== */
+function applyFormatPainter() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  if (!formatPainterData) {
+    const range = sel.getRangeAt(0);
+    if (range.collapsed) {
+      showToast('Select text to copy format from', 'info-circle');
+      return;
+    }
+    const container = range.commonAncestorContainer;
+    const el = container.nodeType === 3 ? container.parentElement : container;
+    formatPainterData = {
+      bold: document.queryCommandState('bold'),
+      italic: document.queryCommandState('italic'),
+      underline: document.queryCommandState('underline'),
+      color: document.queryCommandValue('foreColor'),
+      fontName: document.queryCommandValue('fontName'),
+      fontSize: window.getComputedStyle(el).fontSize
+    };
+    showToast('Format copied. Select text and click Format Painter again to apply.', 'paint-brush');
+  } else {
+    if (formatPainterData.bold) document.execCommand('bold');
+    if (formatPainterData.italic) document.execCommand('italic');
+    if (formatPainterData.underline) document.execCommand('underline');
+    if (formatPainterData.color) document.execCommand('foreColor', false, formatPainterData.color);
+    if (formatPainterData.fontName) document.execCommand('fontName', false, formatPainterData.fontName);
+    formatPainterData = null;
+    showToast('Format applied', 'check-circle');
+  }
+}
+
+/* ===================== Insert Picture ===================== */
+function insertPicture() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      page.focus();
+      document.execCommand('insertHTML', false, `<img src="${ev.target.result}" style="max-width:100%;height:auto;">`);
+      showToast('Picture inserted', 'image');
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+/* ===================== Insert Link ===================== */
+function insertLink() {
+  const sel = window.getSelection();
+  let selectedText = '';
+  if (sel.rangeCount && !sel.isCollapsed) {
+    selectedText = sel.toString();
+  }
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  const dialog = document.createElement('div');
+  dialog.style.cssText = 'background:#fff;padding:20px;border-radius:4px;width:100%;max-width:380px;box-shadow:0 4px 20px rgba(0,0,0,0.2);';
+  dialog.innerHTML = `
+    <h3 style="margin-bottom:12px;font-size:16px;">Insert Hyperlink</h3>
+    <label style="display:block;margin-bottom:4px;font-size:12px;">Text to display:</label>
+    <input id="linkText" value="${selectedText}" style="width:100%;padding:6px;margin-bottom:12px;border:1px solid #C8C6C4;font-size:13px;box-sizing:border-box;">
+    <label style="display:block;margin-bottom:4px;font-size:12px;">Address:</label>
+    <input id="linkUrl" placeholder="https://" style="width:100%;padding:6px;margin-bottom:16px;border:1px solid #C8C6C4;font-size:13px;box-sizing:border-box;">
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button id="linkCancel" style="padding:6px 16px;border:1px solid #C8C6C4;background:#fff;cursor:pointer;font-size:13px;">Cancel</button>
+      <button id="linkOk" style="padding:6px 16px;background:#2B579A;color:#fff;border:none;cursor:pointer;font-size:13px;">OK</button>
+    </div>
+  `;
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+  dialog.querySelector('#linkText').focus();
+  
+  dialog.querySelector('#linkCancel').onclick = () => overlay.remove();
+  dialog.querySelector('#linkOk').onclick = () => {
+    const text = dialog.querySelector('#linkText').value;
+    const url = dialog.querySelector('#linkUrl').value;
+    if (url) {
+      page.focus();
+      const link = `<a href="${url}" target="_blank" style="color:#2E74B5;text-decoration:underline;">${text || url}</a>`;
+      document.execCommand('insertHTML', false, link);
+    }
+    overlay.remove();
+  };
+  dialog.querySelector('#linkUrl').onkeydown = (e) => { if (e.key === 'Enter') dialog.querySelector('#linkOk').click(); };
+}
+
+/* ===================== Insert Comment ===================== */
+function insertComment() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount || sel.isCollapsed) {
+    showToast('Select text to comment on', 'info-circle');
+    return;
+  }
+  const text = sel.toString();
+  showToast('Comment added: "' + (text.length > 30 ? text.substring(0, 30) + '...' : text) + '"', 'comment');
+}
+
+/* ===================== Find & Replace ===================== */
+const findBar = document.getElementById('findBar');
+const findInput = document.getElementById('findInput');
+let findMatches = [];
+let findCurrentIndex = -1;
+
+function openFindBar(isReplace) {
+  findBar.classList.add('active');
+  setTimeout(() => findInput.focus(), 100);
+  findInput.select();
+}
+
+function closeFindBar() {
+  findBar.classList.remove('active');
+  clearFindHighlights();
+  findMatches = [];
+  findCurrentIndex = -1;
+}
+
+findInput.addEventListener('input', () => {
+  clearFindHighlights();
+  findMatches = [];
+  findCurrentIndex = -1;
+  const query = findInput.value;
+  if (!query) {
+    document.getElementById('findResult').textContent = '0 of 0';
+    return;
+  }
+  highlightAllFind(query);
+});
+
+function clearFindHighlights() {
+  document.querySelectorAll('mark.find-highlight, mark.find-current').forEach(m => {
+    const parent = m.parentNode;
+    parent.replaceChild(document.createTextNode(m.textContent), m);
+    parent.normalize();
+  });
+}
+
+function highlightAllFind(query) {
+  const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT, null, false);
+  const textNodes = [];
+  let node;
+  while (node = walker.nextNode()) {
+    if (node.parentElement.tagName === 'MARK' || node.parentElement.tagName === 'SCRIPT') continue;
+    textNodes.push(node);
+  }
+  
+  textNodes.forEach(textNode => {
+    const text = textNode.textContent;
+    if (!regex.test(text)) return;
+    regex.lastIndex = 0;
+    const frag = document.createDocumentFragment();
+    let lastIdx = 0;
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIdx) {
+        frag.appendChild(document.createTextNode(text.substring(lastIdx, match.index)));
+      }
+      const mark = document.createElement('mark');
+      mark.className = 'find-highlight';
+      mark.textContent = match[0];
+      frag.appendChild(mark);
+      findMatches.push(mark);
+      lastIdx = match.index + match[0].length;
+      if (match[0].length === 0) regex.lastIndex++;
+    }
+    if (lastIdx < text.length) {
+      frag.appendChild(document.createTextNode(text.substring(lastIdx)));
+    }
+    textNode.parentNode.replaceChild(frag, textNode);
+  });
+  
+  if (findMatches.length > 0) {
+    findCurrentIndex = 0;
+    updateCurrentFind();
+  } else {
+    document.getElementById('findResult').textContent = '0 of 0';
+  }
+}
+
+function findInDocument(direction) {
+  if (findMatches.length === 0) return;
+  findCurrentIndex = (findCurrentIndex + direction + findMatches.length) % findMatches.length;
+  updateCurrentFind();
+  findMatches[findCurrentIndex].scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+function updateCurrentFind() {
+  document.querySelectorAll('mark.find-current').forEach(m => m.classList.remove('find-current'));
+  if (findMatches[findCurrentIndex]) {
+    findMatches[findCurrentIndex].classList.add('find-current');
+  }
+  document.getElementById('findResult').textContent = `${findCurrentIndex + 1} of ${findMatches.length}`;
+}
+
+/* ===================== Word Count ===================== */
+function updateWordCount() {
+  const text = page.innerText || '';
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+  document.getElementById('wordCountBottom').textContent = `${words} words`;
+}
+
+page.addEventListener('input', updateWordCount);
+updateWordCount();
+
+function showWordCountDialog() {
+  const text = page.innerText || '';
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+  const chars = text.length;
+  const charsNoSpaces = text.replace(/\s/g, '').length;
+  const paragraphs = page.querySelectorAll('p, h1, h2, h3, li').length;
+  const lines = text.split('\n').length;
+  
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  const dialog = document.createElement('div');
+  dialog.style.cssText = 'background:#fff;padding:20px;border-radius:4px;width:100%;max-width:340px;box-shadow:0 4px 20px rgba(0,0,0,0.2);';
+  dialog.innerHTML = `
+    <h3 style="margin-bottom:12px;font-size:16px;">Word Count</h3>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;">
+      <tr><td style="padding:4px 0;">Pages:</td><td style="text-align:right;">1</td></tr>
+      <tr><td style="padding:4px 0;">Words:</td><td style="text-align:right;font-weight:bold;">${words}</td></tr>
+      <tr><td style="padding:4px 0;">Characters (with spaces):</td><td style="text-align:right;">${chars}</td></tr>
+      <tr><td style="padding:4px 0;">Characters (no spaces):</td><td style="text-align:right;">${charsNoSpaces}</td></tr>
+      <tr><td style="padding:4px 0;">Paragraphs:</td><td style="text-align:right;">${paragraphs}</td></tr>
+      <tr><td style="padding:4px 0;">Lines:</td><td style="text-align:right;">${lines}</td></tr>
+    </table>
+    <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+      <button id="wcClose" style="padding:6px 16px;background:#2B579A;color:#fff;border:none;cursor:pointer;font-size:13px;border-radius:2px;">Close</button>
+    </div>
+  `;
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+  dialog.querySelector('#wcClose').onclick = () => overlay.remove();
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+}
+
+/* ===================== Spell Check ===================== */
+function runSpellCheck() {
+  page.spellcheck = true;
+  showToast('Spell check enabled. Misspelled words will be underlined.', 'spell-check');
+  page.focus();
+  setTimeout(() => {
+    const sel = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(page);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    setTimeout(() => sel.removeAllRanges(), 100);
+  }, 50);
+}
+
+/* ===================== View Switching ===================== */
+function switchView(view, btn) {
+  document.querySelectorAll('[data-cmd="printLayout"], [data-cmd="webLayout"], [data-cmd="readMode"], [data-cmd="draft"], [data-cmd="outline"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  if (view === 'printLayout') document.querySelector('.view-btn[data-view="print"]').classList.add('active');
+  if (view === 'webLayout') document.querySelector('.view-btn[data-view="web"]').classList.add('active');
+  if (view === 'readMode') document.querySelector('.view-btn[data-view="read"]').classList.add('active');
+  
+  if (view === 'webLayout') {
+    page.style.width = '100%';
+    page.style.minHeight = 'auto';
+    page.style.padding = '20px';
+    pageWrapper.style.padding = '0 20px';
+  } else {
+    page.style.width = '8.5in';
+    page.style.minHeight = '11in';
+    page.style.padding = '1in';
+    pageWrapper.style.padding = '0 40px';
+  }
+}
+
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+/* ===================== Ruler Toggle ===================== */
+function toggleRuler(btn) {
+  const rulerBar = document.getElementById('rulerBar');
+  rulerBar.classList.toggle('hidden');
+  btn.classList.toggle('active');
+}
+
+/* ===================== Zoom ===================== */
+function setZoom(value) {
+  zoom = Math.max(50, Math.min(200, value));
+  pageWrapper.style.transform = `scale(${zoom / 100})`;
+  zoomSlider.value = zoom;
+  zoomLevel.textContent = zoom + '%';
+}
+zoomSlider.addEventListener('input', (e) => setZoom(parseInt(e.target.value)));
+
+/* ===================== Formatting State ===================== */
+function updateFormattingState() {
+  try {
+    const cmds = ['bold','italic','underline','strikethrough','subscript','superscript',
+                  'justifyLeft','justifyCenter','justifyRight','justifyFull',
+                  'insertUnorderedList','insertOrderedList'];
+    cmds.forEach(c => {
+      const btn = document.querySelector(`[data-cmd="${c}"]`);
+      if (!btn) return;
+      try {
+        if (document.queryCommandState(c)) btn.classList.add('active');
+        else btn.classList.remove('active');
+      } catch(e){}
+    });
+    
+    const fontName = document.queryCommandValue('fontName');
+    if (fontName) {
+      const opt = [...document.getElementById('fontSelect').options].find(o => o.value.toLowerCase().includes(fontName.toLowerCase().split(',')[0]));
+      if (opt) document.getElementById('fontSelect').value = opt.value;
+    }
+  } catch(e) {}
+}
+
+page.addEventListener('keyup', updateFormattingState);
+page.addEventListener('mouseup', updateFormattingState);
+page.addEventListener('touchend', updateFormattingState);
+
+/* ===================== Context Menu ===================== */
+const contextMenu = document.getElementById('contextMenu');
+
+function showContextMenu(x, y) {
+  // Adjust position to stay on screen
+  const menuWidth = 220;
+  const menuHeight = 360;
+  if (x + menuWidth > window.innerWidth) x = window.innerWidth - menuWidth - 8;
+  if (y + menuHeight > window.innerHeight) y = window.innerHeight - menuHeight - 8;
+  contextMenu.style.left = x + 'px';
+  contextMenu.style.top = y + 'px';
+  contextMenu.classList.add('active');
+  
+  const hasSelection = window.getSelection().toString().length > 0;
+  contextMenu.querySelectorAll('[data-cmd="cut"], [data-cmd="copy"]').forEach(b => b.disabled = !hasSelection);
+}
+
+page.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  showContextMenu(e.clientX, e.clientY);
+});
+
+page.addEventListener('touchstart', (e) => {
+  // Store touch position for long-press context menu
+  if (e.touches.length === 1) {
+    const touch = e.touches[0];
+    page._touchStartX = touch.clientX;
+    page._touchStartY = touch.clientY;
+    page._touchStartTime = Date.now();
+  }
+}, { passive: true });
+
+page.addEventListener('touchend', (e) => {
+  // Long press detection
+  if (page._touchStartTime && Date.now() - page._touchStartTime > 500) {
+    const touch = e.changedTouches[0];
+    const dx = Math.abs(touch.clientX - page._touchStartX);
+    const dy = Math.abs(touch.clientY - page._touchStartY);
+    if (dx < 10 && dy < 10) {
+      e.preventDefault();
+      showContextMenu(touch.clientX, touch.clientY);
+    }
+  }
+  page._touchStartTime = null;
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.context-menu')) contextMenu.classList.remove('active');
+});
+document.addEventListener('contextmenu', (e) => {
+  if (!e.target.closest('#page')) contextMenu.classList.remove('active');
+});
+
+/* ===================== Mini Toolbar ===================== */
+const miniToolbar = document.getElementById('miniToolbar');
+let miniToolbarTimer = null;
+
+function showMiniToolbar() {
+  const sel = window.getSelection();
+  if (sel.rangeCount && !sel.isCollapsed && sel.toString().trim().length > 1) {
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    let left = rect.left + rect.width / 2 - 200;
+    let top = rect.top - 40;
+    // Keep on screen
+    if (left < 8) left = 8;
+    if (left + 400 > window.innerWidth) left = window.innerWidth - 408;
+    if (top < 50) top = rect.bottom + 8;
+    miniToolbar.style.left = left + 'px';
+    miniToolbar.style.top = top + 'px';
+    miniToolbar.classList.add('active');
+    clearTimeout(miniToolbarTimer);
+  }
+}
+
+page.addEventListener('mouseup', (e) => {
+  setTimeout(showMiniToolbar, 10);
+});
+page.addEventListener('touchend', (e) => {
+  setTimeout(showMiniToolbar, 200);
+});
+
+document.addEventListener('selectionchange', () => {
+  const sel = window.getSelection();
+  if (!sel.rangeCount || sel.isCollapsed) {
+    miniToolbarTimer = setTimeout(() => miniToolbar.classList.remove('active'), 100);
+  }
+});
+
+miniToolbar.addEventListener('mouseenter', () => clearTimeout(miniToolbarTimer));
+miniToolbar.addEventListener('touchstart', (e) => {
+  e.stopPropagation();
+  clearTimeout(miniToolbarTimer);
+});
+
+/* ===================== Keyboard Shortcuts ===================== */
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey)) {
+    switch(e.key.toLowerCase()) {
+      case 'b': e.preventDefault(); exec('bold'); break;
+      case 'i': e.preventDefault(); exec('italic'); break;
+      case 'u': e.preventDefault(); exec('underline'); break;
+      case 's': e.preventDefault(); saveDocument(); break;
+      case 'z': e.preventDefault(); exec('undo'); break;
+      case 'y': e.preventDefault(); exec('redo'); break;
+      case 'f': e.preventDefault(); openFindBar(false); break;
+      case 'h': e.preventDefault(); openFindBar(true); break;
+      case 'a': e.preventDefault(); exec('selectAll'); break;
+      case 'x': e.preventDefault(); exec('cut'); break;
+      case 'c': exec('copy'); break;
+      case 'v': exec('paste'); break;
+      case '=': e.preventDefault(); exec('subscript'); break;
+      case '+': e.preventDefault(); exec('superscript'); break;
+    }
+  }
+  if (e.key === 'Escape') {
+    closeFindBar();
+    contextMenu.classList.remove('active');
+    document.getElementById('colorPopup').classList.remove('active');
+    document.getElementById('tableGridPopup').classList.remove('active');
+    miniToolbar.classList.remove('active');
+    const backstage = document.getElementById('backstage');
+    if (backstage.classList.contains('active')) closeBackstage();
+  }
+});
+
+/* ===================== Save ===================== */
+function saveDocument() {
+  try {
+    localStorage.setItem('wordDoc_content', page.innerHTML);
+    localStorage.setItem('wordDoc_title', document.getElementById('docTitle').value);
+    document.getElementById('saveStatus').textContent = ' - Saved to this PC';
+    showToast('Document saved', 'check-circle');
+  } catch(e) {
+    showToast('Save failed', 'exclamation-triangle');
+  }
+}
+
+function loadDocument() {
+  try {
+    const saved = localStorage.getItem('wordDoc_content');
+    const title = localStorage.getItem('wordDoc_title');
+    if (saved) page.innerHTML = saved;
+    if (title) document.getElementById('docTitle').value = title;
+  } catch(e) {}
+}
+
+function newDocument() {
+  page.innerHTML = '<h1>New Document</h1><p>Start typing here...</p>';
+  document.getElementById('docTitle').value = 'Document' + Math.floor(Math.random() * 1000);
+  closeBackstage();
+  updateWordCount();
+  showToast('New document created', 'file');
+}
+
+/* ===================== Backstage ===================== */
+function openBackstage() {
+  document.getElementById('backstage').classList.add('active');
+}
+function closeBackstage() {
+  document.getElementById('backstage').classList.remove('active');
+  document.querySelectorAll('.ribbon-tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.ribbon-tabs .tab[data-tab="home"]').classList.add('active');
+  document.querySelectorAll('.ribbon-pane').forEach(p => {
+    p.classList.remove('active');
+    p.style.opacity = '0';
+  });
+  const homePane = document.querySelector('.ribbon-pane[data-pane="home"]');
+  homePane.classList.add('active');
+  requestAnimationFrame(() => homePane.style.opacity = '1');
+}
+
+document.querySelectorAll('.back-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.back-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.back-pane').forEach(p => {
+      p.classList.remove('active');
+      p.style.opacity = '0';
+    });
+    const targetPane = document.querySelector(`.back-pane[data-bp="${tab.dataset.bt}"]`);
+    setTimeout(() => {
+      targetPane.classList.add('active');
+      requestAnimationFrame(() => targetPane.style.opacity = '1');
+    }, 50);
+  });
+});
+
+document.querySelectorAll('.backstage [data-cmd]').forEach(el => {
+  el.addEventListener('click', (e) => {
+    const cmd = el.dataset.cmd;
+    if (cmd === 'closeBackstage') { closeBackstage(); return; }
+    if (cmd === 'newBlankDoc') { newDocument(); return; }
+    if (cmd === 'saveLocal' || cmd === 'save') { saveDocument(); closeBackstage(); return; }
+    if (cmd === 'saveAsPdf' || cmd === 'exportPdf') { showToast('Document exported as PDF (demo)', 'file-pdf'); closeBackstage(); return; }
+    if (cmd === 'saveAsDocx') { saveDocument(); closeBackstage(); return; }
+    if (cmd && cmd.startsWith('openDoc')) { 
+      page.innerHTML = '<h1>' + el.querySelector('strong').textContent + '</h1><p>This is a recently opened document.</p>';
+      closeBackstage();
+      updateWordCount();
+      showToast('Document opened', 'folder-open');
+      return;
+    }
+    if (cmd && cmd.startsWith('new')) {
+      const tpl = el.querySelector('.template-name');
+      if (tpl) {
+        page.innerHTML = '<h1>' + tpl.textContent + '</h1><p>Start typing your ' + tpl.textContent.toLowerCase() + ' here...</p>';
+        closeBackstage();
+        updateWordCount();
+        showToast('Template loaded: ' + tpl.textContent, 'file');
+        return;
+      }
+    }
+    if (cmd === 'close') {
+      if (confirm('Close this document? Unsaved changes will be lost.')) {
+        page.innerHTML = '';
+        closeBackstage();
+      }
+      return;
+    }
+    showToast('Selected: ' + cmd, 'info-circle');
+    closeBackstage();
+  });
+});
+
+/* ===================== Toast Notifications ===================== */
+function showToast(message, icon = 'info-circle') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<i class="fas fa-${icon}"></i><span>${message}</span>`;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+/* ===================== Doc Title Edit ===================== */
+document.getElementById('docTitle').addEventListener('input', (e) => {
+  document.title = e.target.value + ' - Word';
+  document.getElementById('saveStatus').textContent = ' - Unsaved changes';
+});
+
+/* ===================== Search Box ===================== */
+document.getElementById('searchInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.value.trim()) {
+    showToast('Searching for: ' + e.target.value, 'search');
+    e.target.value = '';
+  }
+});
+
+/* ===================== Orientation change ===================== */
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    // Recalculate zoom and positions
+    setZoom(zoom);
+  }, 100);
+});
+
+/* ===================== Prevent zoom on double-tap (mobile) ===================== */
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEnd = now;
+}, { passive: false });
+
+/* ===================== Init ===================== */
+loadDocument();
+updateWordCount();
+updateFormattingState();
+
+document.addEventListener('mousedown', (e) => {
+  if (!e.target.closest('#page') && !e.target.closest('.mini-toolbar')) {
+    miniToolbar.classList.remove('active');
+  }
+});
+
+setTimeout(() => {
+  showToast('Document loaded. Click File to see options.', 'file-word');
+}, 500);
+</script>
+</body>
+</html>
