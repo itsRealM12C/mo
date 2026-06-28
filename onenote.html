@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Notebook1 - OneNote</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
+:root {
+  --on-purple: #7719AA; --on-purple-dark: #5C1385; --on-purple-light: #F3F0F7;
+  --w10-bg: #F3F3F3; --w10-border: #E1E1E1; --w10-border-dark: #C8C6C4;
+  --text-primary: #201F1E; --text-secondary: #605E5C;
+  --ease-fluent: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --transition-fast: 0.1s var(--ease-fluent); --transition-base: 0.15s var(--ease-fluent);
+}
+html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; font-size: 13px; background: var(--w10-bg); color: var(--text-primary); user-select: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: transparent; color: inherit; }
+input, textarea { font-family: inherit; outline: none; border: none; background: transparent; }
+
+.title-bar { height: 32px; background: #fff; border-bottom: 1px solid var(--w10-border); display: flex; align-items: center; padding: 0 0 0 12px; }
+.title-bar-icon { font-size: 14px; margin-right: 8px; color: var(--on-purple); }
+.title-bar-text { flex: 1; font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+.user-avatar { width: 24px; height: 24px; background: linear-gradient(135deg, #B0B0B0, #808080); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; margin-right: 12px; }
+.win-btn { width: 46px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-primary); transition: background var(--transition-fast); }
+.win-btn:hover { background: #EDEBE9; }
+.win-btn.close:hover { background: #E81123; color: #fff; }
+
+.ribbon-tabs { display: flex; background: #fff; border-bottom: 1px solid var(--w10-border); padding: 0 12px; height: 34px; overflow-x: auto; scrollbar-width: none; }
+.ribbon-tabs::-webkit-scrollbar { display: none; }
+.tab { background: transparent; padding: 0 12px; font-size: 13px; color: var(--text-primary); cursor: pointer; border-bottom: 2px solid transparent; transition: all var(--transition-fast); white-space: nowrap; flex-shrink: 0; height: 34px; display: flex; align-items: center; }
+.tab:hover { background: #F3F2F1; }
+.tab.active { color: var(--on-purple); border-bottom-color: var(--on-purple); font-weight: 600; }
+.tab.file-tab { background: var(--on-purple); color: #fff; border-radius: 2px; margin-right: 8px; padding: 0 16px; height: 26px; align-self: center; }
+.tab.file-tab:hover { background: var(--on-purple-dark); }
+
+.ribbon-content { background: #FAFAFA; border-bottom: 1px solid var(--w10-border); padding: 8px 12px; display: flex; height: 88px; overflow-x: auto; gap: 12px; }
+.group { display: flex; flex-direction: column; border-right: 1px solid var(--w10-border); padding-right: 12px; flex-shrink: 0; }
+.group:last-child { border-right: none; padding-right: 0; }
+.group-content { flex: 1; display: flex; align-items: flex-start; gap: 4px; }
+.group-label { text-align: center; font-size: 11px; color: var(--text-secondary); padding-top: 4px; }
+
+.big-btn { background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 4px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; width: 60px; height: 64px; color: var(--text-primary); transition: all var(--transition-fast); }
+.big-btn i { font-size: 24px; color: var(--on-purple); }
+.big-btn:hover { background: #EDEBE9; border-color: var(--w10-border); }
+
+.onenote-layout { flex: 1; display: flex; overflow: hidden; }
+.onenote-sections { width: 140px; background: #C4B7D4; border-right: 1px solid var(--w10-border); padding: 8px 0; display: flex; flex-direction: column; gap: 2px; transition: margin-left var(--transition-base); }
+.onenote-sections.hidden { margin-left: -140px; }
+.onenote-section-tab { padding: 10px 16px; cursor: pointer; font-size: 13px; color: #fff; border-left: 3px solid transparent; transition: all var(--transition-fast); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.onenote-section-tab:hover { background: rgba(255,255,255,0.1); }
+.onenote-section-tab.active { background: #F3F0F7; color: var(--on-purple); border-left-color: var(--on-purple); font-weight: 600; }
+
+.onenote-pages { width: 220px; background: #F3F0F7; border-right: 1px solid var(--w10-border); padding: 16px 8px; overflow-y: auto; transition: margin-left var(--transition-base); }
+.onenote-pages.hidden { margin-left: -220px; }
+.onenote-page-header { font-size: 12px; color: var(--text-secondary); margin: 0 4px 12px; font-weight: 600; text-transform: uppercase; }
+.onenote-page-item { padding: 8px 12px; cursor: pointer; font-size: 13px; border-radius: 2px; transition: background var(--transition-fast); color: var(--text-primary); }
+.onenote-page-item:hover { background: rgba(119, 25, 170, 0.05); }
+.onenote-page-item.active { background: rgba(119, 25, 170, 0.1); color: var(--on-purple); font-weight: 600; }
+
+.onenote-canvas { flex: 1; background: #fff; overflow-y: auto; padding: 40px 60px; outline: none; font-size: 14px; line-height: 1.6; color: #000; }
+.onenote-canvas h1 { color: var(--on-purple); font-size: 28px; font-weight: 400; margin-bottom: 16px; border-bottom: 1px solid #E1E1E1; padding-bottom: 8px; }
+.onenote-canvas p { margin-bottom: 12px; }
+.onenote-canvas ul { margin-left: 24px; margin-bottom: 12px; }
+
+.status-bar { height: 24px; background: var(--on-purple); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; font-size: 11px; flex-shrink: 0; }
+.status-item { padding: 0 8px; display: flex; align-items: center; gap: 8px; height: 100%; cursor: pointer; transition: background var(--transition-fast); }
+.status-item:hover { background: rgba(255,255,255,0.1); }
+
+.mobile-menu-btn { display: none; background: transparent; font-size: 16px; cursor: pointer; padding: 0 12px; color: var(--text-primary); }
+
+@media (max-width: 768px) {
+  .onenote-sections { position: absolute; top: 0; left: 0; bottom: 0; z-index: 20; transform: translateX(-100%); transition: transform var(--transition-base); }
+  .onenote-sections.hidden { transform: translateX(-100%); margin-left: 0; }
+  .onenote-sections.mobile-open { transform: translateX(0); }
+  .onenote-pages { position: absolute; top: 0; left: 140px; bottom: 0; z-index: 10; transform: translateX(-100%); transition: transform var(--transition-base); }
+  .onenote-pages.hidden { transform: translateX(-100%); margin-left: 0; }
+  .onenote-pages.mobile-open { transform: translateX(0); }
+  .onenote-canvas { padding: 16px; }
+  .mobile-menu-btn { display: flex; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<div style="height: 100vh; display: flex; flex-direction: column;">
+  <div class="title-bar">
+    <button class="mobile-menu-btn" id="menuBtn1"><i class="fas fa-bars"></i></button>
+    <i class="title-bar-icon fas fa-note-sticky"></i>
+    <div class="title-bar-text">Notebook1 - OneNote</div>
+    <div class="user-avatar"><i class="fas fa-user"></i></div>
+    <button class="win-btn"><i class="far fa-window-minimize"></i></button>
+    <button class="win-btn"><i class="far fa-window-restore"></i></button>
+    <button class="win-btn close"><i class="fas fa-times"></i></button>
+  </div>
+
+  <nav class="ribbon-tabs">
+    <button class="tab file-tab">File</button>
+    <button class="tab active" data-tab="home">Home</button>
+    <button class="tab" data-tab="insert">Insert</button>
+    <button class="tab" data-tab="draw">Draw</button>
+    <button class="tab" data-tab="view">View</button>
+    <button class="tab" data-tab="help">Help</button>
+  </nav>
+
+  <div class="ribbon-content">
+    <div class="ribbon-pane active" data-pane="home">
+      <div class="group">
+        <div class="group-content">
+          <button class="big-btn"><i class="fas fa-font"></i><span>Text</span></button>
+          <button class="big-btn"><i class="fas fa-highlighter"></i><span>Highlight</span></button>
+          <button class="big-btn"><i class="fas fa-tag"></i><span>Tags</span></button>
+        </div>
+        <div class="group-label">Basic Text</div>
+      </div>
+      <div class="group">
+        <div class="group-content">
+          <button class="big-btn"><i class="fas fa-table"></i><span>Table</span></button>
+          <button class="big-btn"><i class="fas fa-image"></i><span>Pictures</span></button>
+          <button class="big-btn"><i class="fas fa-link"></i><span>Link</span></button>
+        </div>
+        <div class="group-label">Insert</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="onenote-layout">
+    <div class="onenote-sections" id="sectionTabs">
+      <div class="onenote-section-tab active">Work</div>
+      <div class="onenote-section-tab">Personal</div>
+      <div class="onenote-section-tab">Projects</div>
+    </div>
+
+    <div class="onenote-pages" id="pageList">
+      <div class="onenote-page-header">Pages</div>
+      <div class="onenote-page-item active">Meeting Notes</div>
+      <div class="onenote-page-item">Project Timeline</div>
+      <div class="onenote-page-item">To-Do List</div>
+      <div class="onenote-page-item">Research</div>
+    </div>
+
+    <div class="onenote-canvas" contenteditable="true" spellcheck="false">
+      <h1>Meeting Notes - Oct 24</h1>
+      <p><strong>Attendees:</strong> John, Jane, Bob</p>
+      <p><strong>Agenda:</strong></p>
+      <ul>
+        <li>Review Q3 budget</li>
+        <li>Plan Q4 marketing campaign</li>
+        <li>Discuss new product launch</li>
+      </ul>
+      <p>Click anywhere on this page to start typing your notes. OneNote provides a free-form canvas where you can place text, images, and drawings anywhere you want.</p>
+      <p><em>To-do: Send follow-up email to the marketing team.</em></p>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div style="display:flex; align-items:center; height:100%;">
+      <span class="status-item">Page 1 of 4</span>
+    </div>
+    <div style="display:flex; align-items:center; height:100%;">
+      <span class="status-item"><i class="fas fa-sync"></i> Synced</span>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.onenote-section-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.onenote-section-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+document.querySelectorAll('.onenote-page-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.onenote-page-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+document.getElementById('menuBtn1').addEventListener('click', () => {
+  document.getElementById('sectionTabs').classList.toggle('mobile-open');
+  document.getElementById('pageList').classList.toggle('mobile-open');
+});
+</script>
+</body>
+</html>
